@@ -1,5 +1,5 @@
 # blue_archive_api-rs
-Rust API wrapper of torikushii's BlueArchiveAPI. For more information and to see the current status of the API, go to this link below.
+Rust API wrapper of torikushii's BlueArchiveAPI. For more information and to see the current status of the API, go to this link:
 https://github.com/torikushiii/BlueArchiveAPI
 
 
