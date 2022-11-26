@@ -7,7 +7,8 @@ use anyhow::Result;
 use rand::seq::SliceRandom;
 use reqwest::Response;
 
-use super::enums::{BlueArchiveError, StudentQuery};
+use super::enums::StudentQuery;
+use super::errors::BlueArchiveError;
 
 pub(crate) mod helper {
 
