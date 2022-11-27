@@ -5,6 +5,7 @@ pub enum School {
     Millennium,
     Shanhaijing,
     Trinity,
+    Unknown(String),
 }
 
 impl std::fmt::Display for School {
@@ -16,6 +17,7 @@ impl std::fmt::Display for School {
             School::Millennium => write!(f, "Millennium"),
             School::Shanhaijing => write!(f, "Shanhaijing"),
             School::Trinity => write!(f, "Trinity"),
+            School::Unknown(unknown_school) => write!(f, "{}", unknown_school),
         }
     }
 }

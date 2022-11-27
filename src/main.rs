@@ -1,19 +1,14 @@
-use blue_archive::enums::School;
-
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    match blue_archive::fetch_students_by_school(School::Hyakkiyako).await {
-        Ok(students) => {
-            for student in students.iter() {
-                println!(
-                    "Name: {}\nAge:{}, Club:{}",
-                    student.character.name, student.info.age, student.info.club
-                )
-            }
+async fn main() {
+    match blue_archive::fetch_student_by_name("Asuna").await {
+        Ok(student) => {
+            println!(
+                "Name: {}\nProfile:{}",
+                student.character.name, student.character.profile
+            )
         }
         Err(err) => {
             println!("{:?}", err)
         }
     };
-    Ok(())
 }

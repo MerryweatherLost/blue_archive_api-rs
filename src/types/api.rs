@@ -1,18 +1,13 @@
 use serde::{Deserialize, Serialize};
 
-use crate::api::{asynchronous, blocking};
-
-pub trait IntoStudent {
-    fn to_student_sync(&self) -> Student;
-    // async fn to_student_async(&self) -> Student; -> soon .tm
-}
+use crate::enums;
 
 /**
 Contains the current status of the API.
 
 API created by [**torikushiii**](https://github.com/torikushiii)
 
-**API Github:** https://github.com/torikushiii/BlueArchiveAPI
+**Github:** <https://github.com/torikushiii/BlueArchiveAPI>
 */
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -24,7 +19,7 @@ pub struct APIStatus {
 }
 
 /**
-    A `struct` when a Student is searched with an ID.
+    A `struct` when a [`Student`] is searched with an ID.
 */
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -48,20 +43,16 @@ pub struct IDStudent {
     pub tags: Vec<String>,
 }
 
-impl IntoStudent for IDStudent {
-    fn to_student_sync(&self) -> Student {
-        todo!()
-    }
-}
-
+/**
+    Underlying data as result of the response given that contains a [`Vec<PartialStudent>`].
+*/
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PartialStudentData {
     pub data: Vec<PartialStudent>,
 }
 
 /**
-Contains partial information of a Student.
-
+Contains partial information of a [`Student`]. Contains limited data.
 */
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -80,12 +71,9 @@ pub struct PartialStudent {
     pub terrain: Terrain,
 }
 
-impl IntoStudent for PartialStudent {
-    fn to_student_sync(&self) -> Student {
-        todo!()
-    }
-}
-
+/**
+    The "desired" information of a Blue Archive student. Contains the most data.
+*/
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Student {
@@ -98,6 +86,20 @@ pub struct Student {
     pub stats: Stats,
     pub terrain: Terrain,
     pub skills: Skills,
+}
+
+impl Student {
+    fn school(&self) -> enums::School {
+        match self.info.school.as_str() {
+            "Abydos" => enums::School::Abydos,
+            "Gehenna" => enums::School::Gehenna,
+            "Hyakkiyako" => enums::School::Hyakkiyako,
+            "Millennium" => enums::School::Millennium,
+            "Shanhaijing" => enums::School::Shanhaijing,
+            "Trinity" => enums::School::Trinity,
+            _ => enums::School::Unknown(self.info.school.clone()),
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]

@@ -21,11 +21,14 @@ pub enum Endpoints {
         Takes a `ID`: ([`u32`]) or a `String`: [`String`], to use for querying data about equipment.
     */
     Equipment(EquipmentIDOrString),
-    Stage,
-    Raid,
-    Banner,
+    Stage,  // todo
+    Raid,   // todo
+    Banner, // todo
 }
 
+/**
+    A `enum` that maps queries with given data in each of them.
+*/
 pub enum StudentQuery {
     Role(String),
     Type(String),

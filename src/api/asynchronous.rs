@@ -14,6 +14,9 @@ pub(crate) mod helper {
 
     use super::*;
 
+    /**
+        Main function that provides a [`Response`] based on the provided [`Endpoints`] enum.
+    */
     pub async fn fetch_response(endpoint: Endpoints) -> Result<Response, BlueArchiveError> {
         let response_string = match endpoint {
             Endpoints::Status => "".to_string(),
@@ -48,7 +51,7 @@ pub(crate) mod helper {
     }
 
     /**
-        When a query result, normally a list of [`String`] containing the names of the Student's need to be converted to a [`Vec<Student>`]
+        When a query result, normally a list of [`String`] containing the names of the Students need to be converted to a [`Vec<Student>`].
     */
     pub async fn fetch_students_from_query_response(
         response: Response,
@@ -93,6 +96,28 @@ pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
     }
 }
 
+/**
+    Fetches a [`Student`] based on a given name.
+
+    ## Examples
+
+    ```
+        #[tokio::main]
+        async fn main() {
+            match blue_archive::fetch_student_by_name("Asuna").await {
+                Ok(student) => {
+                    println!(
+                        "Name: {}\nProfile:{}",
+                        student.character.name, student.character.profile
+                    )
+                }
+                Err(err) => {
+                    println!("{:?}", err)
+                }
+            };
+        }
+    ```
+*/
 pub async fn fetch_student_by_name<IntoStr: Into<String>>(
     name: IntoStr,
 ) -> Result<Student, BlueArchiveError> {
@@ -111,6 +136,26 @@ pub async fn fetch_student_by_name<IntoStr: Into<String>>(
     }
 }
 
+/**
+    Fetches a [`Student`] based on a given ID.
+    ```
+        #[tokio::main]
+        async fn main() -> anyhow::Result<()> {
+            match blue_archive::fetch_student_by_id(16001).await {
+                Ok(student) => {
+                    println!(
+                        "Name: {}\nAge:{}, Club:{}",
+                        student.character.name, student.info.age, student.info.club
+                    )
+                }
+                Err(err) => {
+                    println!("{:?}", err)
+                }
+            };
+            Ok(())
+        }
+
+*/
 pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
     let response = match helper::fetch_response(Endpoints::Character(Some(
         CharacterNameOrQuery::Query(StudentQuery::ID(id)),
@@ -129,6 +174,28 @@ pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
     }
 }
 
+/**
+    Fetches all instances of [`PartialStudent`] in a [`Vec`]. This uses the `character/` endpoint directly,
+    so it is not that expensive as [`fetch_all_students`], but it has limited information. See [`PartialStudent`] for more information of the data.
+
+    ## Examples
+
+    ```
+        #[tokio::main]
+        async fn main() {
+            match blue_archive::fetch_all_partial_students().await {
+                Ok(partial_students) => {
+                    for student in partial_students.iter() {
+                        println!("Name: {}\nProfile:{}", student.name, student.profile)
+                    }
+                }
+                Err(err) => {
+                    println!("{:?}", err)
+                }
+            };
+        }
+    ```
+*/
 pub async fn fetch_all_partial_students() -> Result<Vec<PartialStudent>, BlueArchiveError> {
     let response = match helper::fetch_response(Endpoints::Character(None)).await {
         Ok(resp) => resp,
@@ -140,6 +207,35 @@ pub async fn fetch_all_partial_students() -> Result<Vec<PartialStudent>, BlueArc
     }
 }
 
+/**
+    Attempts to fetch all instances of [`Student`] in a [`Vec`] through future chaining,
+    since the `character/` endpoint at this time only has instances of [`PartialStudent`] data.
+
+    This is a workaround for that issue.
+
+    **Unfortunately, this function has to do a number of API calls, which is more expensive.**
+
+    ## Examples
+
+    ```
+        #[tokio::main]
+        async fn main() {
+            match blue_archive::fetch_all_students().await {
+                Ok(students) => {
+                    for student in students.iter() {
+                        println!(
+                            "Name: {}\nAge:{}, Club:{}",
+                            student.character.name, student.info.age, student.info.club
+                        )
+                    }
+                }
+                Err(err) => {
+                    println!("{:?}", err)
+                }
+            };
+        }
+    ```
+*/
 pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
     let mut students: Vec<Student> = vec![];
     let partial_students = fetch_all_partial_students().await?;
@@ -160,6 +256,30 @@ pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
     Ok(students)
 }
 
+/**
+    Fetches a random [`Student`].
+
+    In the case randomization fails, [`BlueArchiveError::RandomError`] is presented.
+
+    ## Examples
+
+    ```
+        #[tokio::main]
+        async fn main() {
+            match blue_archive::fetch_random_student().await {
+                Ok(student) => {
+                    println!(
+                        "Name: {}\nAge:{}, Club:{}",
+                        student.character.name, student.info.age, student.info.club
+                    )
+                }
+                Err(err) => {
+                    println!("{:?}", err)
+                }
+            };
+        }
+    ```
+*/
 pub async fn fetch_random_student() -> Result<Student, BlueArchiveError> {
     let partial_students = fetch_all_partial_students().await?;
     match partial_students.choose(&mut rand::thread_rng()) {
@@ -171,11 +291,13 @@ pub async fn fetch_random_student() -> Result<Student, BlueArchiveError> {
 /**
     Fetches a [`Vec`] of [`Student`] from a given [`School`] enum.
 
+    ## Examples
+
     ```
         use blue_archive::enums::School;
 
         #[tokio::main]
-        async fn main() -> anyhow::Result<()> {
+        async fn main() {
             match blue_archive::fetch_students_by_school(School::Hyakkiyako).await {
                 Ok(students) => {
                     for student in students.iter() {
@@ -189,7 +311,6 @@ pub async fn fetch_random_student() -> Result<Student, BlueArchiveError> {
                     println!("{:?}", err)
                 }
             };
-            Ok(())
         }
     ```
 */
@@ -201,6 +322,13 @@ pub async fn fetch_students_by_school(school: School) -> Result<Vec<Student>, Bl
     helper::fetch_students_from_query_response(response).await
 }
 
+/**
+    Fetches [`Equipment`] based on a given ID.
+
+    ## Examples
+
+    **tbd**
+*/
 pub async fn fetch_equipment_by_id(id: u32) -> Result<Equipment, BlueArchiveError> {
     let response =
         helper::fetch_response(Endpoints::Equipment(EquipmentIDOrString::ID(id))).await?;
