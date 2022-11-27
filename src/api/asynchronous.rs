@@ -39,8 +39,8 @@ pub(crate) mod helper {
                 format!("equipment/{}", path)
             }
             Endpoints::Stage => todo!(),
-            Endpoints::Raid => todo!(),
-            Endpoints::Banner => todo!(),
+            Endpoints::Raid => "raid".to_string(),
+            Endpoints::Banner => "banner".to_string(),
         };
         match reqwest::get(format!("https://api.ennead.cc/buruaka/{}", response_string)).await {
             Ok(response) => Ok(response),
@@ -334,6 +334,60 @@ pub async fn fetch_equipment_by_id(id: u32) -> Result<Equipment, BlueArchiveErro
         helper::fetch_response(Endpoints::Equipment(EquipmentIDOrString::ID(id))).await?;
     match response.json::<Equipment>().await {
         Ok(equipment) => Ok(equipment),
+        Err(err) => Err(BlueArchiveError::DeserializationError(err)),
+    }
+}
+
+/**
+    Fetches [`Raids`] from the API.
+
+    ## Examples
+
+    ```
+        #[tokio::main]
+        async fn main() {
+            match blue_archive::fetch_raids().await {
+                Ok(raids) => {
+                    for raid in raids.ended.iter() {
+                        println!("RaidBoss: {}", raid.boss_name)
+                    }
+                }
+                Err(err) => println!("{}", err),
+            }
+        }
+    ```
+*/
+pub async fn fetch_raids() -> Result<Raids, BlueArchiveError> {
+    let response = helper::fetch_response(Endpoints::Raid).await?;
+    match response.json::<Raids>().await {
+        Ok(raids) => Ok(raids),
+        Err(err) => Err(BlueArchiveError::DeserializationError(err)),
+    }
+}
+
+/**
+    Fetches [`Banners`] from the API.
+
+    ## Examples
+
+    ```
+        #[tokio::main]
+        async fn main() {
+            match blue_archive::fetch_banners().await {
+                Ok(banners) => {
+                    for banner in banners.ended.iter() {
+                        println!("{}, {}", banner.id, banner.started_at)
+                    }
+                }
+                Err(err) => println!("{}", err),
+            }
+        }
+    ```
+*/
+pub async fn fetch_banners() -> Result<Banners, BlueArchiveError> {
+    let response = helper::fetch_response(Endpoints::Banner).await?;
+    match response.json::<Banners>().await {
+        Ok(banners) => Ok(banners),
         Err(err) => Err(BlueArchiveError::DeserializationError(err)),
     }
 }
