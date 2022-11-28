@@ -6,27 +6,27 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Equipment {
-    data: EquipmentData,
-    drops: Vec<EquipmentDrop>,
+    pub data: EquipmentData,
+    pub drops: Vec<EquipmentDrop>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EquipmentData {
-    id: u16,
-    localize_id: u32,
-    recipe_id: u16,
-    category: String,
-    rarity: String,
-    max_level: u8,
-    tier: u8,
-    tags: Vec<String>,
+    pub id: u16,
+    pub localize_id: Option<u32>,
+    pub recipe_id: u16,
+    pub category: String,
+    pub rarity: String,
+    pub max_level: u8,
+    pub tier: u8,
+    pub tags: Vec<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EquipmentDrop {
-    stage_name: String,
-    drop_amount: u8,
-    drop_chance: u16,
+    pub stage_name: String,
+    pub drop_amount: u8,
+    pub drop_chance: u16,
 }

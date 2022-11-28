@@ -12,10 +12,11 @@ API created by [**torikushiii**](https://github.com/torikushiii)
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct APIStatus {
-    status: u8,
-    version: String,
-    uptime: f32,
-    endpoints: Vec<String>,
+    #[serde(alias = "status")]
+    pub code: u16,
+    pub version: String,
+    pub uptime: f32,
+    pub endpoints: Vec<String>,
 }
 
 /**

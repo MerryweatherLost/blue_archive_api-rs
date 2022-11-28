@@ -84,6 +84,26 @@ pub(crate) mod helper {
 Fetches the current status of the API in a [`APIStatus`] struct.
 
 Contains status code information, uptime results and more.
+
+## Examples
+
+```
+    use reqwest::StatusCode;
+
+    #[tokio::main]
+    async fn main() {
+        match blue_archive::fetch_status().await {
+            Ok(status) => {
+                match StatusCode::from_u16(status.code) {
+                    Ok(code) => println!("{code}"),
+                    Err(err) => println!("{err}"),
+                };
+            }
+            Err(err) => println!("Unable to fetch Status! {err}"),
+        }
+    }
+```
+
 */
 pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
     let response = match helper::fetch_response(Endpoints::Status).await {
@@ -118,8 +138,8 @@ pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
         }
     ```
 */
-pub async fn fetch_student_by_name<IntoStr: Into<String>>(
-    name: IntoStr,
+pub async fn fetch_student_by_name<IntoString: Into<String>>(
+    name: IntoString,
 ) -> Result<Student, BlueArchiveError> {
     let response = match helper::fetch_response(Endpoints::Character(Some(
         CharacterNameOrQuery::Name(name.into()),
@@ -327,7 +347,15 @@ pub async fn fetch_students_by_school(school: School) -> Result<Vec<Student>, Bl
 
     ## Examples
 
-    **tbd**
+    ```
+        #[tokio::main]
+        async fn main() {
+            match blue_archive::fetch_equipment_by_id(6000).await {
+                Ok(equipment) => println!("{}", equipment.drops[0].stage_name),
+                Err(err) => println!("{}", err),
+            }
+        }
+    ```
 */
 pub async fn fetch_equipment_by_id(id: u32) -> Result<Equipment, BlueArchiveError> {
     let response =
@@ -338,6 +366,33 @@ pub async fn fetch_equipment_by_id(id: u32) -> Result<Equipment, BlueArchiveErro
     }
 }
 
+/**
+    Fetches [`Equipment`] based on a given name.
+
+    ## Examples
+
+    ```
+        #[tokio::main]
+        async fn main() {
+            match blue_archive::fetch_equipment_by_name("t1 hairpin").await {
+                Ok(equipment) => println!("{}", equipment.data.id),
+                Err(err) => println!("{}", err),
+            }
+        }
+    ```
+*/
+pub async fn fetch_equipment_by_name<IntoString: Into<String>>(
+    name: IntoString,
+) -> Result<Equipment, BlueArchiveError> {
+    let response = helper::fetch_response(Endpoints::Equipment(EquipmentIDOrString::String(
+        name.into(),
+    )))
+    .await?;
+    match response.json::<Equipment>().await {
+        Ok(equipment) => Ok(equipment),
+        Err(err) => Err(BlueArchiveError::DeserializationError(err)),
+    }
+}
 /**
     Fetches [`Raids`] from the API.
 
