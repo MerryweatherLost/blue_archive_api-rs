@@ -1,4 +1,4 @@
-use blue_archive::{self, types::Student};
+use blue_archive;
 use tokio;
 
 #[tokio::test]
