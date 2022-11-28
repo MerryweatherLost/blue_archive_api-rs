@@ -1,4 +1,4 @@
-use crate::enums::School;
+use crate::enums::{School, Weapon};
 
 pub enum CharacterNameOrQuery {
     Name(String),
@@ -34,7 +34,7 @@ pub enum StudentQuery {
     Type(String),
     School(School),
     Position(String),
-    Weapon(String),
+    Weapon(Weapon),
     Damage(String),
     Armor(String),
     Released(bool),

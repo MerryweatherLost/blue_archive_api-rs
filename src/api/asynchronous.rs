@@ -2,7 +2,6 @@ use crate::api::enums::*;
 use crate::enums::*;
 
 use crate::types::*;
-use crate::Endpoints;
 use anyhow::Result;
 use rand::seq::SliceRandom;
 use reqwest::Response;
@@ -337,6 +336,37 @@ pub async fn fetch_random_student() -> Result<Student, BlueArchiveError> {
 pub async fn fetch_students_by_school(school: School) -> Result<Vec<Student>, BlueArchiveError> {
     let response = helper::fetch_response(Endpoints::Character(Some(CharacterNameOrQuery::Query(
         StudentQuery::School(school),
+    ))))
+    .await?;
+    helper::fetch_students_from_query_response(response).await
+}
+
+/**
+    Fetches a [`Vec`] of [`Student`] from a given [`Weapon`] enum.
+
+    ## Examples
+
+    ```
+        use blue_archive::Weapon;
+
+        #[tokio::main]
+        async fn main() {
+            let assault_rifles = match blue_archive::fetch_students_by_weapon(Weapon::AR).await {
+                Ok(students) => {
+                    println!("Here is a list of students within the Assault Rifles Category:");
+                    students
+                }
+                Err(err) => return println!("Unable to Retrieve Students! {err}"),
+            };
+            for student in assault_rifles.iter() {
+                println!("{}, {}", student.character.name, student.info.age);
+            }
+        }
+    ```
+*/
+pub async fn fetch_students_by_weapon(weapon: Weapon) -> Result<Vec<Student>, BlueArchiveError> {
+    let response = helper::fetch_response(Endpoints::Character(Some(CharacterNameOrQuery::Query(
+        StudentQuery::Weapon(weapon),
     ))))
     .await?;
     helper::fetch_students_from_query_response(response).await

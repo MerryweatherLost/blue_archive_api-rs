@@ -8,6 +8,6 @@ pub mod api;
 pub mod enums;
 pub mod types;
 
-pub use api::enums::*;
+pub use enums::*;
 
 pub use api::asynchronous::*;
