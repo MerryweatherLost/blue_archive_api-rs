@@ -3,23 +3,6 @@ use serde::{Deserialize, Serialize};
 use crate::enums;
 
 /**
-Contains the current status of the API.
-
-API created by [**torikushiii**](https://github.com/torikushiii)
-
-**Github:** <https://github.com/torikushiii/BlueArchiveAPI>
-*/
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct APIStatus {
-    #[serde(alias = "status")]
-    pub code: u16,
-    pub version: String,
-    pub uptime: f32,
-    pub endpoints: Vec<String>,
-}
-
-/**
     A `struct` when a [`Student`] is searched with an ID.
 */
 #[derive(Debug, Serialize, Deserialize)]

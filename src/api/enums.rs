@@ -5,9 +5,9 @@ pub enum StudentNameOrQuery {
     Query(StudentQuery),
 }
 
-pub enum EquipmentIDOrString {
+pub enum EquipmentIDOrName {
     ID(u32),
-    String(String),
+    Name(String),
 }
 
 pub enum Endpoints {
@@ -20,7 +20,7 @@ pub enum Endpoints {
     /**
         Takes a `ID`: ([`u32`]) or a `String`: [`String`], to use for querying data about equipment.
     */
-    Equipment(EquipmentIDOrString),
+    Equipment(EquipmentIDOrName),
     Stage,  // todo
     Raid,   // todo
     Banner, // todo

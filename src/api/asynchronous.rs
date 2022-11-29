@@ -32,8 +32,8 @@ pub(crate) mod helper {
             }
             Endpoints::Equipment(id_or_string) => {
                 let path = match id_or_string {
-                    EquipmentIDOrString::ID(id) => format!("{}?id=true", id),
-                    EquipmentIDOrString::String(string) => format!("{}", string),
+                    EquipmentIDOrName::ID(id) => format!("{}?id=true", id),
+                    EquipmentIDOrName::Name(string) => format!("{}", string),
                 };
                 format!("equipment/{}", path)
             }
@@ -388,8 +388,7 @@ pub async fn fetch_students_by_weapon(weapon: Weapon) -> Result<Vec<Student>, Bl
     ```
 */
 pub async fn fetch_equipment_by_id(id: u32) -> Result<Equipment, BlueArchiveError> {
-    let response =
-        helper::fetch_response(Endpoints::Equipment(EquipmentIDOrString::ID(id))).await?;
+    let response = helper::fetch_response(Endpoints::Equipment(EquipmentIDOrName::ID(id))).await?;
     match response.json::<Equipment>().await {
         Ok(equipment) => Ok(equipment),
         Err(err) => Err(BlueArchiveError::DeserializationError(err)),
@@ -414,10 +413,8 @@ pub async fn fetch_equipment_by_id(id: u32) -> Result<Equipment, BlueArchiveErro
 pub async fn fetch_equipment_by_name<IntoString: Into<String>>(
     name: IntoString,
 ) -> Result<Equipment, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Equipment(EquipmentIDOrString::String(
-        name.into(),
-    )))
-    .await?;
+    let response =
+        helper::fetch_response(Endpoints::Equipment(EquipmentIDOrName::Name(name.into()))).await?;
     match response.json::<Equipment>().await {
         Ok(equipment) => Ok(equipment),
         Err(err) => Err(BlueArchiveError::DeserializationError(err)),
