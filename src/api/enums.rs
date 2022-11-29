@@ -1,6 +1,6 @@
 use crate::enums::{School, Weapon};
 
-pub enum CharacterNameOrQuery {
+pub enum StudentNameOrQuery {
     Name(String),
     Query(StudentQuery),
 }
@@ -16,7 +16,7 @@ pub enum Endpoints {
         Takes a [`Option<CharNameOrQuery>`], which is used to pass in a
         `Name`: ([`String`]), or a `Query`: ([`StudentQuery`]) for advanced queries.
     */
-    Character(Option<CharacterNameOrQuery>),
+    Character(Option<StudentNameOrQuery>),
     /**
         Takes a `ID`: ([`u32`]) or a `String`: [`String`], to use for querying data about equipment.
     */

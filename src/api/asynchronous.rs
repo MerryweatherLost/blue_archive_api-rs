@@ -22,8 +22,8 @@ pub(crate) mod helper {
             Endpoints::Character(possible_char_query) => {
                 let path = match possible_char_query {
                     Some(char_query) => match char_query {
-                        CharacterNameOrQuery::Name(string) => string, // Direct name of Character e.g. Asuna
-                        CharacterNameOrQuery::Query(query) => query.to_string(), // The specific query e.g. query?school=Abydos
+                        StudentNameOrQuery::Name(string) => string, // Direct name of Character e.g. Asuna
+                        StudentNameOrQuery::Query(query) => query.to_string(), // The specific query e.g. query?school=Abydos
                     },
                     // If empty, means that all instances of PartialStudent, or "character/" will be returned in a request.
                     None => "".to_string(),
@@ -141,7 +141,7 @@ pub async fn fetch_student_by_name<IntoString: Into<String>>(
     name: IntoString,
 ) -> Result<Student, BlueArchiveError> {
     let response = match helper::fetch_response(Endpoints::Character(Some(
-        CharacterNameOrQuery::Name(name.into()),
+        StudentNameOrQuery::Name(name.into()),
     )))
     .await
     {
@@ -177,7 +177,7 @@ pub async fn fetch_student_by_name<IntoString: Into<String>>(
 */
 pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
     let response = match helper::fetch_response(Endpoints::Character(Some(
-        CharacterNameOrQuery::Query(StudentQuery::ID(id)),
+        StudentNameOrQuery::Query(StudentQuery::ID(id)),
     )))
     .await
     {
@@ -334,7 +334,7 @@ pub async fn fetch_random_student() -> Result<Student, BlueArchiveError> {
     ```
 */
 pub async fn fetch_students_by_school(school: School) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(CharacterNameOrQuery::Query(
+    let response = helper::fetch_response(Endpoints::Character(Some(StudentNameOrQuery::Query(
         StudentQuery::School(school),
     ))))
     .await?;
@@ -365,7 +365,7 @@ pub async fn fetch_students_by_school(school: School) -> Result<Vec<Student>, Bl
     ```
 */
 pub async fn fetch_students_by_weapon(weapon: Weapon) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(CharacterNameOrQuery::Query(
+    let response = helper::fetch_response(Endpoints::Character(Some(StudentNameOrQuery::Query(
         StudentQuery::Weapon(weapon),
     ))))
     .await?;
