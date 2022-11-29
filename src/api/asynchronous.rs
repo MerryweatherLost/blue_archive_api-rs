@@ -33,7 +33,7 @@ pub(crate) mod helper {
             Endpoints::Equipment(id_or_string) => {
                 let path = match id_or_string {
                     EquipmentIDOrName::ID(id) => format!("{}?id=true", id),
-                    EquipmentIDOrName::Name(string) => format!("{}", string),
+                    EquipmentIDOrName::Name(string) => string,
                 };
                 format!("equipment/{}", path)
             }
@@ -43,9 +43,7 @@ pub(crate) mod helper {
         };
         match reqwest::get(format!("https://api.ennead.cc/buruaka/{}", response_string)).await {
             Ok(response) => Ok(response),
-            Err(err) => {
-                return Err(BlueArchiveError::RequestError(err));
-            }
+            Err(err) => Err(BlueArchiveError::RequestError(err)),
         }
     }
 
@@ -302,7 +300,7 @@ pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
 pub async fn fetch_random_student() -> Result<Student, BlueArchiveError> {
     let partial_students = fetch_all_partial_students().await?;
     match partial_students.choose(&mut rand::thread_rng()) {
-        Some(found) => return Ok(fetch_student_by_name(&found.name).await?),
+        Some(found) => Ok(fetch_student_by_name(&found.name).await?),
         None => Err(BlueArchiveError::RandomError),
     }
 }

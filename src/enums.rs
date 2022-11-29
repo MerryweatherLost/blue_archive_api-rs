@@ -116,7 +116,7 @@ impl Weapon {
             Weapon::SG => "Shotgun".to_string(),
             Weapon::SMG => "Submachine Gun".to_string(),
             Weapon::SR => "Sniper Rifle".to_string(),
-            Weapon::Unknown(string) => format!("{string}"),
+            Weapon::Unknown(string) => string.to_string(),
         }
     }
 }
