@@ -18,7 +18,10 @@ async fn main() {
 
     let assault_rifles = match blue_archive::fetch_students_by_weapon(Weapon::AR).await {
         Ok(students) => {
-            println!("Here is a list of students within the Assault Rifles Category:");
+            println!(
+                "Here is a list of students within the {} Category:",
+                Weapon::AR.full_name()
+            );
             students
         }
         Err(err) => return println!("Unable to Retrieve Students! {err}"),

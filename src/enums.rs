@@ -103,7 +103,7 @@ pub enum Weapon {
 }
 
 impl Weapon {
-    fn full_name(&self) -> String {
+    pub fn full_name(&self) -> String {
         match self {
             Weapon::AR => "Assault Rifle".to_string(),
             Weapon::GL => "Grenade Launcher".to_string(),

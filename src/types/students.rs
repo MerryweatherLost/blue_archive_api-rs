@@ -73,7 +73,7 @@ pub struct Student {
 }
 
 impl Student {
-    fn school(&self) -> enums::School {
+    pub fn school(&self) -> enums::School {
         match self.info.school.as_str() {
             "Abydos" => enums::School::Abydos,
             "Gehenna" => enums::School::Gehenna,
