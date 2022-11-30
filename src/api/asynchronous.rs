@@ -60,12 +60,21 @@ pub(crate) mod helper {
         };
 
         // Concurrent Requests
-        let bodies = futures::future::join_all(
-            student_name_list
-                .into_iter()
-                .map(|name| async move { fetch_student_by_name(name).await }),
-        )
-        .await;
+        let bodies =
+            futures::future::join_all(student_name_list.into_iter().map(|name| async move {
+                let response =
+                    match reqwest::get(format!("https://api.ennead.cc/buruaka/character/{}", name))
+                        .await
+                    {
+                        Ok(res) => res,
+                        Err(err) => return Err(BlueArchiveError::RequestError(err)),
+                    };
+                match response.json::<Student>().await {
+                    Ok(student) => Ok(student),
+                    Err(err) => Err(BlueArchiveError::RequestError(err)),
+                }
+            }))
+            .await;
         for body in bodies {
             match body {
                 Ok(student) => students.push(student),
@@ -258,12 +267,23 @@ pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
     let partial_students = fetch_all_partial_students().await?;
 
     // Concurrent Requests
-    let bodies = futures::future::join_all(
-        partial_students
-            .into_iter()
-            .map(|partial| async move { fetch_student_by_name(partial.name).await }),
-    )
-    .await;
+    let bodies =
+        futures::future::join_all(partial_students.into_iter().map(|partial| async move {
+            let response = match reqwest::get(format!(
+                "https://api.ennead.cc/buruaka/character/{}",
+                partial.name
+            ))
+            .await
+            {
+                Ok(res) => res,
+                Err(err) => return Err(BlueArchiveError::RequestError(err)),
+            };
+            match response.json::<Student>().await {
+                Ok(student) => Ok(student),
+                Err(err) => Err(BlueArchiveError::RequestError(err)),
+            }
+        }))
+        .await;
     for body in bodies {
         match body {
             Ok(student) => students.push(student),
