@@ -1,6 +1,3 @@
-use blue_archive;
-use tokio;
-
 #[tokio::test]
 async fn fetch_asuna() {
     let name = match blue_archive::fetch_student_by_name("Asuna").await {
