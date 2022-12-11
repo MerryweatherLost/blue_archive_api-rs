@@ -4,7 +4,7 @@ pub enum BlueArchiveError {
     RequestError(reqwest::Error),
     /// In the case that deserialization failed.
     DeserializationError(reqwest::Error),
-    /// When randomiation fails.
+    /// When randomization fails.
     RandomError,
 }
 
