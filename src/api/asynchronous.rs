@@ -446,13 +446,12 @@ pub async fn fetch_equipment_by_name<IntoString: Into<String>>(
     ```
         #[tokio::main]
         async fn main() {
-            match blue_archive::fetch_raids().await {
-                Ok(raids) => {
-                    for raid in raids.ended.iter() {
-                        println!("RaidBoss: {}", raid.boss_name)
+            if let Ok(raids) = blue_archive::fetch_raids().await {
+                for raid in raids.ended {
+                    if let Ok(start_time) = raid.start_time() {
+                        println!("Boss: {}, {}", raid.boss_name, start_time)
                     }
                 }
-                Err(err) => println!("{}", err),
             }
         }
     ```
