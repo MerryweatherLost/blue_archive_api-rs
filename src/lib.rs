@@ -16,4 +16,4 @@ pub mod types;
 
 pub use enums::*;
 
-pub use api::asynchronous::*;
+pub use api::*;
