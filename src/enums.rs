@@ -32,7 +32,7 @@ impl std::fmt::Display for Role {
 }
 
 /**
-    **This is a [`enum`] that contains the current Blue Archive weapons represented in the API.**
+    **This is a `enum` that contains the current Blue Archive weapons represented in the API.**
 
     As of the `13th of December, 2022`,
     this is the current list of weapons represented in the API.
