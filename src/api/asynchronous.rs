@@ -360,6 +360,74 @@ pub async fn fetch_students_by_school(school: School) -> Result<Vec<Student>, Bl
 }
 
 /**
+    Fetches a [`Vec`] of [`Student`] from a given [`Role`] enum.
+
+    ## Examples
+
+    ```
+        use blue_archive::enums::Role;
+
+        #[tokio::main]
+        async fn main() {
+            match blue_archive::fetch_students_by_role(Role::Attacker).await {
+                Ok(students) => {
+                    for student in students.iter() {
+                        println!(
+                            "Name: {}\nAge:{}, Club:{}",
+                            student.character.name, student.info.age, student.info.club
+                        )
+                    }
+                }
+                Err(err) => {
+                    println!("{:?}", err)
+                }
+            };
+        }
+    ```
+*/
+pub async fn fetch_students_by_role(role: Role) -> Result<Vec<Student>, BlueArchiveError> {
+    let response = helper::fetch_response(Endpoints::Character(Some(StudentNameOrQuery::Query(
+        StudentQuery::Role(role),
+    ))))
+    .await?;
+    helper::fetch_students_from_query_response(response).await
+}
+
+/**
+    Fetches a [`Vec`] of [`Student`] from a given [`Type`] enum.
+
+    ## Examples
+
+    ```
+        use blue_archive::enums::Type;
+
+        #[tokio::main]
+        async fn main() {
+            match blue_archive::fetch_students_by_type(Type::Special).await {
+                Ok(students) => {
+                    for student in students.iter() {
+                        println!(
+                            "Name: {}\nAge:{}, Club:{}",
+                            student.character.name, student.info.age, student.info.club
+                        )
+                    }
+                }
+                Err(err) => {
+                    println!("{:?}", err)
+                }
+            };
+        }
+    ```
+*/
+pub async fn fetch_students_by_type(type_: Type) -> Result<Vec<Student>, BlueArchiveError> {
+    let response = helper::fetch_response(Endpoints::Character(Some(StudentNameOrQuery::Query(
+        StudentQuery::Type(type_),
+    ))))
+    .await?;
+    helper::fetch_students_from_query_response(response).await
+}
+
+/**
     Fetches a [`Vec`] of [`Student`] from a given [`Weapon`] enum.
 
     ## Examples
@@ -385,6 +453,86 @@ pub async fn fetch_students_by_school(school: School) -> Result<Vec<Student>, Bl
 pub async fn fetch_students_by_weapon(weapon: Weapon) -> Result<Vec<Student>, BlueArchiveError> {
     let response = helper::fetch_response(Endpoints::Character(Some(StudentNameOrQuery::Query(
         StudentQuery::Weapon(weapon),
+    ))))
+    .await?;
+    helper::fetch_students_from_query_response(response).await
+}
+
+/**
+    Fetches a [`Vec`] of [`Student`] from a given [`Position`] enum.
+
+    ## Examples
+
+    ```
+        use blue_archive::Position;
+
+        #[tokio::main]
+        async fn main() {
+            if let Ok(students) = blue_archive::fetch_students_by_position(Position::Front).await {
+                for student in students.iter() {
+                    println!("{student}")
+                }
+            }
+        }
+    ```
+*/
+pub async fn fetch_students_by_position(
+    position: Position,
+) -> Result<Vec<Student>, BlueArchiveError> {
+    let response = helper::fetch_response(Endpoints::Character(Some(StudentNameOrQuery::Query(
+        StudentQuery::Position(position),
+    ))))
+    .await?;
+    helper::fetch_students_from_query_response(response).await
+}
+
+/**
+    Fetches a [`Vec`] of [`Student`] from a given [`Damage`] enum.
+
+    ## Examples
+
+    ```
+        use blue_archive::Damage;
+
+        #[tokio::main]
+        async fn main() {
+            if let Ok(students) = blue_archive::fetch_students_by_damage(Damage::Explosion).await {
+                for student in students.iter() {
+                    println!("{student}")
+                }
+            }
+        }
+    ```
+*/
+pub async fn fetch_students_by_damage(damage: Damage) -> Result<Vec<Student>, BlueArchiveError> {
+    let response = helper::fetch_response(Endpoints::Character(Some(StudentNameOrQuery::Query(
+        StudentQuery::Damage(damage),
+    ))))
+    .await?;
+    helper::fetch_students_from_query_response(response).await
+}
+
+/**
+    Fetches a [`Vec`] of [`Student`] from a given [`Armor`] enum.
+
+    ## Examples
+
+    ```
+        use blue_archive::Armor;
+
+        #[tokio::main]
+        async fn main() {
+            if let Ok(students) = blue_archive::fetch_students_by_armor(Armor::Heavy).await {
+                for student in students.iter() {
+                    println!("{student}")
+                }
+            }
+        }
+    ```
+*/
+pub async fn fetch_students_by_armor(armor: Armor) -> Result<Vec<Student>, BlueArchiveError> {
+    let response = helper::fetch_response(Endpoints::Character(Some(StudentNameOrQuery::Query(
+        StudentQuery::Armor(armor),
     ))))
     .await?;
     helper::fetch_students_from_query_response(response).await
@@ -446,12 +594,17 @@ pub async fn fetch_equipment_by_name<IntoString: Into<String>>(
     ```
         #[tokio::main]
         async fn main() {
-            if let Ok(raids) = blue_archive::fetch_raids().await {
-                for raid in raids.ended {
-                    if let Ok(start_time) = raid.start_time() {
+            match blue_archive::fetch_raids().await {
+                Ok(raids) => {
+                    for raid in raids.ended {
+                        let start_time = match raid.start_time() {
+                            Ok(time) => time.to_string(),
+                            Err(_) => "N/A".to_string(),
+                        };
                         println!("Boss: {}, {}", raid.boss_name, start_time)
                     }
                 }
+                Err(err) => println!("Could not fetch raids!\n{}", err),
             }
         }
     ```

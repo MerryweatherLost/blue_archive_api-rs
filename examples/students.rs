@@ -1,32 +1,23 @@
-use blue_archive::{School, Weapon};
+use blue_archive::Type;
 
 #[tokio::main]
 async fn main() {
-    let hyakkiyako_students = match blue_archive::fetch_students_by_school(School::Hyakkiyako).await
-    {
+    match blue_archive::fetch_students_by_type(Type::Striker).await {
         Ok(students) => {
-            println!("Here is a list of students from the Hyakkiyako Alliance Academy:");
-            students
+            println!("Here is a list of Blue Archive Students that are Strikers.");
+            for student in students.iter() {
+                println!("-----------------------------------------------------------");
+                println!(
+                    "Name: {}\nAge: {}\nSchool/School Year: {} / {}\nClub: {}\nBase Stars: {}",
+                    student.character.name,
+                    student.info.age,
+                    student.info.school,
+                    student.info.school_year,
+                    student.info.club,
+                    "⭐".repeat(student.character.base_star as usize)
+                );
+            }
         }
-        Err(err) => return println!("Unable to Retrieve Students! {err}"),
+        Err(err) => println!("Failed to Obtain Students!\n{err}",),
     };
-    for student in hyakkiyako_students.iter() {
-        println!("{}, {}", student.character.name, student.info.age);
-    }
-
-    println!();
-
-    let assault_rifles = match blue_archive::fetch_students_by_weapon(Weapon::AR).await {
-        Ok(students) => {
-            println!(
-                "Here is a list of students within the {} Category:",
-                Weapon::AR.full_name()
-            );
-            students
-        }
-        Err(err) => return println!("Unable to Retrieve Students! {err}"),
-    };
-    for student in assault_rifles.iter() {
-        println!("{}, {}", student.character.name, student.info.age);
-    }
 }

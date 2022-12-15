@@ -1,4 +1,4 @@
-use crate::enums::{School, Weapon};
+use crate::{Armor, Damage, Position, Role, School, Type, Weapon};
 
 pub enum StudentNameOrQuery {
     Name(String),
@@ -30,13 +30,13 @@ pub enum Endpoints {
     A `enum` that maps queries with given data in each of them.
 */
 pub enum StudentQuery {
-    Role(String),
-    Type(String),
+    Role(Role),
+    Type(Type),
     School(School),
-    Position(String),
+    Position(Position),
     Weapon(Weapon),
-    Damage(String),
-    Armor(String),
+    Damage(Damage),
+    Armor(Armor),
     Released(bool),
     ID(u32),
 }

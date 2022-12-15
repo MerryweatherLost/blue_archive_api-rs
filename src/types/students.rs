@@ -86,6 +86,12 @@ impl Student {
     }
 }
 
+impl std::fmt::Display for Student {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}, {}", self.character.name, self.info.age)
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Character {
