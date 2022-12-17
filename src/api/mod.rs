@@ -44,10 +44,7 @@ pub(crate) mod helper {
             Endpoints::Raid => "raid".to_string(),
             Endpoints::Banner => "banner".to_string(),
         };
-        match reqwest::get(format!("https://api.ennead.cc/buruaka/{}", response_string)).await {
-            Ok(response) => Ok(response),
-            Err(err) => Err(BlueArchiveError::Reqwest(err)),
-        }
+        Ok(reqwest::get(format!("https://api.ennead.cc/buruaka/{}", response_string)).await?)
     }
 
     /**
@@ -72,10 +69,7 @@ pub(crate) mod helper {
                         Ok(res) => res,
                         Err(err) => return Err(BlueArchiveError::Reqwest(err)),
                     };
-                match response.json::<Student>().await {
-                    Ok(student) => Ok(student),
-                    Err(err) => Err(BlueArchiveError::Reqwest(err)),
-                }
+                Ok(response.json::<Student>().await?)
             }))
             .await;
         for body in bodies {
@@ -119,10 +113,7 @@ pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
         Ok(resp) => resp,
         Err(err) => return Err(err),
     };
-    match response.json::<APIStatus>().await {
-        Ok(status) => Ok(status),
-        Err(err) => Err(BlueArchiveError::Reqwest(err)),
-    }
+    Ok(response.json::<APIStatus>().await?)
 }
 
 /**
@@ -155,10 +146,7 @@ pub async fn fetch_student_by_name<IntoString: Into<String>>(
     ))))
     .await?;
 
-    match response.json::<Student>().await {
-        Ok(student) => Ok(student),
-        Err(err) => Err(BlueArchiveError::Reqwest(err)),
-    }
+    Ok(response.json::<Student>().await?)
 }
 
 /**
@@ -186,13 +174,8 @@ pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
         StudentQuery::ID(id),
     ))))
     .await?;
-    match response.json::<IDStudent>().await {
-        Ok(id_student) => match fetch_student_by_name(id_student.name).await {
-            Ok(student) => Ok(student),
-            Err(ex) => Err(ex),
-        },
-        Err(err) => Err(BlueArchiveError::Reqwest(err)),
-    }
+    let id_student = response.json::<IDStudent>().await?;
+    fetch_student_by_name(id_student.name).await
 }
 
 /**
@@ -222,10 +205,7 @@ pub async fn fetch_all_partial_students() -> Result<Vec<PartialStudent>, BlueArc
         Ok(resp) => resp,
         Err(err) => return Err(err),
     };
-    match response.json::<PartialStudentData>().await {
-        Ok(partial) => Ok(partial.data),
-        Err(err) => Err(BlueArchiveError::Reqwest(err)),
-    }
+    Ok(response.json::<PartialStudentData>().await?.data)
 }
 
 /**
@@ -273,17 +253,11 @@ pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
                 Ok(res) => res,
                 Err(err) => return Err(BlueArchiveError::Reqwest(err)),
             };
-            match response.json::<Student>().await {
-                Ok(student) => Ok(student),
-                Err(err) => Err(BlueArchiveError::Reqwest(err)),
-            }
+            Ok(response.json::<Student>().await)
         }))
         .await;
     for body in bodies {
-        match body {
-            Ok(student) => students.push(student),
-            Err(ex) => return Err(ex),
-        }
+        students.push(body??)
     }
     Ok(students)
 }
@@ -550,10 +524,7 @@ pub async fn fetch_students_by_armor(armor: Armor) -> Result<Vec<Student>, BlueA
 */
 pub async fn fetch_equipment_by_id(id: u32) -> Result<Equipment, BlueArchiveError> {
     let response = helper::fetch_response(Endpoints::Equipment(EquipmentIDOrName::ID(id))).await?;
-    match response.json::<Equipment>().await {
-        Ok(equipment) => Ok(equipment),
-        Err(err) => Err(BlueArchiveError::Reqwest(err)),
-    }
+    Ok(response.json::<Equipment>().await?)
 }
 
 /**
@@ -576,10 +547,7 @@ pub async fn fetch_equipment_by_name<IntoString: Into<String>>(
 ) -> Result<Equipment, BlueArchiveError> {
     let response =
         helper::fetch_response(Endpoints::Equipment(EquipmentIDOrName::Name(name.into()))).await?;
-    match response.json::<Equipment>().await {
-        Ok(equipment) => Ok(equipment),
-        Err(err) => Err(BlueArchiveError::Reqwest(err)),
-    }
+    Ok(response.json::<Equipment>().await?)
 }
 /**
     Fetches [`Raids`] from the API.
@@ -606,10 +574,7 @@ pub async fn fetch_equipment_by_name<IntoString: Into<String>>(
 */
 pub async fn fetch_raids() -> Result<Raids, BlueArchiveError> {
     let response = helper::fetch_response(Endpoints::Raid).await?;
-    match response.json::<Raids>().await {
-        Ok(raids) => Ok(raids),
-        Err(err) => Err(BlueArchiveError::Reqwest(err)),
-    }
+    Ok(response.json::<Raids>().await?)
 }
 
 /**
@@ -633,8 +598,5 @@ pub async fn fetch_raids() -> Result<Raids, BlueArchiveError> {
 */
 pub async fn fetch_banners() -> Result<Banners, BlueArchiveError> {
     let response = helper::fetch_response(Endpoints::Banner).await?;
-    match response.json::<Banners>().await {
-        Ok(banners) => Ok(banners),
-        Err(err) => Err(BlueArchiveError::Reqwest(err)),
-    }
+    Ok(response.json::<Banners>().await?)
 }
