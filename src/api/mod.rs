@@ -1,5 +1,6 @@
 pub mod enums;
 pub mod errors;
+pub mod fetcher;
 
 use crate::api::enums::*;
 use crate::enums::*;

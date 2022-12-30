@@ -5,7 +5,7 @@ use crate::enums;
 /**
     A `struct` when a [`Student`] is searched with an ID.
 */
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct IDStudent {
     pub id: u32,
@@ -38,7 +38,7 @@ pub struct PartialStudentData {
 /**
 Contains partial information of a [`Student`]. Contains limited data.
 */
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct PartialStudent {
     pub id: u32,
@@ -58,7 +58,7 @@ pub struct PartialStudent {
 /**
     The "desired" information of a Blue Archive student. Contains the most data.
 */
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Student {
     pub id: u32,
@@ -92,7 +92,7 @@ impl std::fmt::Display for Student {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Character {
     pub armor_type: String,
@@ -107,7 +107,7 @@ pub struct Character {
     pub weapon_type: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Info {
     pub age: String,
@@ -119,7 +119,7 @@ pub struct Info {
     pub voice_actor: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Stats {
     pub id: u32,
@@ -144,7 +144,7 @@ pub struct Stats {
     pub indoor_mood: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Terrain {
     pub urban: TerrainModifier,
@@ -152,14 +152,14 @@ pub struct Terrain {
     pub indoor: TerrainModifier,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct TerrainModifier {
     damage_dealt: String,
     shield_block_rate: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Skills {
     ex: Vec<Skill>,
@@ -168,7 +168,7 @@ pub struct Skills {
     sub: Vec<Skill>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Skill {
     level: u32,

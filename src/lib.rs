@@ -17,3 +17,4 @@ pub mod types;
 pub use enums::*;
 
 pub use api::*;
+pub use fetcher::BlueArchiveFetcher;
