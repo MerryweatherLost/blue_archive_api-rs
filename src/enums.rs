@@ -1,3 +1,5 @@
+use strum_macros::{Display, EnumIter, EnumString};
+
 /**
     **This is a `enum` that contains the current Blue Archive roles represented in the API.**
 
@@ -255,6 +257,130 @@ impl std::fmt::Display for Armor {
             Armor::Light => write!(f, "Light"),
             Armor::Special => write!(f, "Special"),
             Armor::Unknown(string) => write!(f, "{string}"),
+        }
+    }
+}
+
+/**
+    **This is a `enum` that contains the current Blue Archive clubs represented in the API.**
+    As of the `3rd of March, 2023`,
+    this is the current list of armor represented in the API.
+
+    * **Kohshinjo68**
+    * **SPTF**
+    * **GourmetClub**
+    * **RemedialClass**
+    * **Fuuki**
+    * **Countermeasure**
+    * **Veritas**
+    * **CleanNClearing**
+    * **Meihuayuan**
+    * **TrainingClub**
+    * **Justice**
+    * **NinpoKenkyubu**
+    * **GameDev**
+    * **RedwinterSecretary**
+    * **HoukagoDessert**
+    * **EmptyClub**
+    * **Shugyobu**
+    * **BookClub**
+    * **SisterHood**
+    * **RabbitPlatoon**
+    * **AriusSqud**
+    * **Onmyobu**
+    * **TheSeminar**
+    * **Anzenkyoku**
+    * **Engineer**
+    * **TrinityVigilance**
+    * **MatsuriOffice**
+    * **Endanbou**
+    * **Class227**
+    * **Emergentology**
+    * **PandemoniumSociety**
+    * **FoodService**
+    * **KnightsHospitalle**
+
+    In the case that a armor in the API is not present on the wrapper,
+    a [`Club::Unknown(String)`] is returned to represent the unknown armor with its name in the `enum`.
+*/
+#[derive(Debug, Eq, Hash, PartialEq, EnumIter, EnumString, Display)]
+pub enum Club {
+    #[strum(serialize = "Kohshinjo68")]
+    ProblemSolver68,
+    #[strum(serialize = "SPTF")]
+    SuperPhenomenonTaskForce,
+    #[strum(serialize = "GourmetClub")]
+    GourmetResearchSociety,
+    RemedialClass,
+    Fuuki,
+    Countermeasure,
+    Veritas,
+    #[strum(serialize = "CleanNClearing")]
+    CleaningAndClearing,
+    Meihuayuan,
+    TrainingClub,
+    Justice,
+    NinpoKenkyubu,
+    GameDev,
+    RedwinterSecretary,
+    HoukagoDessert,
+    EmptyClub,
+    Shugyobu,
+    BookClub,
+    SisterHood,
+    RabbitPlatoon,
+    AriusSqud,
+    Onmyobu,
+    TheSeminar,
+    #[strum(serialize = "anzenkyoku")]
+    Anzenkyoku,
+    Engineer,
+    TrinityVigilance,
+    MatsuriOffice,
+    Endanbou,
+    Class227,
+    Emergentology,
+    PandemoniumSociety,
+    FoodService,
+    KnightsHospitaller,
+    Unknown(String),
+}
+
+impl std::fmt::Display for Club {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Club::GourmetClub => write!(f, ""),
+            Club::RemedialClass => write!(f, "Make-Up Work Club"),
+            Club::Fuuki => write!(f, "School Lunch Club"), // I'm unsure if this is the right one.
+            Club::Countermeasure => write!(f, "Foreclosure Task Force"),
+            Club::Veritas => write!(f, "Veritas"),
+            Club::CleanNClearing => write!(f, "Cleaning & Clearing"),
+            Club::Meihuayuan => write!(f, "Plum Blossom Garden"),
+            Club::TrainingClub => write!(f, "Athletics Training Club"),
+            Club::Justice => write!(f, "Justice Realization Committee"),
+            Club::NinpoKenkyubu => write!(f, "Ninjutsu Research Club"),
+            Club::GameDev => write!(f, "Game Development Department"),
+            Club::RedwinterSecretary => write!(f, "Red Winter Office"), // <- Not sure, we may have to check for the students in each club. // HashMap Club -> Vec<Student> to find out.
+            Club::HoukagoDessert => write!(f, "After-School Sweets Club"),
+            Club::EmptyClub => write!(f, "Unassigned"),
+            Club::Shugyobu => write!(f, "Inner Discipline Club"),
+            Club::BookClub => write!(f, "Library Committee"),
+            Club::SisterHood => write!(f, "Sisterhood"),
+            Club::RabbitPlatoon => write!(f, "RABBIT Squad"),
+            Club::AriusSqud => write!(f, "Arius Squad"),
+            Club::Onmyobu => write!(f, ""),
+            Club::TheSeminar => write!(f, ""),
+            Club::Anzenkyoku => write!(f, ""),
+            Club::Engineer => write!(f, ""),
+            Club::TrinityVigilance => write!(f, ""),
+            Club::MatsuriOffice => write!(f, ""),
+            Club::Endanbou => write!(f, ""),
+            Club::Class227 => write!(f, ""),
+            Club::Emergentology => write!(f, ""),
+            Club::PandemoniumSociety => write!(f, ""),
+            Club::FoodService => write!(f, ""),
+            Club::KnightsHospitaller => write!(f, "Knight Hospitaller"),
+            Club::Unknown(_) => write!(f, ""),
         }
     }
 }

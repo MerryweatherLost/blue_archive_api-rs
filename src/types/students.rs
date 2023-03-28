@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use serde::{Deserialize, Serialize};
 
 use crate::enums;
@@ -82,6 +84,13 @@ impl Student {
             "Shanhaijing" => enums::School::Shanhaijing,
             "Trinity" => enums::School::Trinity,
             _ => enums::School::Unknown(self.info.school.clone()),
+        }
+    }
+
+    pub fn club(&self) -> enums::Club {
+        match enums::Club::from_str(&self.info.club) {
+            Ok(club) => club,
+            Err(_) => enums::Club::Unknown(self.info.club.clone()),
         }
     }
 }
