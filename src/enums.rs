@@ -13,6 +13,7 @@ use strum_macros::{Display, EnumIter, EnumString};
     In the case that a role in the API is not present on the wrapper,
     a [`Role::Unknown(String)`] is returned to represent the unknown role with its name in the `enum`.
 */
+#[derive(EnumString)]
 pub enum Role {
     Attacker,
     Healer,
@@ -44,6 +45,7 @@ impl std::fmt::Display for Role {
     In the case that a type in the API is not present on the wrapper,
     a [`Type::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
 */
+#[derive(EnumString)]
 pub enum Type {
     Special,
     Striker,
@@ -74,6 +76,7 @@ impl std::fmt::Display for Type {
     In the case that a school in the API is not present on the wrapper,
     a [`School::Unknown(String)`] is returned to represent the unknown school with its name in the `enum`.
 */
+#[derive(EnumString)]
 pub enum School {
     Abydos,
     Gehenna,
@@ -110,6 +113,7 @@ impl std::fmt::Display for School {
     In the case that a weapon in the API is not present on the wrapper,
     a [`Position::Unknown(String)`] is returned to represent the unknown weapon with its name in the `enum`.
 */
+#[derive(EnumString)]
 pub enum Position {
     Front,
     Middle,
@@ -196,6 +200,7 @@ impl Weapon {
     In the case that a damage type in the API is not present on the wrapper,
     a [`Damage::Unknown(String)`] is returned to represent the unknown damage type with its name in the `enum`.
 */
+#[derive(EnumString)]
 pub enum Damage {
     Explosion,
     Mystic,
@@ -226,6 +231,8 @@ impl std::fmt::Display for Damage {
     In the case that a armor in the API is not present on the wrapper,
     a [`Armor::Unknown(String)`] is returned to represent the unknown armor with its name in the `enum`.
 */
+
+#[derive(EnumString)]
 pub enum Armor {
     Heavy,
     Light,
@@ -303,7 +310,8 @@ pub enum Club {
     GameDev,
     RedwinterSecretary,
     HoukagoDessert,
-    EmptyClub,
+    #[strum(serialize = "EmptyClub")]
+    Unassigned,
     Shugyobu,
     BookClub,
     SisterHood,

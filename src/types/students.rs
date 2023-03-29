@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
 
-use crate::enums;
+use crate::enums::{Club, School};
 
 /**
     A `struct` when a [`Student`] is searched with an ID.
@@ -74,23 +74,57 @@ pub struct Student {
     pub skills: Skills,
 }
 
+/// The Age of a Blue Archive Student.
+///
+/// The actual [`Option<u8>`] is wrapped under this struct for Display purposes.
+#[derive(Debug)]
+pub struct Age(Option<u8>);
+
+impl std::fmt::Display for Age {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.0 {
+            Some(age) => write!(f, "{age}"),
+            None => write!(f, "None"),
+        }
+    }
+}
+
 impl Student {
-    pub fn school(&self) -> enums::School {
-        match self.info.school.as_str() {
-            "Abydos" => enums::School::Abydos,
-            "Gehenna" => enums::School::Gehenna,
-            "Hyakkiyako" => enums::School::Hyakkiyako,
-            "Millennium" => enums::School::Millennium,
-            "Shanhaijing" => enums::School::Shanhaijing,
-            "Trinity" => enums::School::Trinity,
-            _ => enums::School::Unknown(self.info.school.clone()),
+    /// The name of the Student.
+    pub fn name(&self) -> String {
+        self.character.name.to_string()
+    }
+
+    /// The age of the Student.
+    /// * Unknown Ages or "Top Secret" will be referred to as [`None`].
+    pub fn age(&self) -> Age {
+        match self.info.age.find(|c| c == ' ') {
+            Some(ix) => match self.info.age[0..ix].parse::<u8>() {
+                Ok(num) => Age(Some(num)),
+                Err(_) => Age(None),
+            },
+            None => Age(None),
         }
     }
 
-    pub fn club(&self) -> enums::Club {
-        match enums::Club::from_str(&self.info.club) {
+    /// The [`School`] the [`Student`] belongs to.
+    pub fn school(&self) -> School {
+        match self.info.school.as_str() {
+            "Abydos" => School::Abydos,
+            "Gehenna" => School::Gehenna,
+            "Hyakkiyako" => School::Hyakkiyako,
+            "Millennium" => School::Millennium,
+            "Shanhaijing" => School::Shanhaijing,
+            "Trinity" => School::Trinity,
+            _ => School::Unknown(self.info.school.clone()),
+        }
+    }
+
+    /// The [`Club`] the [`Student`] belongs to.
+    pub fn club(&self) -> Club {
+        match Club::from_str(&self.info.club) {
             Ok(club) => club,
-            Err(_) => enums::Club::Unknown(self.info.club.clone()),
+            Err(_) => Club::Unknown(self.info.club.clone()),
         }
     }
 }
