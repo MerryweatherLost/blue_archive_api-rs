@@ -18,3 +18,5 @@ pub use enums::*;
 
 pub use api::*;
 pub use fetcher::BlueArchiveFetcher;
+
+pub use errors::BlueArchiveError;

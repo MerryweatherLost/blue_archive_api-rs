@@ -148,6 +148,7 @@ impl std::fmt::Display for Position {
     In the case that a weapon in the API is not present on the wrapper,
     a [`Weapon::Unknown(String)`] is returned to represent the unknown weapon with its name in the `enum`.
 */
+#[derive(EnumString, Display)]
 pub enum Weapon {
     AR,
     GL,
@@ -165,39 +166,21 @@ pub enum Weapon {
 
 impl Weapon {
     pub fn full_name(&self) -> String {
-        match self {
-            Weapon::AR => "Assault Rifle".to_string(),
-            Weapon::GL => "Grenade Launcher".to_string(),
-            Weapon::HG => "Handgun".to_string(),
-            Weapon::MG => "Machine Gun".to_string(),
-            Weapon::MT => "Mortar".to_string(),
-            Weapon::RF => "Rifle".to_string(),
-            Weapon::RG => "Railgun".to_string(),
-            Weapon::RL => "Rocket Launcher".to_string(),
-            Weapon::SG => "Shotgun".to_string(),
-            Weapon::SMG => "Submachine Gun".to_string(),
-            Weapon::SR => "Sniper Rifle".to_string(),
-            Weapon::Unknown(string) => string.to_string(),
-        }
-    }
-}
-
-impl std::fmt::Display for Weapon {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Weapon::AR => write!(f, "AR"),
-            Weapon::GL => write!(f, "GL"),
-            Weapon::HG => write!(f, "HG"),
-            Weapon::MG => write!(f, "MG"),
-            Weapon::MT => write!(f, "MT"),
-            Weapon::RF => write!(f, "RF"),
-            Weapon::RG => write!(f, "RG"),
-            Weapon::RL => write!(f, "RL"),
-            Weapon::SG => write!(f, "SG"),
-            Weapon::SMG => write!(f, "SMG"),
-            Weapon::SR => write!(f, "SR"),
-            Weapon::Unknown(string) => write!(f, "{string}"),
-        }
+        let name = match self {
+            Weapon::AR => "Assault Rifle",
+            Weapon::GL => "Grenade Launcher",
+            Weapon::HG => "Handgun",
+            Weapon::MG => "Machine Gun",
+            Weapon::MT => "Mortar",
+            Weapon::RF => "Rifle",
+            Weapon::RG => "Railgun",
+            Weapon::RL => "Rocket Launcher",
+            Weapon::SG => "Shotgun",
+            Weapon::SMG => "Submachine Gun",
+            Weapon::SR => "Sniper Rifle",
+            Weapon::Unknown(string) => string.as_str(),
+        };
+        name.to_string()
     }
 }
 
@@ -305,18 +288,14 @@ impl std::fmt::Display for Armor {
 */
 #[derive(Debug, Eq, Hash, PartialEq, EnumIter, EnumString, Display)]
 pub enum Club {
-    #[strum(serialize = "Kohshinjo68")]
-    ProblemSolver68,
-    #[strum(serialize = "SPTF")]
-    SuperPhenomenonTaskForce,
-    #[strum(serialize = "GourmetClub")]
-    GourmetResearchSociety,
+    Kohshinjo68,
+    SPTF,
+    GourmetClub,
     RemedialClass,
     Fuuki,
     Countermeasure,
     Veritas,
-    #[strum(serialize = "CleanNClearing")]
-    CleaningAndClearing,
+    CleaningNClearing,
     Meihuayuan,
     TrainingClub,
     Justice,
@@ -344,43 +323,4 @@ pub enum Club {
     FoodService,
     KnightsHospitaller,
     Unknown(String),
-}
-
-impl std::fmt::Display for Club {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Club::GourmetClub => write!(f, ""),
-            Club::RemedialClass => write!(f, "Make-Up Work Club"),
-            Club::Fuuki => write!(f, "School Lunch Club"), // I'm unsure if this is the right one.
-            Club::Countermeasure => write!(f, "Foreclosure Task Force"),
-            Club::Veritas => write!(f, "Veritas"),
-            Club::CleanNClearing => write!(f, "Cleaning & Clearing"),
-            Club::Meihuayuan => write!(f, "Plum Blossom Garden"),
-            Club::TrainingClub => write!(f, "Athletics Training Club"),
-            Club::Justice => write!(f, "Justice Realization Committee"),
-            Club::NinpoKenkyubu => write!(f, "Ninjutsu Research Club"),
-            Club::GameDev => write!(f, "Game Development Department"),
-            Club::RedwinterSecretary => write!(f, "Red Winter Office"), // <- Not sure, we may have to check for the students in each club. // HashMap Club -> Vec<Student> to find out.
-            Club::HoukagoDessert => write!(f, "After-School Sweets Club"),
-            Club::EmptyClub => write!(f, "Unassigned"),
-            Club::Shugyobu => write!(f, "Inner Discipline Club"),
-            Club::BookClub => write!(f, "Library Committee"),
-            Club::SisterHood => write!(f, "Sisterhood"),
-            Club::RabbitPlatoon => write!(f, "RABBIT Squad"),
-            Club::AriusSqud => write!(f, "Arius Squad"),
-            Club::Onmyobu => write!(f, ""),
-            Club::TheSeminar => write!(f, ""),
-            Club::Anzenkyoku => write!(f, ""),
-            Club::Engineer => write!(f, ""),
-            Club::TrinityVigilance => write!(f, ""),
-            Club::MatsuriOffice => write!(f, ""),
-            Club::Endanbou => write!(f, ""),
-            Club::Class227 => write!(f, ""),
-            Club::Emergentology => write!(f, ""),
-            Club::PandemoniumSociety => write!(f, ""),
-            Club::FoodService => write!(f, ""),
-            Club::KnightsHospitaller => write!(f, "Knight Hospitaller"),
-            Club::Unknown(_) => write!(f, ""),
-        }
-    }
 }

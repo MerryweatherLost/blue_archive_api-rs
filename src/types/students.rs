@@ -121,7 +121,7 @@ pub struct Character {
 pub struct Info {
     pub age: String,
     #[serde(alias = "artis")]
-    pub artist: String,
+    pub artist: Option<String>,
     pub club: String,
     pub school: String,
     pub school_year: String,
