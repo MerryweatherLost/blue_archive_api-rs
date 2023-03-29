@@ -11,9 +11,9 @@ tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
 chrono = { version = "0.4", features = ["serde"] }
 anyhow = "1"
-rand = "0.8.5"
-futures = "0.3.25"
-thiserror = "1.0.37"
+rand = "0.8"
+futures = "0.3"
+thiserror = "1.0"
 strum = "0.24"
 strum_macros = "0.24"
 
