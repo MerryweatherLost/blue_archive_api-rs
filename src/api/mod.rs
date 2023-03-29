@@ -17,6 +17,8 @@ use reqwest::Response;
 use enums::StudentQuery;
 use errors::BlueArchiveError;
 
+pub use crate::API_URI;
+
 pub(crate) mod helper {
 
     use super::*;
@@ -30,8 +32,8 @@ pub(crate) mod helper {
             Endpoints::Character(possible_char_query) => {
                 let path = match possible_char_query {
                     Some(char_query) => match char_query {
-                        CharacterNameOrQuery::Name(string) => string, // Direct name of Character e.g. Asuna
-                        CharacterNameOrQuery::Query(query) => {
+                        QueryKind::Name(string) => string, // Direct name of Character e.g. Asuna
+                        QueryKind::Query(query) => {
                             let query_string = query
                                 .into_iter()
                                 .map(|sq| sq.to_string())
@@ -39,6 +41,14 @@ pub(crate) mod helper {
                                 .join("&");
                             format!("query?{query_string}")
                         } // The specific query e.g. query?school=Abydos
+                        QueryKind::Special(special_query) => match special_query {
+                            SpecialQuery::ID(id) => {
+                                format!("{id}?id=true")
+                            }
+                            SpecialQuery::Released(released) => {
+                                format!("?released={released}")
+                            }
+                        },
                     },
                     // If empty, means that all instances of PartialStudent, or "character/" will be returned in a request.
                     None => "".to_string(),
@@ -56,13 +66,13 @@ pub(crate) mod helper {
             Endpoints::Raid => "raid".to_string(),
             Endpoints::Banner => "banner".to_string(),
         };
-        Ok(reqwest::get(format!("https://api.ennead.cc/buruaka/{}", response_string)).await?)
+        Ok(reqwest::get(format!("{API_URI}/{}", response_string)).await?)
     }
 
     /**
         When a query result, normally a list of [`String`] containing the names of the Students need to be converted to a [`Vec<Student>`].
     */
-    pub async fn fetch_students_from_query_response(
+    pub(crate) async fn fetch_students_from_query_response(
         response: Response,
     ) -> Result<Vec<Student>, BlueArchiveError> {
         let mut students: Vec<Student> = vec![];
@@ -74,13 +84,10 @@ pub(crate) mod helper {
         // Concurrent Requests
         let bodies =
             futures::future::join_all(student_name_list.into_iter().map(|name| async move {
-                let response =
-                    match reqwest::get(format!("https://api.ennead.cc/buruaka/character/{}", name))
-                        .await
-                    {
-                        Ok(res) => res,
-                        Err(err) => return Err(BlueArchiveError::Reqwest(err)),
-                    };
+                let response = match reqwest::get(format!("{}/character/{}", API_URI, name)).await {
+                    Ok(res) => res,
+                    Err(err) => return Err(BlueArchiveError::Reqwest(err)),
+                };
                 Ok(response.json::<Student>().await?)
             }))
             .await;
@@ -153,33 +160,77 @@ pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
 pub async fn fetch_student_by_name<IntoString: Into<String>>(
     name: IntoString,
 ) -> Result<Student, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(CharacterNameOrQuery::Name(
-        name.into(),
-    ))))
-    .await?;
+    let response =
+        helper::fetch_response(Endpoints::Character(Some(QueryKind::Name(name.into())))).await?;
 
     Ok(response.json::<Student>().await?)
 }
 
 /**
+    Fetches a [`Student`] based on a given ID.
     Fetches a [`Vec`] of [`Student`] based on a given name.
 
     ## Examples
 
     ```
         #[tokio::main]
+        async fn main() -> anyhow::Result<()> {
+            match blue_archive::fetch_student_by_id(16001).await {
+                Ok(student) => {
+                    println!(
+                        "Name: {}\nAge:{}, Club:{}",
+                        student.character.name, student.info.age, student.info.club
+                    )
+                }
+                Err(err) => {
+                    println!("{:?}", err)
+                }
+            };
+            Ok(())
+        }
         async fn main() {
 
         }
     ```
 */
-pub async fn fetch_students_by_queries(
-    queries: Vec<StudentQuery>,
-) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(CharacterNameOrQuery::Query(
-        queries,
+pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
+    let response = helper::fetch_response(Endpoints::Character(Some(QueryKind::Special(
+        SpecialQuery::ID(id),
     ))))
     .await?;
+    Ok(fetch_student_by_name(response.json::<IDStudent>().await?.name).await?)
+}
+/**
+    Fetches a [`Vec`] of [`Student`] based on a given set of queries.
+
+    ## Examples
+
+    ```
+        #[tokio::main]
+        async fn main() {
+            match blue_archive::fetch_students_by_queries([
+                StudentQuery::SquadType(SquadType::Striker),
+                StudentQuery::School(School::Trinity),
+            ])
+            .await
+            {
+                Ok(students) => {
+                    println!("Here is a list of Blue Archive Students that are Strikers & apart of Trinity General School.");
+                    for student in students.iter() {
+                        println!("{student}");
+                    }
+                }
+                Err(err) => println!("Failed to Obtain Students!\n{err}",),
+            };
+        }
+    ```
+*/
+pub async fn fetch_students_by_queries<Q: Into<Vec<StudentQuery>>>(
+    queries: Q,
+) -> Result<Vec<Student>, BlueArchiveError> {
+    let response =
+        helper::fetch_response(Endpoints::Character(Some(QueryKind::Query(queries.into()))))
+            .await?;
     helper::fetch_students_from_query_response(response).await
 }
 /**
@@ -248,15 +299,11 @@ pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
     // Concurrent Requests
     let bodies =
         futures::future::join_all(partial_students.into_iter().map(|partial| async move {
-            let response = match reqwest::get(format!(
-                "https://api.ennead.cc/buruaka/character/{}",
-                partial.name
-            ))
-            .await
-            {
-                Ok(res) => res,
-                Err(err) => return Err(BlueArchiveError::Reqwest(err)),
-            };
+            let response =
+                match reqwest::get(format!("{}/character/{}", API_URI, partial.name)).await {
+                    Ok(res) => res,
+                    Err(err) => return Err(BlueArchiveError::Reqwest(err)),
+                };
             Ok(response.json::<Student>().await)
         }))
         .await;

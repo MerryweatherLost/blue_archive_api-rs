@@ -87,6 +87,21 @@ pub enum School {
     Unknown(String),
 }
 
+impl School {
+    pub fn full_name(&self) -> String {
+        let name = match self {
+            School::Abydos => "Abydos High School",
+            School::Gehenna => "Gehenna Academy",
+            School::Hyakkiyako => "Hyakkiyako Alliance Academy",
+            School::Millennium => "Millennium Science School",
+            School::Shanhaijing => "Shanhaijing Senior Secondary School",
+            School::Trinity => "Trinity General School",
+            School::Unknown(string) => string.as_ref(),
+        };
+        name.to_string()
+    }
+}
+
 impl std::fmt::Display for School {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -253,6 +268,7 @@ impl std::fmt::Display for Armor {
 
 /**
     **This is a `enum` that contains the current Blue Archive clubs represented in the API.**
+
     As of the `3rd of March, 2023`,
     this is the current list of armor represented in the API.
 

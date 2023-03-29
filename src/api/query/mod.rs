@@ -32,9 +32,9 @@ use anyhow::Result;
     ```
 */
 pub async fn fetch_students_by_school(school: School) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(CharacterNameOrQuery::Query(
-        vec![StudentQuery::School(school)],
-    ))))
+    let response = helper::fetch_response(Endpoints::Character(Some(QueryKind::Query(vec![
+        StudentQuery::School(school),
+    ]))))
     .await?;
     helper::fetch_students_from_query_response(response).await
 }
@@ -66,15 +66,15 @@ pub async fn fetch_students_by_school(school: School) -> Result<Vec<Student>, Bl
     ```
 */
 pub async fn fetch_students_by_role(role: Role) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(CharacterNameOrQuery::Query(
-        vec![StudentQuery::Role(role)],
-    ))))
+    let response = helper::fetch_response(Endpoints::Character(Some(QueryKind::Query(vec![
+        StudentQuery::Role(role),
+    ]))))
     .await?;
     helper::fetch_students_from_query_response(response).await
 }
 
 /**
-    Fetches a [`Vec`] of [`Student`] from a given [`Type`] enum.
+    Fetches a [`Vec`] of [`Student`] from a given [`SquadType`] enum.
 
     ## Examples
 
@@ -102,9 +102,9 @@ pub async fn fetch_students_by_role(role: Role) -> Result<Vec<Student>, BlueArch
 pub async fn fetch_students_by_squad_type(
     squad: SquadType,
 ) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(CharacterNameOrQuery::Query(
-        vec![StudentQuery::SquadType(squad)],
-    ))))
+    let response = helper::fetch_response(Endpoints::Character(Some(QueryKind::Query(vec![
+        StudentQuery::SquadType(squad),
+    ]))))
     .await?;
     helper::fetch_students_from_query_response(response).await
 }
@@ -133,9 +133,9 @@ pub async fn fetch_students_by_squad_type(
     ```
 */
 pub async fn fetch_students_by_weapon(weapon: Weapon) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(CharacterNameOrQuery::Query(
-        vec![StudentQuery::Weapon(weapon)],
-    ))))
+    let response = helper::fetch_response(Endpoints::Character(Some(QueryKind::Query(vec![
+        StudentQuery::Weapon(weapon),
+    ]))))
     .await?;
     helper::fetch_students_from_query_response(response).await
 }
@@ -161,9 +161,9 @@ pub async fn fetch_students_by_weapon(weapon: Weapon) -> Result<Vec<Student>, Bl
 pub async fn fetch_students_by_position(
     position: Position,
 ) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(CharacterNameOrQuery::Query(
-        vec![StudentQuery::Position(position)],
-    ))))
+    let response = helper::fetch_response(Endpoints::Character(Some(QueryKind::Query(vec![
+        StudentQuery::Position(position),
+    ]))))
     .await?;
     helper::fetch_students_from_query_response(response).await
 }
@@ -187,9 +187,9 @@ pub async fn fetch_students_by_position(
     ```
 */
 pub async fn fetch_students_by_damage(damage: Damage) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(CharacterNameOrQuery::Query(
-        vec![StudentQuery::Damage(damage)],
-    ))))
+    let response = helper::fetch_response(Endpoints::Character(Some(QueryKind::Query(vec![
+        StudentQuery::Damage(damage),
+    ]))))
     .await?;
     helper::fetch_students_from_query_response(response).await
 }
@@ -213,9 +213,9 @@ pub async fn fetch_students_by_damage(damage: Damage) -> Result<Vec<Student>, Bl
     ```
 */
 pub async fn fetch_students_by_armor(armor: Armor) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(CharacterNameOrQuery::Query(
-        vec![StudentQuery::Armor(armor)],
-    ))))
+    let response = helper::fetch_response(Endpoints::Character(Some(QueryKind::Query(vec![
+        StudentQuery::Armor(armor),
+    ]))))
     .await?;
     helper::fetch_students_from_query_response(response).await
 }

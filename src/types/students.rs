@@ -41,7 +41,7 @@ pub struct PartialStudentData {
 }
 
 /**
-Contains partial information of a [`Student`]. Contains limited data.
+Contains partial information of a [`Student`], and contains limited data.
 */
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -61,7 +61,9 @@ pub struct PartialStudent {
 }
 
 /**
-    The "desired" information of a Blue Archive student. Contains the most data.
+    The "desired" information of a Blue Archive student, and contains the most data.
+
+    Has special methods to access certain data easier.
 */
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]

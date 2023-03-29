@@ -20,3 +20,5 @@ pub use api::*;
 pub use fetcher::BlueArchiveFetcher;
 
 pub use errors::BlueArchiveError;
+
+pub const API_URI: &str = "https://api.ennead.cc/buruaka";
