@@ -1,4 +1,4 @@
-use crate::{Armor, Damage, Position, Role, School, Type, Weapon};
+use crate::{Armor, Damage, Position, Role, School, SquadType, Weapon};
 
 /// An `enum` that represents querying the API through two choices, [`CharacterNameOrQuery::Name`] (searching the student by name) or [`CharacterNameOrQuery::Query`] (through a specified [`Vec`] of [`StudentQuery`]'s).
 pub enum CharacterNameOrQuery {
@@ -35,7 +35,7 @@ pub enum Endpoints {
 
 pub enum StudentQuery {
     Role(Role),
-    Type(Type),
+    SquadType(SquadType),
     School(School),
     Position(Position),
     Weapon(Weapon),
@@ -47,7 +47,7 @@ impl std::fmt::Display for StudentQuery {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Role(q) => write!(f, "role={}", q),
-            Self::Type(q) => write!(f, "type={}", q),
+            Self::SquadType(q) => write!(f, "type={}", q),
             Self::School(q) => write!(f, "school={}", q),
             Self::Position(q) => write!(f, "position={}", q),
             Self::Weapon(q) => write!(f, "weapon={}", q),

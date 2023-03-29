@@ -35,29 +35,29 @@ impl std::fmt::Display for Role {
 }
 
 /**
-    **This is a `enum` that contains the current Blue Archive weapons represented in the API.**
+    **This is a `enum` that contains the current Blue Archive squads represented in the API.**
 
-    As of the `13th of December, 2022`,
-    this is the current list of weapons represented in the API.
+    As of the `29th of March, 2023`,
+    this is the current list of squads represented in the API.
     * **Special**
     * **Striker**
 
-    In the case that a type in the API is not present on the wrapper,
-    a [`Type::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
+    In the case that a squad in the API is not present on the wrapper,
+    a [`SquadType::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
 */
 #[derive(EnumString)]
-pub enum Type {
+pub enum SquadType {
     Special,
     Striker,
     Unknown(String),
 }
 
-impl std::fmt::Display for Type {
+impl std::fmt::Display for SquadType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Type::Special => write!(f, "Special"),
-            Type::Striker => write!(f, "Striker"),
-            Type::Unknown(unknown_type) => write!(f, "{}", unknown_type),
+            SquadType::Special => write!(f, "Special"),
+            SquadType::Striker => write!(f, "Striker"),
+            SquadType::Unknown(unknown_type) => write!(f, "{}", unknown_type),
         }
     }
 }

@@ -2,7 +2,10 @@ use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
 
-use crate::enums::{Club, School};
+use crate::{
+    enums::{Club, School},
+    SquadType, Weapon,
+};
 
 /**
     A `struct` when a [`Student`] is searched with an ID.
@@ -76,7 +79,7 @@ pub struct Student {
 
 /// The Age of a Blue Archive Student.
 ///
-/// The actual [`Option<u8>`] is wrapped under this struct for Display purposes.
+/// The actual [`Option<u8>`] is wrapped under this struct to make it easier to display.
 #[derive(Debug)]
 pub struct Age(Option<u8>);
 
@@ -95,7 +98,7 @@ impl Student {
         self.character.name.to_string()
     }
 
-    /// The age of the Student.
+    /// The age of the [`Student`], referred to as [`Age<u8>`].
     /// * Unknown Ages or "Top Secret" will be referred to as [`None`].
     pub fn age(&self) -> Age {
         match self.info.age.find(|c| c == ' ') {
@@ -104,6 +107,22 @@ impl Student {
                 Err(_) => Age(None),
             },
             None => Age(None),
+        }
+    }
+
+    /// The [`SquadType`] the [`Student`] is apart of.
+    pub fn squad_type(&self) -> SquadType {
+        match SquadType::from_str(self.character.squad_type.as_str()) {
+            Ok(squad) => squad,
+            Err(_) => SquadType::Unknown(self.character.squad_type.to_string()),
+        }
+    }
+
+    /// The [`Weapon`] the [`Student`] uses.
+    pub fn weapon(&self) -> Weapon {
+        match Weapon::from_str(self.character.weapon_type.as_str()) {
+            Ok(weapon) => weapon,
+            Err(_) => Weapon::Unknown(self.character.weapon_type.to_string()),
         }
     }
 

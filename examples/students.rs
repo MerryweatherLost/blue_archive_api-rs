@@ -1,9 +1,9 @@
-use blue_archive::{api::enums::StudentQuery, School, Type};
+use blue_archive::{api::enums::StudentQuery, School, SquadType};
 
 #[tokio::main]
 async fn main() {
     match blue_archive::fetch_students_by_queries(vec![
-        StudentQuery::Type(Type::Striker),
+        StudentQuery::SquadType(SquadType::Striker),
         StudentQuery::School(School::Trinity),
     ])
     .await

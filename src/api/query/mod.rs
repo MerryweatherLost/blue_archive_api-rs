@@ -79,11 +79,11 @@ pub async fn fetch_students_by_role(role: Role) -> Result<Vec<Student>, BlueArch
     ## Examples
 
     ```
-        use blue_archive::enums::Type;
+        use blue_archive::enums::SquadType;
 
         #[tokio::main]
         async fn main() {
-            match blue_archive::fetch_students_by_type(Type::Special).await {
+            match blue_archive::fetch_students_by_squad_type(SquadType::Special).await {
                 Ok(students) => {
                     for student in students.iter() {
                         println!(
@@ -99,9 +99,11 @@ pub async fn fetch_students_by_role(role: Role) -> Result<Vec<Student>, BlueArch
         }
     ```
 */
-pub async fn fetch_students_by_type(type_: Type) -> Result<Vec<Student>, BlueArchiveError> {
+pub async fn fetch_students_by_squad_type(
+    squad: SquadType,
+) -> Result<Vec<Student>, BlueArchiveError> {
     let response = helper::fetch_response(Endpoints::Character(Some(CharacterNameOrQuery::Query(
-        vec![StudentQuery::Type(type_)],
+        vec![StudentQuery::SquadType(squad)],
     ))))
     .await?;
     helper::fetch_students_from_query_response(response).await
