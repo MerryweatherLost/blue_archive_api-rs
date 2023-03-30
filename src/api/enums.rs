@@ -1,13 +1,14 @@
 use crate::{Armor, Damage, Position, Role, School, SquadType, Weapon};
 
-/// An `enum` that represents querying the API through three choices, [`QueryKind::Name`] (searching the student by name), [`QueryKind::Query`] (through a specified [`Vec`] of [`StudentQuery`]'s), or [`QueryKind::Special`] (through ID & released.).
-pub enum QueryKind {
+/// An `enum` that represents querying the API through three choices, [`StudentQueryKind::Name`] (searching the student by name), [`StudentQueryKind::Query`] (through a specified [`Vec`] of [`StudentQuery`]'s),
+/// or [`StudentQueryKind::Special`] (through a [`SpecialStudentQuery`] [ID & released]).
+pub enum StudentQueryKind {
     Name(String),
     Query(Vec<StudentQuery>),
-    Special(SpecialQuery),
+    Special(SpecialStudentQuery),
 }
 
-pub enum SpecialQuery {
+pub enum SpecialStudentQuery {
     ID(u32),
     Released(bool),
 }
@@ -25,7 +26,7 @@ pub enum Endpoints {
 
         If [`None`], then it will get a result of all partial students.
     */
-    Character(Option<QueryKind>),
+    Character(Option<StudentQueryKind>),
     /**
         Takes a `ID`: ([`u32`]) or a `String`: [`String`], to use for querying data about equipment.
     */

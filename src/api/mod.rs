@@ -26,14 +26,14 @@ pub(crate) mod helper {
     /**
         Main function that provides a [`Response`] based on the provided [`Endpoints`] enum.
     */
-    pub async fn fetch_response(endpoint: Endpoints) -> Result<Response, BlueArchiveError> {
+    pub(crate) async fn fetch_response(endpoint: Endpoints) -> Result<Response, BlueArchiveError> {
         let response_string = match endpoint {
             Endpoints::Status => "".to_string(),
             Endpoints::Character(possible_char_query) => {
                 let path = match possible_char_query {
                     Some(char_query) => match char_query {
-                        QueryKind::Name(string) => string, // Direct name of Character e.g. Asuna
-                        QueryKind::Query(query) => {
+                        StudentQueryKind::Name(string) => string, // Direct name of Character e.g. Asuna
+                        StudentQueryKind::Query(query) => {
                             let query_string = query
                                 .into_iter()
                                 .map(|sq| sq.to_string())
@@ -41,11 +41,11 @@ pub(crate) mod helper {
                                 .join("&");
                             format!("query?{query_string}")
                         } // The specific query e.g. query?school=Abydos
-                        QueryKind::Special(special_query) => match special_query {
-                            SpecialQuery::ID(id) => {
+                        StudentQueryKind::Special(special_query) => match special_query {
+                            SpecialStudentQuery::ID(id) => {
                                 format!("{id}?id=true")
                             }
-                            SpecialQuery::Released(released) => {
+                            SpecialStudentQuery::Released(released) => {
                                 format!("?released={released}")
                             }
                         },
@@ -147,7 +147,7 @@ pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
                 Ok(student) => {
                     println!(
                         "Name: {}\nProfile:{}",
-                        student.character.name, student.character.profile
+                        student.name(), student.character.profile
                     )
                 }
                 Err(err) => {
@@ -160,8 +160,10 @@ pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
 pub async fn fetch_student_by_name<IntoString: Into<String>>(
     name: IntoString,
 ) -> Result<Student, BlueArchiveError> {
-    let response =
-        helper::fetch_response(Endpoints::Character(Some(QueryKind::Name(name.into())))).await?;
+    let response = helper::fetch_response(Endpoints::Character(Some(StudentQueryKind::Name(
+        name.into(),
+    ))))
+    .await?;
 
     Ok(response.json::<Student>().await?)
 }
@@ -179,7 +181,7 @@ pub async fn fetch_student_by_name<IntoString: Into<String>>(
                 Ok(student) => {
                     println!(
                         "Name: {}\nAge:{}, Club:{}",
-                        student.character.name, student.info.age, student.info.club
+                        student.name(), student.age(), student.club()
                     )
                 }
                 Err(err) => {
@@ -194,8 +196,8 @@ pub async fn fetch_student_by_name<IntoString: Into<String>>(
     ```
 */
 pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(QueryKind::Special(
-        SpecialQuery::ID(id),
+    let response = helper::fetch_response(Endpoints::Character(Some(StudentQueryKind::Special(
+        SpecialStudentQuery::ID(id),
     ))))
     .await?;
     Ok(fetch_student_by_name(response.json::<IDStudent>().await?.name).await?)
@@ -228,9 +230,10 @@ pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
 pub async fn fetch_students_by_queries<Q: Into<Vec<StudentQuery>>>(
     queries: Q,
 ) -> Result<Vec<Student>, BlueArchiveError> {
-    let response =
-        helper::fetch_response(Endpoints::Character(Some(QueryKind::Query(queries.into()))))
-            .await?;
+    let response = helper::fetch_response(Endpoints::Character(Some(StudentQueryKind::Query(
+        queries.into(),
+    ))))
+    .await?;
     helper::fetch_students_from_query_response(response).await
 }
 /**
@@ -281,7 +284,7 @@ pub async fn fetch_all_partial_students() -> Result<Vec<PartialStudent>, BlueArc
                     for student in students.iter() {
                         println!(
                             "Name: {}\nAge:{}, Club:{}",
-                            student.character.name, student.info.age, student.info.club
+                            student.name(), student.age(), student.club()
                         )
                     }
                 }
@@ -327,7 +330,7 @@ pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
                 Ok(student) => {
                     println!(
                         "Name: {}\nAge:{}, Club:{}",
-                        student.character.name, student.info.age, student.info.club
+                        student.name(), student.age(), student.club()
                     )
                 }
                 Err(err) => {
