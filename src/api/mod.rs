@@ -190,9 +190,6 @@ pub async fn fetch_student_by_name<IntoString: Into<String>>(
             };
             Ok(())
         }
-        async fn main() {
-
-        }
     ```
 */
 pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
@@ -200,7 +197,7 @@ pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
         SpecialStudentQuery::ID(id),
     ))))
     .await?;
-    Ok(fetch_student_by_name(response.json::<IDStudent>().await?.name).await?)
+    fetch_student_by_name(response.json::<IDStudent>().await?.name).await
 }
 /**
     Fetches a [`Vec`] of [`Student`] based on a given set of queries.
@@ -208,6 +205,8 @@ pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
     ## Examples
 
     ```
+        use blue_archive::{School, SquadType, StudentQuery};
+
         #[tokio::main]
         async fn main() {
             match blue_archive::fetch_students_by_queries([
