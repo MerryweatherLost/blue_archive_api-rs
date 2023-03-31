@@ -14,7 +14,7 @@ pub mod api;
 pub mod enums;
 pub mod types;
 
-pub use enums::*;
+pub use enums::{Armor, Club, Damage, Position, Role, School, SquadType, Weapon};
 
 pub use api::*;
 pub use fetcher::BlueArchiveFetcher;
