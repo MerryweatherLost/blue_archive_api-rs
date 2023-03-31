@@ -14,10 +14,12 @@ use anyhow::Result;
 use rand::seq::SliceRandom;
 use reqwest::Response;
 
-use enums::StudentQuery;
+use enums::Query;
 use errors::BlueArchiveError;
 
 pub use crate::API_URI;
+
+use self::enums::students::StudentQueryBuilder;
 
 pub(crate) mod helper {
 
@@ -29,31 +31,9 @@ pub(crate) mod helper {
     pub(crate) async fn fetch_response(endpoint: Endpoints) -> Result<Response, BlueArchiveError> {
         let response_string = match endpoint {
             Endpoints::Status => "".to_string(),
-            Endpoints::Character(possible_char_query) => {
-                let path = match possible_char_query {
-                    Some(char_query) => match char_query {
-                        StudentQueryKind::Name(string) => string, // Direct name of Character e.g. Asuna
-                        StudentQueryKind::Query(query) => {
-                            let query_string = query
-                                .into_iter()
-                                .map(|sq| sq.to_string())
-                                .collect::<Vec<String>>()
-                                .join("&");
-                            format!("query?{query_string}")
-                        } // The specific query e.g. query?school=Abydos
-                        StudentQueryKind::Special(special_query) => match special_query {
-                            SpecialStudentQuery::ID(id) => {
-                                format!("{id}?id=true")
-                            }
-                            SpecialStudentQuery::Released(released) => {
-                                format!("?released={released}")
-                            }
-                        },
-                    },
-                    // If empty, means that all instances of PartialStudent, or "character/" will be returned in a request.
-                    None => "".to_string(),
-                };
-                format!("character/{}", path)
+            Endpoints::Character(query) => {
+                println!("{query}");
+                format!("character/{query}")
             }
             Endpoints::Equipment(id_or_string) => {
                 let path = match id_or_string {
@@ -160,9 +140,9 @@ pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
 pub async fn fetch_student_by_name<IntoString: Into<String>>(
     name: IntoString,
 ) -> Result<Student, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(StudentQueryKind::Name(
-        name.into(),
-    ))))
+    let response = helper::fetch_response(Endpoints::Character(
+        StudentQueryBuilder::new().build_with_student_name(name.into()),
+    ))
     .await?;
 
     Ok(response.json::<Student>().await?)
@@ -193,9 +173,9 @@ pub async fn fetch_student_by_name<IntoString: Into<String>>(
     ```
 */
 pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(StudentQueryKind::Special(
-        SpecialStudentQuery::ID(id),
-    ))))
+    let response = helper::fetch_response(Endpoints::Character(
+        StudentQueryBuilder::new().build_with_single(Query::ID(id)),
+    ))
     .await?;
     fetch_student_by_name(response.json::<IDStudent>().await?.name).await
 }
@@ -205,13 +185,13 @@ pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
     ## Examples
 
     ```
-        use blue_archive::{School, SquadType, StudentQuery};
+        use blue_archive::{School, SquadType, Query};
 
         #[tokio::main]
         async fn main() {
             match blue_archive::fetch_students_by_queries([
-                StudentQuery::SquadType(SquadType::Striker),
-                StudentQuery::School(School::Trinity),
+                Query::SquadType(SquadType::Striker),
+                Query::School(School::Trinity),
             ])
             .await
             {
@@ -226,12 +206,12 @@ pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
         }
     ```
 */
-pub async fn fetch_students_by_queries<Q: Into<Vec<StudentQuery>>>(
+pub async fn fetch_students_by_queries<Q: Into<Vec<Query>>>(
     queries: Q,
 ) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(Some(StudentQueryKind::Query(
-        queries.into(),
-    ))))
+    let response = helper::fetch_response(Endpoints::Character(
+        StudentQueryBuilder::new().build_with_multiple(queries.into()),
+    ))
     .await?;
     helper::fetch_students_from_query_response(response).await
 }
@@ -258,7 +238,11 @@ pub async fn fetch_students_by_queries<Q: Into<Vec<StudentQuery>>>(
     ```
 */
 pub async fn fetch_all_partial_students() -> Result<Vec<PartialStudent>, BlueArchiveError> {
-    let response = match helper::fetch_response(Endpoints::Character(None)).await {
+    let response = match helper::fetch_response(Endpoints::Character(
+        StudentQueryBuilder::new().build_empty(),
+    ))
+    .await
+    {
         Ok(resp) => resp,
         Err(err) => return Err(err),
     };

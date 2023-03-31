@@ -5,6 +5,8 @@ use crate::errors::BlueArchiveError;
 use crate::types::*;
 use anyhow::Result;
 
+use super::enums::students::StudentQueryBuilder;
+
 /**
     Fetches a [`Vec`] of [`Student`] from a given [`School`] enum.
 
@@ -32,11 +34,10 @@ use anyhow::Result;
     ```
 */
 pub async fn fetch_students_by_school(school: School) -> Result<Vec<Student>, BlueArchiveError> {
-    let response =
-        helper::fetch_response(Endpoints::Character(Some(StudentQueryKind::Query(vec![
-            StudentQuery::School(school),
-        ]))))
-        .await?;
+    let response = helper::fetch_response(Endpoints::Character(
+        StudentQueryBuilder::new().build_with_single(Query::School(school)),
+    ))
+    .await?;
     helper::fetch_students_from_query_response(response).await
 }
 
@@ -67,11 +68,10 @@ pub async fn fetch_students_by_school(school: School) -> Result<Vec<Student>, Bl
     ```
 */
 pub async fn fetch_students_by_role(role: Role) -> Result<Vec<Student>, BlueArchiveError> {
-    let response =
-        helper::fetch_response(Endpoints::Character(Some(StudentQueryKind::Query(vec![
-            StudentQuery::Role(role),
-        ]))))
-        .await?;
+    let response = helper::fetch_response(Endpoints::Character(
+        StudentQueryBuilder::new().build_with_single(Query::Role(role)),
+    ))
+    .await?;
     helper::fetch_students_from_query_response(response).await
 }
 
@@ -104,11 +104,10 @@ pub async fn fetch_students_by_role(role: Role) -> Result<Vec<Student>, BlueArch
 pub async fn fetch_students_by_squad_type(
     squad: SquadType,
 ) -> Result<Vec<Student>, BlueArchiveError> {
-    let response =
-        helper::fetch_response(Endpoints::Character(Some(StudentQueryKind::Query(vec![
-            StudentQuery::SquadType(squad),
-        ]))))
-        .await?;
+    let response = helper::fetch_response(Endpoints::Character(
+        StudentQueryBuilder::new().build_with_single(Query::SquadType(squad)),
+    ))
+    .await?;
     helper::fetch_students_from_query_response(response).await
 }
 
@@ -136,11 +135,10 @@ pub async fn fetch_students_by_squad_type(
     ```
 */
 pub async fn fetch_students_by_weapon(weapon: Weapon) -> Result<Vec<Student>, BlueArchiveError> {
-    let response =
-        helper::fetch_response(Endpoints::Character(Some(StudentQueryKind::Query(vec![
-            StudentQuery::Weapon(weapon),
-        ]))))
-        .await?;
+    let response = helper::fetch_response(Endpoints::Character(
+        StudentQueryBuilder::new().build_with_single(Query::Weapon(weapon)),
+    ))
+    .await?;
     helper::fetch_students_from_query_response(response).await
 }
 
@@ -165,11 +163,10 @@ pub async fn fetch_students_by_weapon(weapon: Weapon) -> Result<Vec<Student>, Bl
 pub async fn fetch_students_by_position(
     position: Position,
 ) -> Result<Vec<Student>, BlueArchiveError> {
-    let response =
-        helper::fetch_response(Endpoints::Character(Some(StudentQueryKind::Query(vec![
-            StudentQuery::Position(position),
-        ]))))
-        .await?;
+    let response = helper::fetch_response(Endpoints::Character(
+        StudentQueryBuilder::new().build_with_single(Query::Position(position)),
+    ))
+    .await?;
     helper::fetch_students_from_query_response(response).await
 }
 
@@ -192,11 +189,10 @@ pub async fn fetch_students_by_position(
     ```
 */
 pub async fn fetch_students_by_damage(damage: Damage) -> Result<Vec<Student>, BlueArchiveError> {
-    let response =
-        helper::fetch_response(Endpoints::Character(Some(StudentQueryKind::Query(vec![
-            StudentQuery::Damage(damage),
-        ]))))
-        .await?;
+    let response = helper::fetch_response(Endpoints::Character(
+        StudentQueryBuilder::new().build_with_single(Query::Damage(damage)),
+    ))
+    .await?;
     helper::fetch_students_from_query_response(response).await
 }
 
@@ -219,10 +215,9 @@ pub async fn fetch_students_by_damage(damage: Damage) -> Result<Vec<Student>, Bl
     ```
 */
 pub async fn fetch_students_by_armor(armor: Armor) -> Result<Vec<Student>, BlueArchiveError> {
-    let response =
-        helper::fetch_response(Endpoints::Character(Some(StudentQueryKind::Query(vec![
-            StudentQuery::Armor(armor),
-        ]))))
-        .await?;
+    let response = helper::fetch_response(Endpoints::Character(
+        StudentQueryBuilder::new().build_with_single(Query::Armor(armor)),
+    ))
+    .await?;
     helper::fetch_students_from_query_response(response).await
 }

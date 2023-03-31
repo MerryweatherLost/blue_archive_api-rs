@@ -19,7 +19,7 @@ pub use enums::*;
 pub use api::*;
 pub use fetcher::BlueArchiveFetcher;
 
-pub use api::enums::StudentQuery;
+pub use api::enums::Query;
 pub use errors::BlueArchiveError;
 
 pub const API_URI: &str = "https://api.ennead.cc/buruaka";
