@@ -24,7 +24,7 @@ pub struct APIStatus {
     /// The version of the API.
     pub version: String,
     /// How long the API has been up, I'm unsure of the measurement, but it is most likely in **miliseconds**.
-    pub uptime: f32,
+    pub uptime: u64,
     /// The list of available endpoints for the API.
     pub endpoints: Vec<String>,
 }

@@ -1,3 +1,7 @@
+//! Contains the bulk of the wrapper's implementations.
+//!
+//! Part of it is already used in the crate's library.
+
 pub mod enums;
 pub mod errors;
 pub mod fetcher;
@@ -32,7 +36,6 @@ pub(crate) mod helper {
         let response_string = match endpoint {
             Endpoints::Status => "".to_string(),
             Endpoints::Character(query) => {
-                println!("{query}");
                 format!("character/{query}")
             }
             Endpoints::Equipment(id_or_string) => {
@@ -42,11 +45,11 @@ pub(crate) mod helper {
                 };
                 format!("equipment/{}", path)
             }
-            Endpoints::Stage => todo!(),
+            Endpoints::_Stage => "stage".to_string(),
             Endpoints::Raid => "raid".to_string(),
             Endpoints::Banner => "banner".to_string(),
         };
-        Ok(reqwest::get(format!("{API_URI}/{}", response_string)).await?)
+        Ok(reqwest::get(format!("{}/{}", API_URI, response_string)).await?)
     }
 
     /**
@@ -79,6 +82,23 @@ pub(crate) mod helper {
         }
 
         Ok(students)
+    }
+
+    /**
+        In the case of a [`reqwest::Error`], this function will be used to handle and process it into a [`BlueArchiveError`], depending on what the error results in.
+    */
+    pub(crate) async fn handle_reqwest_error<IS: Into<String>>(
+        query: IS,
+        status_code: reqwest::StatusCode,
+        error: reqwest::Error,
+    ) -> BlueArchiveError {
+        match error.status() == Some(reqwest::StatusCode::NOT_FOUND) {
+            true => BlueArchiveError::NotFound {
+                query: query.into(),
+                status_code,
+            },
+            false => BlueArchiveError::Reqwest(error),
+        }
     }
 }
 
@@ -137,15 +157,21 @@ pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
         }
     ```
 */
-pub async fn fetch_student_by_name<IntoString: Into<String>>(
-    name: IntoString,
+pub async fn fetch_student_by_name<IS: Into<String>>(
+    name: IS,
 ) -> Result<Student, BlueArchiveError> {
+    let name: String = name.into();
     let response = helper::fetch_response(Endpoints::Character(
-        StudentQueryBuilder::new().build_with_student_name(name.into()),
+        StudentQueryBuilder::new().build_with_student_name(name.clone()),
     ))
     .await?;
 
-    Ok(response.json::<Student>().await?)
+    let status_code = response.status();
+
+    match response.error_for_status_ref() {
+        Ok(_) => Ok(response.json::<Student>().await?),
+        Err(why) => Err(helper::handle_reqwest_error(name, status_code, why).await),
+    }
 }
 
 /**
@@ -300,9 +326,7 @@ pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
 }
 
 /**
-    Fetches a random [`Student`].
-
-    In the case randomization fails, [`BlueArchiveError::RandomError`] is presented.
+    Fetches a random [`Student`], though can return [`None`] if the `students` it is iterating over are empty.
 
     ## Examples
 
@@ -310,11 +334,15 @@ pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
         #[tokio::main]
         async fn main() {
             match blue_archive::fetch_random_student().await {
-                Ok(student) => {
-                    println!(
-                        "Name: {}\nAge:{}, Club:{}",
-                        student.name(), student.age(), student.club()
-                    )
+                Ok(possible_student) => {
+                    match possible_student {
+                        Some(student) => {
+                            println!("{student}")
+                        }
+                        None => {
+                            println!("Could not randomize students.")
+                        }
+                    }
                 }
                 Err(err) => {
                     println!("{:?}", err)
@@ -323,11 +351,11 @@ pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
         }
     ```
 */
-pub async fn fetch_random_student() -> Result<Student, BlueArchiveError> {
+pub async fn fetch_random_student() -> Result<Option<Student>, BlueArchiveError> {
     let partial_students = fetch_all_partial_students().await?;
     match partial_students.choose(&mut rand::thread_rng()) {
-        Some(found) => Ok(fetch_student_by_name(&found.name).await?),
-        None => Err(BlueArchiveError::RandomError),
+        Some(found) => Ok(Some(fetch_student_by_name(&found.name).await?)),
+        None => Ok(None),
     }
 }
 
@@ -348,7 +376,13 @@ pub async fn fetch_random_student() -> Result<Student, BlueArchiveError> {
 */
 pub async fn fetch_equipment_by_id(id: u32) -> Result<Equipment, BlueArchiveError> {
     let response = helper::fetch_response(Endpoints::Equipment(EquipmentIDOrName::ID(id))).await?;
-    Ok(response.json::<Equipment>().await?)
+
+    let status_code = response.status();
+
+    match response.error_for_status_ref() {
+        Ok(_) => Ok(response.json::<Equipment>().await?),
+        Err(why) => Err(helper::handle_reqwest_error(id.to_string(), status_code, why).await),
+    }
 }
 
 /**
@@ -366,8 +400,8 @@ pub async fn fetch_equipment_by_id(id: u32) -> Result<Equipment, BlueArchiveErro
         }
     ```
 */
-pub async fn fetch_equipment_by_name<IntoString: Into<String>>(
-    name: IntoString,
+pub async fn fetch_equipment_by_name<IS: Into<String>>(
+    name: IS,
 ) -> Result<Equipment, BlueArchiveError> {
     let response =
         helper::fetch_response(Endpoints::Equipment(EquipmentIDOrName::Name(name.into()))).await?;
@@ -412,7 +446,7 @@ pub async fn fetch_raids() -> Result<Raids, BlueArchiveError> {
             match blue_archive::fetch_banners().await {
                 Ok(banners) => {
                     for banner in banners.ended.iter() {
-                        println!("{}, {}", banner.id, banner.started_at)
+                        println!("{banner}")
                     }
                 }
                 Err(err) => println!("{}", err),

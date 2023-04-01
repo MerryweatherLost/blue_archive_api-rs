@@ -1,6 +1,26 @@
 use serde::{Deserialize, Serialize};
+use strum_macros::Display;
 
-#[derive(Debug, Serialize, Deserialize)]
+/// Contains the different kinds of [`Banner`] gachas possible.
+///
+/// - `Pickup` PickupGacha
+/// - `Limited` LimitedGacha
+/// - `Fes` FesGacha
+#[derive(Clone, Display, Debug, Serialize, Deserialize)]
+pub enum Gacha {
+    /// Pickup Recruitment Gacha.
+    #[serde(alias = "PickupGacha")]
+    Pickup,
+    /// Limited Gacha.
+    #[serde(alias = "LimitedGacha")]
+    Limited,
+    /// Unsure of what this is exactly, "Festival?"
+    #[serde(alias = "FesGacha")]
+    Fes,
+}
+
+/// Banners data of all Blue Archive [`Banner`]'s.
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Banners {
     pub current: Vec<Banner>,
@@ -8,12 +28,38 @@ pub struct Banners {
     pub ended: Vec<Banner>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Banner {
-    pub id: u32,
-    pub gacha_type: String,
-    pub started_at: String, // make not visible, will be turned into a time that is obtained through a function.
-    pub ended_at: String, // make not visible, will be turned into a time that is obtained through a function.
-    pub rateups: Vec<String>,
+    pub gacha_type: Gacha,
+    start_at: u64,
+    end_at: u64,
+    /// Contains the names of the students who have higher rates of being picked.
+    #[serde(alias = "rateups")]
+    pub rateup_student_names: Vec<String>,
+}
+
+impl Banner {
+    /// When the banner starts (or started).
+    pub fn starts(&self) -> Option<chrono::NaiveDateTime> {
+        chrono::NaiveDateTime::from_timestamp_millis(self.start_at as i64)
+    }
+
+    /// When the banner ends (or ended).
+    pub fn ends(&self) -> Option<chrono::NaiveDateTime> {
+        chrono::NaiveDateTime::from_timestamp_millis(self.end_at as i64)
+    }
+}
+
+impl std::fmt::Display for Banner {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "<type:({}), starts:({:?}) : ends:({:?}), rateup_student_names:({:?})>",
+            self.gacha_type,
+            self.starts(),
+            self.ends(),
+            self.rateup_student_names
+        )
+    }
 }

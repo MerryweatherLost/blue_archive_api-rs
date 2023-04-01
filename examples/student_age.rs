@@ -16,7 +16,7 @@ async fn main() -> Result<()> {
 
     println!();
 
-    // -> Although Shun is Top Secret, and will be reflected as None.
+    // -> Although Shun is Top Secret, & will be reflected as None.
     println!("Fetching Shun's Age!");
     let shun_age = fetcher
         .get_student_by_name("Shun")

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     enums::{Club, School},
-    SquadType, Weapon,
+    Armor, Damage, Position, Role, SquadType, Weapon,
 };
 
 /**
@@ -146,6 +146,35 @@ impl Student {
         match Club::from_str(&self.info.club) {
             Ok(club) => club,
             Err(_) => Club::Unknown(self.info.club.clone()),
+        }
+    }
+
+    /// The [`Role`] the [`Student`] is apart of.
+    pub fn role(&self) -> Role {
+        match Role::from_str(&self.character.role) {
+            Ok(role) => role,
+            Err(_) => Role::Unknown(self.character.role.clone()),
+        }
+    }
+
+    pub fn position(&self) -> Position {
+        match Position::from_str(&self.character.position) {
+            Ok(pos) => pos,
+            Err(_) => Position::Unknown(self.character.position.clone()),
+        }
+    }
+
+    pub fn damage(&self) -> Damage {
+        match Damage::from_str(&self.character.bullet_type) {
+            Ok(damage) => damage,
+            Err(_) => Damage::Unknown(self.character.bullet_type.clone()),
+        }
+    }
+
+    pub fn armor(&self) -> Armor {
+        match Armor::from_str(&self.character.armor_type) {
+            Ok(armor) => armor,
+            Err(_) => Armor::Unknown(self.character.armor_type.clone()),
         }
     }
 }

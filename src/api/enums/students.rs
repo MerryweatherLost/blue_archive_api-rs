@@ -32,15 +32,19 @@ impl std::fmt::Display for Query {
     }
 }
 
-/// An `enum` that represents querying the API through two, [`QueryKind::Name`] (searching the student by name), [`QueryKind::Multiple`] (through a specified [`Vec`] of [`Query`]'s),
-/// or [`QueryKind::Single`] (through a single [`Query`] [ID & released are applicable]).
-pub enum QueryKind {
+/// An `enum` that represents querying the API through three values,
+/// - [`QueryKind::Name`] searching the student by name
+/// - [`QueryKind::Single`] through a single [`Query`] (ID & released are applicable)
+/// - [`QueryKind::Multiple`] through a specified [`Vec`] of [`Query`]
+pub(crate) enum QueryKind {
     Name(String),
     Single(Query),
     Multiple(Vec<Query>),
 }
 
-/// TBD
+/// Builder pattern for a [`StudentQuery`], which allows for chaining of queries based on a [`QueryKind`].
+///
+/// **Meant for internal use.**
 pub(crate) struct StudentQueryBuilder {
     pub kind: Option<QueryKind>,
     pub query_string: String,
@@ -55,20 +59,25 @@ impl StudentQueryBuilder {
     }
 
     /// Builds with "" as the String for the [`StudentQuery`].
+    ///
+    /// This is used in the case of fetching PartialStudents via the `character/` endpoint.
     pub fn build_empty(self) -> StudentQuery {
         StudentQuery("".to_string())
     }
 
+    /// Allows for the building of a [`StudentQuery`] with the `name` of a student.
     pub fn build_with_student_name(mut self, name: String) -> StudentQuery {
         self.kind = Some(QueryKind::Name(name));
         self.build()
     }
 
+    /// Allows for the building of a [`StudentQuery`] based on a **single** `query`.
     pub fn build_with_single(mut self, query: Query) -> StudentQuery {
         self.kind = Some(QueryKind::Single(query));
         self.build()
     }
 
+    /// Allows for the building of a [`StudentQuery`] based on **multiple** `queries`: [`Vec<Query>`]
     pub fn build_with_multiple(mut self, queries: Vec<Query>) -> StudentQuery {
         self.kind = Some(QueryKind::Multiple(queries));
         self.build()
@@ -96,7 +105,10 @@ impl StudentQueryBuilder {
     }
 }
 
-pub struct StudentQuery(String);
+/// A simple Query that wraps around a [`String`], and is to be used in fetching the response.
+///
+/// **Meant for internal use.**
+pub(crate) struct StudentQuery(String);
 
 impl std::fmt::Display for StudentQuery {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
