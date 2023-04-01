@@ -1,3 +1,5 @@
+use strum_macros::{Display, EnumIter, EnumString};
+
 /**
     **This is a `enum` that contains the current Blue Archive roles represented in the API.**
 
@@ -11,6 +13,7 @@
     In the case that a role in the API is not present on the wrapper,
     a [`Role::Unknown(String)`] is returned to represent the unknown role with its name in the `enum`.
 */
+#[derive(EnumString, EnumIter, PartialEq, Eq)]
 pub enum Role {
     Attacker,
     Healer,
@@ -32,28 +35,29 @@ impl std::fmt::Display for Role {
 }
 
 /**
-    **This is a `enum` that contains the current Blue Archive weapons represented in the API.**
+    **This is a `enum` that contains the current Blue Archive squads represented in the API.**
 
-    As of the `13th of December, 2022`,
-    this is the current list of weapons represented in the API.
+    As of the `29th of March, 2023`,
+    this is the current list of squads represented in the API.
     * **Special**
     * **Striker**
 
-    In the case that a type in the API is not present on the wrapper,
-    a [`Type::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
+    In the case that a squad in the API is not present on the wrapper,
+    a [`SquadType::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
 */
-pub enum Type {
+#[derive(EnumString, EnumIter, PartialEq, Eq)]
+pub enum SquadType {
     Special,
     Striker,
     Unknown(String),
 }
 
-impl std::fmt::Display for Type {
+impl std::fmt::Display for SquadType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Type::Special => write!(f, "Special"),
-            Type::Striker => write!(f, "Striker"),
-            Type::Unknown(unknown_type) => write!(f, "{}", unknown_type),
+            SquadType::Special => write!(f, "Special"),
+            SquadType::Striker => write!(f, "Striker"),
+            SquadType::Unknown(unknown_type) => write!(f, "{}", unknown_type),
         }
     }
 }
@@ -72,6 +76,7 @@ impl std::fmt::Display for Type {
     In the case that a school in the API is not present on the wrapper,
     a [`School::Unknown(String)`] is returned to represent the unknown school with its name in the `enum`.
 */
+#[derive(EnumString, EnumIter, PartialEq, Eq)]
 pub enum School {
     Abydos,
     Gehenna,
@@ -80,6 +85,21 @@ pub enum School {
     Shanhaijing,
     Trinity,
     Unknown(String),
+}
+
+impl School {
+    pub fn full_name(&self) -> String {
+        let name = match self {
+            School::Abydos => "Abydos High School",
+            School::Gehenna => "Gehenna Academy",
+            School::Hyakkiyako => "Hyakkiyako Alliance Academy",
+            School::Millennium => "Millennium Science School",
+            School::Shanhaijing => "Shanhaijing Senior Secondary School",
+            School::Trinity => "Trinity General School",
+            School::Unknown(string) => string.as_ref(),
+        };
+        name.to_string()
+    }
 }
 
 impl std::fmt::Display for School {
@@ -108,6 +128,7 @@ impl std::fmt::Display for School {
     In the case that a weapon in the API is not present on the wrapper,
     a [`Position::Unknown(String)`] is returned to represent the unknown weapon with its name in the `enum`.
 */
+#[derive(EnumString, EnumIter, PartialEq, Eq)]
 pub enum Position {
     Front,
     Middle,
@@ -146,6 +167,7 @@ impl std::fmt::Display for Position {
     In the case that a weapon in the API is not present on the wrapper,
     a [`Weapon::Unknown(String)`] is returned to represent the unknown weapon with its name in the `enum`.
 */
+#[derive(EnumString, Display, EnumIter, PartialEq, Eq)]
 pub enum Weapon {
     AR,
     GL,
@@ -163,39 +185,21 @@ pub enum Weapon {
 
 impl Weapon {
     pub fn full_name(&self) -> String {
-        match self {
-            Weapon::AR => "Assault Rifle".to_string(),
-            Weapon::GL => "Grenade Launcher".to_string(),
-            Weapon::HG => "Handgun".to_string(),
-            Weapon::MG => "Machine Gun".to_string(),
-            Weapon::MT => "Mortar".to_string(),
-            Weapon::RF => "Rifle".to_string(),
-            Weapon::RG => "Railgun".to_string(),
-            Weapon::RL => "Rocket Launcher".to_string(),
-            Weapon::SG => "Shotgun".to_string(),
-            Weapon::SMG => "Submachine Gun".to_string(),
-            Weapon::SR => "Sniper Rifle".to_string(),
-            Weapon::Unknown(string) => string.to_string(),
-        }
-    }
-}
-
-impl std::fmt::Display for Weapon {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Weapon::AR => write!(f, "AR"),
-            Weapon::GL => write!(f, "GL"),
-            Weapon::HG => write!(f, "HG"),
-            Weapon::MG => write!(f, "MG"),
-            Weapon::MT => write!(f, "MT"),
-            Weapon::RF => write!(f, "RF"),
-            Weapon::RG => write!(f, "RG"),
-            Weapon::RL => write!(f, "RL"),
-            Weapon::SG => write!(f, "SG"),
-            Weapon::SMG => write!(f, "SMG"),
-            Weapon::SR => write!(f, "SR"),
-            Weapon::Unknown(string) => write!(f, "{string}"),
-        }
+        let name = match self {
+            Weapon::AR => "Assault Rifle",
+            Weapon::GL => "Grenade Launcher",
+            Weapon::HG => "Handgun",
+            Weapon::MG => "Machine Gun",
+            Weapon::MT => "Mortar",
+            Weapon::RF => "Rifle",
+            Weapon::RG => "Railgun",
+            Weapon::RL => "Rocket Launcher",
+            Weapon::SG => "Shotgun",
+            Weapon::SMG => "Submachine Gun",
+            Weapon::SR => "Sniper Rifle",
+            Weapon::Unknown(string) => string.as_str(),
+        };
+        name.to_string()
     }
 }
 
@@ -211,6 +215,7 @@ impl std::fmt::Display for Weapon {
     In the case that a damage type in the API is not present on the wrapper,
     a [`Damage::Unknown(String)`] is returned to represent the unknown damage type with its name in the `enum`.
 */
+#[derive(EnumString, EnumIter, PartialEq, Eq)]
 pub enum Damage {
     Explosion,
     Mystic,
@@ -241,6 +246,8 @@ impl std::fmt::Display for Damage {
     In the case that a armor in the API is not present on the wrapper,
     a [`Armor::Unknown(String)`] is returned to represent the unknown armor with its name in the `enum`.
 */
+
+#[derive(EnumString, EnumIter, PartialEq, Eq)]
 pub enum Armor {
     Heavy,
     Light,
@@ -257,4 +264,87 @@ impl std::fmt::Display for Armor {
             Armor::Unknown(string) => write!(f, "{string}"),
         }
     }
+}
+
+/**
+    **This is a `enum` that contains the current Blue Archive clubs represented in the API.**
+
+    As of the `3rd of March, 2023`,
+    this is the current list of armor represented in the API.
+
+    * **Kohshinjo68**
+    * **SPTF**
+    * **GourmetClub**
+    * **RemedialClass**
+    * **Fuuki**
+    * **Countermeasure**
+    * **Veritas**
+    * **CleanNClearing**
+    * **Meihuayuan**
+    * **TrainingClub**
+    * **Justice**
+    * **NinpoKenkyubu**
+    * **GameDev**
+    * **RedwinterSecretary**
+    * **HoukagoDessert**
+    * **EmptyClub**
+    * **Shugyobu**
+    * **BookClub**
+    * **SisterHood**
+    * **RabbitPlatoon**
+    * **AriusSqud**
+    * **Onmyobu**
+    * **TheSeminar**
+    * **Anzenkyoku**
+    * **Engineer**
+    * **TrinityVigilance**
+    * **MatsuriOffice**
+    * **Endanbou**
+    * **Class227**
+    * **Emergentology**
+    * **PandemoniumSociety**
+    * **FoodService**
+    * **KnightsHospitalle**
+
+    In the case that a armor in the API is not present on the wrapper,
+    a [`Club::Unknown(String)`] is returned to represent the unknown armor with its name in the `enum`.
+*/
+#[derive(Debug, Eq, Hash, PartialEq, EnumIter, EnumString, Display)]
+pub enum Club {
+    Kohshinjo68,
+    SPTF,
+    GourmetClub,
+    RemedialClass,
+    Fuuki,
+    Countermeasure,
+    Veritas,
+    CleaningNClearing,
+    Meihuayuan,
+    TrainingClub,
+    Justice,
+    NinpoKenkyubu,
+    GameDev,
+    RedwinterSecretary,
+    HoukagoDessert,
+    #[strum(serialize = "EmptyClub")]
+    Unassigned,
+    Shugyobu,
+    BookClub,
+    SisterHood,
+    RabbitPlatoon,
+    AriusSqud,
+    Onmyobu,
+    TheSeminar,
+    #[strum(serialize = "anzenkyoku")]
+    Anzenkyoku,
+    Engineer,
+    TrinityVigilance,
+    MatsuriOffice,
+    Endanbou,
+    Class227,
+    Emergentology,
+    PandemoniumSociety,
+    FoodService,
+    KnightsHospitaller,
+    Unknown(String),
 }

@@ -1,6 +1,11 @@
+use std::str::FromStr;
+
 use serde::{Deserialize, Serialize};
 
-use crate::enums;
+use crate::{
+    enums::{Club, School},
+    Armor, Damage, Position, Role, SquadType, Weapon,
+};
 
 /**
     A `struct` when a [`Student`] is searched with an ID.
@@ -36,7 +41,7 @@ pub struct PartialStudentData {
 }
 
 /**
-Contains partial information of a [`Student`]. Contains limited data.
+Contains partial information of a [`Student`], and contains limited data.
 */
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -56,7 +61,9 @@ pub struct PartialStudent {
 }
 
 /**
-    The "desired" information of a Blue Archive student. Contains the most data.
+    The "desired" information of a Blue Archive student, and contains the most data.
+
+    Has special methods to access certain data easier.
 */
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -72,23 +79,115 @@ pub struct Student {
     pub skills: Skills,
 }
 
+/// The Age of a Blue Archive Student.
+///
+/// The actual [`Option<u8>`] is wrapped under this struct to make it easier to display.
+#[derive(Debug)]
+pub struct Age(Option<u8>);
+
+impl std::fmt::Display for Age {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.0 {
+            Some(age) => write!(f, "{age}"),
+            None => write!(f, "None"),
+        }
+    }
+}
+
 impl Student {
-    pub fn school(&self) -> enums::School {
+    /// The name of the Student.
+    pub fn name(&self) -> String {
+        self.character.name.to_string()
+    }
+
+    /// The age of the [`Student`], referred to as [`Age<u8>`].
+    /// * Unknown Ages or "Top Secret" will be referred to as [`None`].
+    pub fn age(&self) -> Age {
+        match self.info.age.find(|c| c == ' ') {
+            Some(ix) => match self.info.age[0..ix].parse::<u8>() {
+                Ok(num) => Age(Some(num)),
+                Err(_) => Age(None),
+            },
+            None => Age(None),
+        }
+    }
+
+    /// The [`SquadType`] the [`Student`] is apart of.
+    pub fn squad_type(&self) -> SquadType {
+        match SquadType::from_str(self.character.squad_type.as_str()) {
+            Ok(squad) => squad,
+            Err(_) => SquadType::Unknown(self.character.squad_type.to_string()),
+        }
+    }
+
+    /// The [`Weapon`] the [`Student`] uses.
+    pub fn weapon(&self) -> Weapon {
+        match Weapon::from_str(self.character.weapon_type.as_str()) {
+            Ok(weapon) => weapon,
+            Err(_) => Weapon::Unknown(self.character.weapon_type.to_string()),
+        }
+    }
+
+    /// The [`School`] the [`Student`] belongs to.
+    pub fn school(&self) -> School {
         match self.info.school.as_str() {
-            "Abydos" => enums::School::Abydos,
-            "Gehenna" => enums::School::Gehenna,
-            "Hyakkiyako" => enums::School::Hyakkiyako,
-            "Millennium" => enums::School::Millennium,
-            "Shanhaijing" => enums::School::Shanhaijing,
-            "Trinity" => enums::School::Trinity,
-            _ => enums::School::Unknown(self.info.school.clone()),
+            "Abydos" => School::Abydos,
+            "Gehenna" => School::Gehenna,
+            "Hyakkiyako" => School::Hyakkiyako,
+            "Millennium" => School::Millennium,
+            "Shanhaijing" => School::Shanhaijing,
+            "Trinity" => School::Trinity,
+            _ => School::Unknown(self.info.school.clone()),
+        }
+    }
+
+    /// The [`Club`] the [`Student`] belongs to.
+    pub fn club(&self) -> Club {
+        match Club::from_str(&self.info.club) {
+            Ok(club) => club,
+            Err(_) => Club::Unknown(self.info.club.clone()),
+        }
+    }
+
+    /// The [`Role`] the [`Student`] is apart of.
+    pub fn role(&self) -> Role {
+        match Role::from_str(&self.character.role) {
+            Ok(role) => role,
+            Err(_) => Role::Unknown(self.character.role.clone()),
+        }
+    }
+
+    pub fn position(&self) -> Position {
+        match Position::from_str(&self.character.position) {
+            Ok(pos) => pos,
+            Err(_) => Position::Unknown(self.character.position.clone()),
+        }
+    }
+
+    pub fn damage(&self) -> Damage {
+        match Damage::from_str(&self.character.bullet_type) {
+            Ok(damage) => damage,
+            Err(_) => Damage::Unknown(self.character.bullet_type.clone()),
+        }
+    }
+
+    pub fn armor(&self) -> Armor {
+        match Armor::from_str(&self.character.armor_type) {
+            Ok(armor) => armor,
+            Err(_) => Armor::Unknown(self.character.armor_type.clone()),
         }
     }
 }
 
 impl std::fmt::Display for Student {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}, {}", self.character.name, self.info.age)
+        write!(
+            f,
+            "{}, Age: {}, apart of {}",
+            self.name(),
+            self.age(),
+            self.school()
+        )
     }
 }
 
@@ -112,7 +211,7 @@ pub struct Character {
 pub struct Info {
     pub age: String,
     #[serde(alias = "artis")]
-    pub artist: String,
+    pub artist: Option<String>,
     pub club: String,
     pub school: String,
     pub school_year: String,

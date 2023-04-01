@@ -1,10 +1,15 @@
-use blue_archive::Type;
+use blue_archive::{Query, School, SquadType};
 
 #[tokio::main]
 async fn main() {
-    match blue_archive::fetch_students_by_type(Type::Striker).await {
+    match blue_archive::fetch_students_by_queries([
+        Query::SquadType(SquadType::Striker),
+        Query::School(School::Trinity),
+    ])
+    .await
+    {
         Ok(students) => {
-            println!("Here is a list of Blue Archive Students that are Strikers.");
+            println!("Here is a list of Blue Archive Students that are Strikers & apart of Trinity General School.");
             for student in students.iter() {
                 println!("-----------------------------------------------------------");
                 println!(
