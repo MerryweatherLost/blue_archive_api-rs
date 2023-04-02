@@ -89,13 +89,11 @@ pub(crate) mod helper {
     */
     pub(crate) async fn handle_reqwest_error<IS: Into<String>>(
         query: IS,
-        status_code: reqwest::StatusCode,
         error: reqwest::Error,
     ) -> BlueArchiveError {
         match error.status() == Some(reqwest::StatusCode::NOT_FOUND) {
             true => BlueArchiveError::NotFound {
                 query: query.into(),
-                status_code,
             },
             false => BlueArchiveError::Reqwest(error),
         }
@@ -166,11 +164,9 @@ pub async fn fetch_student_by_name<IS: Into<String>>(
     ))
     .await?;
 
-    let status_code = response.status();
-
     match response.error_for_status_ref() {
         Ok(_) => Ok(response.json::<Student>().await?),
-        Err(why) => Err(helper::handle_reqwest_error(name, status_code, why).await),
+        Err(why) => Err(helper::handle_reqwest_error(name, why).await),
     }
 }
 
@@ -377,11 +373,9 @@ pub async fn fetch_random_student() -> Result<Option<Student>, BlueArchiveError>
 pub async fn fetch_equipment_by_id(id: u32) -> Result<Equipment, BlueArchiveError> {
     let response = helper::fetch_response(Endpoints::Equipment(EquipmentIDOrName::ID(id))).await?;
 
-    let status_code = response.status();
-
     match response.error_for_status_ref() {
         Ok(_) => Ok(response.json::<Equipment>().await?),
-        Err(why) => Err(helper::handle_reqwest_error(id.to_string(), status_code, why).await),
+        Err(why) => Err(helper::handle_reqwest_error(id.to_string(), why).await),
     }
 }
 
