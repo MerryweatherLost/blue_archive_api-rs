@@ -54,7 +54,7 @@ impl BlueArchiveFetcher {
                 };
                 checks.push(result)
             }
-            if checks.iter().all(|&x| x == true) {
+            if checks.iter().all(|&x| x) {
                 filtered_students.push(student.clone())
             }
         }
