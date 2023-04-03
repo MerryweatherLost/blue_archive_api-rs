@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumIter, EnumString};
 
 /**
@@ -88,6 +89,7 @@ pub enum School {
 }
 
 impl School {
+    /// The full name of the school.
     pub fn full_name(&self) -> String {
         let name = match self {
             School::Abydos => "Abydos High School",
@@ -184,6 +186,7 @@ pub enum Weapon {
 }
 
 impl Weapon {
+    /// The full name of the weapon.
     pub fn full_name(&self) -> String {
         let name = match self {
             Weapon::AR => "Assault Rifle",
@@ -197,7 +200,7 @@ impl Weapon {
             Weapon::SG => "Shotgun",
             Weapon::SMG => "Submachine Gun",
             Weapon::SR => "Sniper Rifle",
-            Weapon::Unknown(string) => string.as_str(),
+            Weapon::Unknown(string) => string,
         };
         name.to_string()
     }
@@ -237,7 +240,7 @@ impl std::fmt::Display for Damage {
 /**
     **This is a `enum` that contains the current Blue Archive armor represented in the API.**
 
-    As of the `14th of December, 2022`,
+    As of the `3rd of April, 2023`,
     this is the current list of armor represented in the API.
     * **Explosion**
     * **Mystic**
@@ -269,7 +272,7 @@ impl std::fmt::Display for Armor {
 /**
     **This is a `enum` that contains the current Blue Archive clubs represented in the API.**
 
-    As of the `3rd of March, 2023`,
+    As of the `3rd of April, 2023`,
     this is the current list of armor represented in the API.
 
     * **Kohshinjo68**
@@ -306,12 +309,13 @@ impl std::fmt::Display for Armor {
     * **FoodService**
     * **KnightsHospitalle**
 
-    In the case that a armor in the API is not present on the wrapper,
-    a [`Club::Unknown(String)`] is returned to represent the unknown armor with its name in the `enum`.
+    In the case that a club in the API is not present on the wrapper,
+    a [`Club::Unknown(String)`] is returned to represent the unknown club with its name in the `enum`.
 */
-#[derive(Debug, Eq, Hash, PartialEq, EnumIter, EnumString, Display)]
+#[derive(Debug, Hash, Eq, PartialEq, EnumIter, EnumString, Display)]
 pub enum Club {
-    Kohshinjo68,
+    #[strum(serialize = "Kohshinjo68")]
+    ProblemSolver68,
     SPTF,
     GourmetClub,
     RemedialClass,
@@ -347,4 +351,38 @@ pub enum Club {
     FoodService,
     KnightsHospitaller,
     Unknown(String),
+}
+
+/**
+    **This is a `enum` that contains the current Blue Archive rarities represented in the API.**
+
+    As of the `3rd of April, 2023`,
+    this is the current list of armor represented in the API.
+
+    * **R** (Rare)
+    * **SR** (Super Rare)
+    * **SSR** (Super-Super Rare)
+
+    In the case that a rarity in the API is not present on the wrapper,
+    a [`Rarity::Unknown(String)`] is returned to represent the unknown rarity with its name in the `enum`.
+*/
+#[derive(Clone, Debug, Display, Deserialize, Serialize, EnumString, Eq, PartialEq)]
+pub enum Rarity {
+    R,
+    SR,
+    SSR,
+    Unknown(String),
+}
+
+impl Rarity {
+    /// The full name of the rarity type.
+    pub fn full_name(&self) -> String {
+        let name = match self {
+            Rarity::R => "Rare",
+            Rarity::SR => "Super Rare",
+            Rarity::SSR => "Super-Super Rare",
+            Rarity::Unknown(string) => string,
+        };
+        name.to_string()
+    }
 }

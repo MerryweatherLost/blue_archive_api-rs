@@ -1,3 +1,6 @@
+//! Enums related to querying [`Student`]'s, and also contains a [`StudentQuery`]
+//! and an associated builder pattern for internal usage.
+
 use crate::{Armor, Damage, Position, Role, School, SquadType, Weapon};
 
 /**
@@ -88,7 +91,7 @@ impl StudentQueryBuilder {
             self.query_string = match query_kind {
                 QueryKind::Single(query) => match query {
                     Query::ID(_) | Query::Released(_) => query.to_string(),
-                    _ => format!("query?{}", query.to_string()),
+                    _ => format!("query?{}", query),
                 },
                 QueryKind::Multiple(queries) => format!(
                     "query?{}",
