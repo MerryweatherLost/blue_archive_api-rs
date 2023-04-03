@@ -1,3 +1,5 @@
+//! The types associated with the API.
+
 use serde::{Deserialize, Serialize};
 
 pub mod banners;

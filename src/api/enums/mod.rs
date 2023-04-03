@@ -1,3 +1,5 @@
+//! Contains the enums used in the API internally.
+
 use self::students::StudentQuery;
 
 pub mod students;

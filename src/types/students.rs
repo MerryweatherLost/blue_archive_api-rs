@@ -3,7 +3,7 @@ use std::str::FromStr;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    enums::{Club, School},
+    enums::{Club, Rarity, School},
     Armor, Damage, Position, Role, SquadType, Weapon,
 };
 
@@ -13,22 +13,39 @@ use crate::{
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct IDStudent {
+    /// The ID of the student.
     pub id: u32,
+    /// TBD
     pub localize_etc_id: u32,
+    /// The name of the student.
     pub name: String,
+    /// When the student was released.
     pub released: bool,
+    /// If the student is playable.
     pub playable: bool,
+    /// The amount of stars the student has upon obtaining them.
     pub base_star: u8,
+    /// The rarity of the student.
     pub rarity: String,
+    /// The type of armor the student has.
     pub armor_type: String,
+    /// The type of damage (or the type of bullet) of the student.
     pub bullet_type: String,
+    /// The position of the student.
     pub position: String,
+    /// The role of the student.
     pub role: String,
+    /// The type of squad of the student.
     pub squad_type: String,
+    /// The type of weapon the student uses.
     pub weapon_type: String,
+    /// The club the student is apart of.
     pub club: String,
+    /// The school the student is apart of.
     pub school: String,
+    /// TBD
     pub equipment_type: Vec<String>,
+    /// TBD
     pub tags: Vec<String>,
 }
 
@@ -46,17 +63,29 @@ Contains partial information of a [`Student`], and contains limited data.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct PartialStudent {
+    /// The ID of the student.
     pub id: u32,
+    /// The amount of stars the student has upon obtaining them.
     pub base_star: u8,
+    /// The rarity of the student.
     pub rarity: String,
+    /// The name of the student.
     pub name: String,
+    /// The profile of the student.
     pub profile: String,
+    /// The type of armor of the student.
     pub armor_type: String,
+    /// The type of damage (or the type of bullet) of the student.
     pub bullet_type: String,
+    /// The position of the student.
     pub position: String,
+    /// The role of the student.
     pub role: String,
+    /// The type of squad of the student.
     pub squad_type: String,
+    /// The type of weapon the student has.
     pub weapon_type: String,
+    /// The type of terrain modifiers.
     pub terrain: Terrain,
 }
 
@@ -68,44 +97,34 @@ pub struct PartialStudent {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Student {
+    /// The ID associated with the student.
     pub id: u32,
+    /// If the student is released.
     pub is_released: bool,
+    /// If the student is a playable character in the game.
     pub is_playable: bool,
+    /// Details about the character, mainly relating to their name and profile.
     pub character: Character,
+    /// Details about the character pertaining to their age, school, and other things.
     pub info: Info,
+    /// Details pertaining to the stats of the student.
     #[serde(alias = "stat")]
     pub stats: Stats,
+    /// Details relating to the terrain modifiers of the student.
     pub terrain: Terrain,
+    /// Details relating to the skills of the student.
     pub skills: Skills,
 }
 
-/// The Age of a Blue Archive Student.
-///
-/// The actual [`Option<u8>`] is wrapped under this struct to make it easier to display.
-#[derive(Debug)]
-pub struct Age(Option<u8>);
-
-impl Age {
-    /// A method to represent [`Age`] as a [`u8`].
-    ///
-    /// Will return `0` if there is no age for the [`Student`].
-    pub fn as_u8(&self) -> u8 {
-        self.0.unwrap_or(0)
-    }
-}
-impl std::fmt::Display for Age {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self.0 {
-            Some(age) => write!(f, "{age}"),
-            None => write!(f, "None"),
-        }
-    }
-}
-
 impl Student {
-    /// The name of the Student.
+    /// The name of the [`Student`].
     pub fn name(&self) -> String {
         self.character.name.to_string()
+    }
+
+    /// The profile of the [`Student`].
+    pub fn profile(&self) -> String {
+        self.character.profile.to_string()
     }
 
     /// The age of the [`Student`], referred to as [`Age<u8>`].
@@ -118,6 +137,11 @@ impl Student {
             },
             None => Age(None),
         }
+    }
+
+    /// The [`Rarity`] of the [`Student`].
+    pub fn rarity(&self) -> Rarity {
+        self.character.rarity.clone()
     }
 
     /// The [`SquadType`] the [`Student`] is apart of.
@@ -165,6 +189,7 @@ impl Student {
         }
     }
 
+    /// The [`Position`] the [`Student`] belongs to.
     pub fn position(&self) -> Position {
         match Position::from_str(&self.character.position) {
             Ok(pos) => pos,
@@ -172,6 +197,7 @@ impl Student {
         }
     }
 
+    /// The type of [`Damage`] the [`Student`] deals.
     pub fn damage(&self) -> Damage {
         match Damage::from_str(&self.character.bullet_type) {
             Ok(damage) => damage,
@@ -179,6 +205,7 @@ impl Student {
         }
     }
 
+    /// The type of [`Armor`] the [`Student`] has.
     pub fn armor(&self) -> Armor {
         match Armor::from_str(&self.character.armor_type) {
             Ok(armor) => armor,
@@ -199,30 +226,69 @@ impl std::fmt::Display for Student {
     }
 }
 
+/// The Age of a Blue Archive Student.
+///
+/// The actual [`Option<u8>`] is wrapped under this struct to make it easier to display.
+#[derive(Debug)]
+pub struct Age(Option<u8>);
+
+impl Age {
+    /// A method to represent [`Age`] as a [`u8`].
+    ///
+    /// Will return `0` if there is no age for the [`Student`].
+    pub fn as_u8(&self) -> u8 {
+        self.0.unwrap_or(0)
+    }
+}
+impl std::fmt::Display for Age {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.0 {
+            Some(age) => write!(f, "{age}"),
+            None => write!(f, "None"),
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Character {
+    /// The type of armor the student has (you can also access this through the given method in [`Student`]).
     pub armor_type: String,
-    pub base_star: u32,
+    /// The amount of stars a student has upon obtaining them.
+    pub base_star: u8,
+    /// The type of damage (or type of bullet) of the student (you can also access this through the given method in [`Student`]).
     pub bullet_type: String,
+    /// The name of the student (you can also access this through the given method in [`Student`]).
     pub name: String,
+    /// The position of the student (you can also access this through the given method in [`Student`]).
     pub position: String,
+    /// The profile of the student (you can also access this through the given method in [`Student`]).
     pub profile: String,
-    pub rarity: String,
+    /// The raw rarity of the student (you can also access this through the given method in [`Student`]).
+    pub rarity: Rarity,
+    /// The role of the student (you can also access this through the given method in [`Student`]).
     pub role: String,
+    /// The type of squad of the student (you can also access this through the given method in [`Student`]).
     pub squad_type: String,
+    /// The type of weapon the student has (you can also access this through the given method in [`Student`]).
     pub weapon_type: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Info {
+    /// The age of the student (represented as ... years old). (you can also access this through the given method in [`Student`]).
     pub age: String,
+    /// The artist of the Student.
     #[serde(alias = "artis")]
     pub artist: Option<String>,
+    /// The raw club of the student (you can also access this through the given method in [`Student`]).
     pub club: String,
+    /// The raw school of the student (you can also access this through the given method in [`Student`]).
     pub school: String,
+    /// The given school year of the student.
     pub school_year: String,
+    /// The voice actor of the student.
     pub voice_actor: String,
 }
 
