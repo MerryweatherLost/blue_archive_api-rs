@@ -88,7 +88,7 @@ impl StudentQueryBuilder {
             self.query_string = match query_kind {
                 QueryKind::Single(query) => match query {
                     Query::ID(_) | Query::Released(_) => query.to_string(),
-                    _ => format!("query?{}", query.to_string()),
+                    _ => format!("query?{}", query),
                 },
                 QueryKind::Multiple(queries) => format!(
                     "query?{}",

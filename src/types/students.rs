@@ -83,8 +83,16 @@ pub struct Student {
 ///
 /// The actual [`Option<u8>`] is wrapped under this struct to make it easier to display.
 #[derive(Debug)]
-pub struct Age(pub Option<u8>);
+pub struct Age(Option<u8>);
 
+impl Age {
+    /// A method to represent [`Age`] as a [`u8`].
+    ///
+    /// Will return `0` if there is no age for the [`Student`].
+    pub fn as_u8(&self) -> u8 {
+        self.0.unwrap_or(0)
+    }
+}
 impl std::fmt::Display for Age {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.0 {

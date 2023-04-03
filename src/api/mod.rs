@@ -16,7 +16,7 @@ use crate::api::enums::*;
 use crate::types::*;
 use anyhow::Result;
 use rand::seq::SliceRandom;
-use reqwest::Response;
+use reqwest::{Response, StatusCode};
 
 use enums::Query;
 use errors::BlueArchiveError;
@@ -40,8 +40,8 @@ pub(crate) mod helper {
             }
             Endpoints::Equipment(id_or_string) => {
                 let path = match id_or_string {
-                    EquipmentIDOrName::ID(id) => format!("{}?id=true", id),
-                    EquipmentIDOrName::Name(string) => string,
+                    IDOrName::ID(id) => format!("{}?id=true", id),
+                    IDOrName::Name(string) => string,
                 };
                 format!("equipment/{}", path)
             }
@@ -91,7 +91,7 @@ pub(crate) mod helper {
         query: IS,
         error: reqwest::Error,
     ) -> BlueArchiveError {
-        match error.status() == Some(reqwest::StatusCode::NOT_FOUND) {
+        match error.status() == Some(StatusCode::NOT_FOUND) {
             true => BlueArchiveError::NotFound {
                 query: query.into(),
             },
@@ -287,10 +287,7 @@ pub async fn fetch_all_partial_students() -> Result<Vec<PartialStudent>, BlueArc
             match blue_archive::fetch_all_students().await {
                 Ok(students) => {
                     for student in students.iter() {
-                        println!(
-                            "Name: {}\nAge:{}, Club:{}",
-                            student.name(), student.age(), student.club()
-                        )
+                        println!("{student}")
                     }
                 }
                 Err(err) => {
@@ -371,7 +368,7 @@ pub async fn fetch_random_student() -> Result<Option<Student>, BlueArchiveError>
     ```
 */
 pub async fn fetch_equipment_by_id(id: u32) -> Result<Equipment, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Equipment(EquipmentIDOrName::ID(id))).await?;
+    let response = helper::fetch_response(Endpoints::Equipment(IDOrName::ID(id))).await?;
 
     match response.error_for_status_ref() {
         Ok(_) => Ok(response.json::<Equipment>().await?),
@@ -398,7 +395,7 @@ pub async fn fetch_equipment_by_name<IS: Into<String>>(
     name: IS,
 ) -> Result<Equipment, BlueArchiveError> {
     let response =
-        helper::fetch_response(Endpoints::Equipment(EquipmentIDOrName::Name(name.into()))).await?;
+        helper::fetch_response(Endpoints::Equipment(IDOrName::Name(name.into()))).await?;
     Ok(response.json::<Equipment>().await?)
 }
 /**

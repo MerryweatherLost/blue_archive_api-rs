@@ -5,7 +5,7 @@ pub mod students;
 pub use students::Query;
 
 /// An enum that matches either a `ID`: ([`u32`]) or a `Name`: ([`String`]).
-pub(crate) enum EquipmentIDOrName {
+pub(crate) enum IDOrName {
     ID(u32),
     Name(String),
 }
@@ -20,7 +20,7 @@ pub(crate) enum Endpoints {
     /**
         Takes a `ID`: ([`u32`]) or a `String`: [`String`], to use for querying data about equipment.
     */
-    Equipment(EquipmentIDOrName),
+    Equipment(IDOrName),
     /// Blue Archive stages.
     ///
     /// <- underscored for now due to this endpoint not being documented (or I'm just not aware of it being done).
