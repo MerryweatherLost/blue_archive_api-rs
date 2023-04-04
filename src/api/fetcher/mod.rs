@@ -9,6 +9,7 @@ use crate::{types::*, BlueArchiveError, Query};
 /// It is recommended if you'd prefer hot-loading all the data first, **rather than making multiple asynchronous queries**, e.g. for fetching all instances of
 /// [`Student`], which is difficult to fetch due to API limitations.
 
+#[derive(Debug, Clone)]
 pub struct BlueArchiveFetcher {
     pub students: Vec<Student>,
 }
