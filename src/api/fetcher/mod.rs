@@ -3,7 +3,7 @@
 use anyhow::Result;
 use rand::seq::SliceRandom;
 
-use crate::{types::*, Query};
+use crate::{types::*, BlueArchiveError, Query};
 
 /// Allows for caching of Blue Archive data, with a cost of memory and time, although functions and accessing of data will be more easier.
 /// It is recommended if you'd prefer hot-loading all the data first, **rather than making multiple asynchronous queries**, e.g. for fetching all instances of
@@ -13,6 +13,12 @@ pub struct BlueArchiveFetcher {
     pub students: Vec<Student>,
 }
 impl BlueArchiveFetcher {
+    /// Refreshes the cache with new data, should be used rarely.
+    pub async fn refresh(&mut self) -> Result<(), BlueArchiveError> {
+        self.students = crate::fetch_all_students().await?;
+        Ok(())
+    }
+
     /// Allows for the creation of a new fetcher, though can fail if there are API issues, such as it being down.
     pub async fn new() -> Result<Self> {
         Ok(Self {
@@ -29,8 +35,16 @@ impl BlueArchiveFetcher {
             .cloned()
     }
 
+    /// Allows you to search for a [`Student`] by their id, if they exist.
+    pub fn get_student_by_id(&self, id: u32) -> Option<Student> {
+        self.students
+            .iter()
+            .find(|student| student.id == id)
+            .cloned()
+    }
+
     /// Fetches a random [`Student`], could be [`None`] if the `students` are empty.
-    pub async fn fetch_random_student(&self) -> Option<Student> {
+    pub fn fetch_random_student(&self) -> Option<Student> {
         self.students.choose(&mut rand::thread_rng()).cloned()
     }
 
