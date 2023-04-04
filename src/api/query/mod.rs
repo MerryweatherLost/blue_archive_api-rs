@@ -1,5 +1,5 @@
 use crate::api::enums::*;
-use crate::{enums::*, fetch_all_partial_students, fetch_all_students, helper};
+use crate::{enums::*, fetch_all_students, helper};
 
 use crate::errors::BlueArchiveError;
 use crate::types::*;

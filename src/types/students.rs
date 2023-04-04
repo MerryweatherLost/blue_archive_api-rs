@@ -162,14 +162,9 @@ impl Student {
 
     /// The [`School`] the [`Student`] belongs to.
     pub fn school(&self) -> School {
-        match self.info.school.as_str() {
-            "Abydos" => School::Abydos,
-            "Gehenna" => School::Gehenna,
-            "Hyakkiyako" => School::Hyakkiyako,
-            "Millennium" => School::Millennium,
-            "Shanhaijing" => School::Shanhaijing,
-            "Trinity" => School::Trinity,
-            _ => School::Unknown(self.info.school.clone()),
+        match School::from_str(&self.info.school) {
+            Ok(school) => school,
+            Err(_) => School::Unknown(self.info.school.clone()),
         }
     }
 
@@ -218,7 +213,8 @@ impl std::fmt::Display for Student {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{}, Age: {}, apart of {}",
+            "(#{} :: {} :: Age: {} :: School:{})",
+            self.id,
             self.name(),
             self.age(),
             self.school()

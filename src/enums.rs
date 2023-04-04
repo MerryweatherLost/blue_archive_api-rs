@@ -81,7 +81,7 @@ impl std::fmt::Display for SquadType {
     In the case that a school in the API is not present on the wrapper,
     a [`School::Unknown(String)`] is returned to represent the unknown school with its name in the `enum`.
 */
-#[derive(EnumString, Display, EnumIter, PartialEq, Eq)]
+#[derive(EnumString, Debug, Display, EnumIter, PartialEq, Eq)]
 pub enum School {
     Abydos,
     Gehenna,
