@@ -1,4 +1,4 @@
-//! Enums related to querying [`Student`]'s, and also contains a [`StudentQuery`]
+//! Enums related to querying students, and also contains a `StudentQuery`
 //! and an associated builder pattern for internal usage.
 
 use crate::{Armor, Damage, Position, Role, School, SquadType, Weapon};

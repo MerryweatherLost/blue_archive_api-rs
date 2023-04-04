@@ -1,3 +1,5 @@
+//! Enums for external use via querying, and general accessibility.
+
 use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumIter, EnumString};
 
