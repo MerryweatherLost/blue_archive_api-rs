@@ -195,10 +195,8 @@ pub async fn fetch_student_by_name<IS: Into<String>>(
     ```
 */
 pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(
-        StudentQueryBuilder::new().build_with_single(Query::ID(id)),
-    ))
-    .await?;
+    let student_query = StudentQueryBuilder::new().build_with_single(Query::ID(id));
+    let response = helper::fetch_response(Endpoints::Character(student_query)).await?;
     fetch_student_by_name(response.json::<IDStudent>().await?.name).await
 }
 /**
@@ -231,10 +229,8 @@ pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
 pub async fn fetch_students_by_queries<Q: Into<Vec<Query>>>(
     queries: Q,
 ) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = helper::fetch_response(Endpoints::Character(
-        StudentQueryBuilder::new().build_with_multiple(queries.into()),
-    ))
-    .await?;
+    let student_query = StudentQueryBuilder::new().build_with_multiple(queries.into());
+    let response = helper::fetch_response(Endpoints::Character(student_query)).await?;
     helper::fetch_students_from_query_response(response).await
 }
 /**
@@ -260,11 +256,8 @@ pub async fn fetch_students_by_queries<Q: Into<Vec<Query>>>(
     ```
 */
 pub async fn fetch_all_partial_students() -> Result<Vec<PartialStudent>, BlueArchiveError> {
-    let response = match helper::fetch_response(Endpoints::Character(
-        StudentQueryBuilder::new().build_empty(),
-    ))
-    .await
-    {
+    let student_query = StudentQueryBuilder::new().build_empty();
+    let response = match helper::fetch_response(Endpoints::Character(student_query)).await {
         Ok(resp) => resp,
         Err(err) => return Err(err),
     };

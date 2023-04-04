@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 
-use anyhow::Result;
 use blue_archive::{types::Student, Club};
 
 use strum::IntoEnumIterator;
+
+use anyhow::Result;
 
 #[tokio::main]
 async fn main() -> Result<()> {
