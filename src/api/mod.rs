@@ -61,7 +61,7 @@ pub(crate) mod helper {
         let mut students: Vec<Student> = vec![];
         let student_name_list = match response.json::<Vec<String>>().await {
             Ok(name_list) => name_list,
-            Err(err) => return Err(BlueArchiveError::Reqwest(err)),
+            Err(_) => vec![], // <- represents no students.
         };
 
         // Concurrent Requests
