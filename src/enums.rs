@@ -272,84 +272,116 @@ impl std::fmt::Display for Armor {
 /**
     **This is a `enum` that contains the current Blue Archive clubs represented in the API.**
 
-    As of the `3rd of April, 2023`,
+    As of the `4th of April, 2023`,
     this is the current list of armor represented in the API.
 
-    * **Kohshinjo68**
-    * **SPTF**
-    * **GourmetClub**
-    * **RemedialClass**
-    * **Fuuki**
-    * **Countermeasure**
-    * **Veritas**
-    * **CleanNClearing**
-    * **Meihuayuan**
-    * **TrainingClub**
-    * **Justice**
-    * **NinpoKenkyubu**
-    * **GameDev**
-    * **RedwinterSecretary**
-    * **HoukagoDessert**
-    * **EmptyClub**
-    * **Shugyobu**
-    * **BookClub**
-    * **SisterHood**
-    * **RabbitPlatoon**
-    * **AriusSqud**
-    * **Onmyobu**
-    * **TheSeminar**
-    * **Anzenkyoku**
-    * **Engineer**
-    * **TrinityVigilance**
-    * **MatsuriOffice**
-    * **Endanbou**
-    * **Class227**
-    * **Emergentology**
-    * **PandemoniumSociety**
-    * **FoodService**
-    * **KnightsHospitalle**
+    - **Problem Solver 68**
+    - **Super Phenomenon Task Force**
+    - **Gourmet Research Society**
+    - **Make Up Work Club**
+    - **Prefect Team**
+    - **Foreclosure Task Force**
+    - **Veritas**
+    - **Cleaning & Clearing**
+    - **Plum Blossom Garden**
+    - **Athletics Training Club**
+    - **Ninjutsu Research Department**
+    - **Justice Task Force**
+    - **Game Development Department**
+    - **Red Winter Secretary**
+    - **After School Sweets Club**
+    - **Unassigned**
+    - **Inner Discipline Club**
+    - **Library Committee**
+    - **Sisterhood**
+    - **RABBIT Squad**
+    - **Arius Squad**
+    - **Yin-Yang Club**
+    - **Seminar**
+    - **Public Safety Bureau**
+    - **Engineering Club**
+    - **Trinity Vigilante Crew**
+    - **Festival Operations Department**
+    - **Chinese Alchemy Study Club**
+    - **Spec Ops #227**
+    - **Medical Emergency Club**
+    - **Pandemonium Society**
+    - **School Lunch Club**
+    - **Remedial Knights**
 
     In the case that a club in the API is not present on the wrapper,
     a [`Club::Unknown(String)`] is returned to represent the unknown club with its name in the `enum`.
 */
 #[derive(Debug, Hash, Eq, PartialEq, EnumIter, EnumString, Display)]
 pub enum Club {
-    #[strum(serialize = "Kohshinjo68")]
+    #[strum(serialize = "Kohshinjo68", to_string = "Problem Solver 68")]
     ProblemSolver68,
-    SPTF,
-    GourmetClub,
-    RemedialClass,
-    Fuuki,
-    Countermeasure,
+    #[strum(serialize = "SPTF", to_string = "Super Phenomenon Task Force")]
+    SuperPhenomenonTaskForce,
+    #[strum(serialize = "GourmetClub", to_string = "Gourmet Research Society")]
+    GourmetResearchSociety,
+    #[strum(serialize = "RemedialClass", to_string = "Make-Up Work Club")]
+    MakeUpWorkClub,
+    #[strum(serialize = "Fuuki", to_string = "Prefect Team")]
+    PrefectTeam,
+    #[strum(serialize = "Countermeasure", to_string = "Foreclosure Task Force")]
+    ForeclosureTaskForce,
     Veritas,
-    CleaningNClearing,
-    Meihuayuan,
-    TrainingClub,
-    Justice,
-    NinpoKenkyubu,
-    GameDev,
-    RedwinterSecretary,
-    HoukagoDessert,
-    #[strum(serialize = "EmptyClub")]
+    #[strum(serialize = "CleanNClearing", to_string = "Cleaning & Clearing")]
+    CleaningAndClearing,
+    #[strum(serialize = "Meihuayuan", to_string = "Plum Blossom Garden")]
+    PlumBlossomGarden,
+    #[strum(serialize = "TrainingClub", to_string = "Athletics Training Club")]
+    AthleticsTrainingClub,
+    #[strum(serialize = "NinpoKenkyubu", to_string = "Ninjutsu Research Club")]
+    NinjutsuResearchDepartment,
+    #[strum(serialize = "Justice", to_string = "Justice Task Force")]
+    JusticeTaskForce,
+    #[strum(serialize = "GameDev", to_string = "Game Development Department")]
+    GameDevelopmentDepartment,
+    #[strum(serialize = "RedwinterSecretary", to_string = "Red Winter Office")]
+    RedWinterSecretary,
+    #[strum(serialize = "HoukagoDessert", to_string = "After-School Sweets Club")]
+    AfterSchoolSweetsClub,
+    #[strum(serialize = "EmptyClub", to_string = "Unassigned")]
     Unassigned,
-    Shugyobu,
-    BookClub,
-    SisterHood,
-    RabbitPlatoon,
-    AriusSqud,
-    Onmyobu,
-    TheSeminar,
-    #[strum(serialize = "anzenkyoku")]
-    Anzenkyoku,
-    Engineer,
-    TrinityVigilance,
-    MatsuriOffice,
-    Endanbou,
-    Class227,
-    Emergentology,
+    #[strum(serialize = "Shugyobu", to_string = "Inner Discipline Club")]
+    InnerDisciplineClub,
+    #[strum(serialize = "BookClub", to_string = "Library Committee")]
+    LibraryCommittee,
+    #[strum(serialize = "SisterHood", to_string = "Sisterhood")]
+    Sisterhood,
+    #[strum(serialize = "RabbitPlatoon", to_string = "RABBIT Squad")]
+    RABBITSquad,
+    #[strum(serialize = "AriusSqud", to_string = "Arius Squad")]
+    AriusSquad,
+    #[strum(serialize = "Onmyobu", to_string = "Yin-Yang Club")]
+    YinYangClub,
+    #[strum(serialize = "TheSeminar", to_string = "Seminar")]
+    Seminar,
+    #[strum(serialize = "anzenkyoku", to_string = "Public Safety Bureau")]
+    PublicSafetyBureau,
+    #[strum(serialize = "Engineer", to_string = "Engineering Club")]
+    EngineeringClub,
+    #[strum(serialize = "TrinityVigilance", to_string = "Trinity Vigilante Crew")]
+    TrinityVigilanteCrew,
+    #[strum(
+        serialize = "MatsuriOffice",
+        to_string = "Festival Operations Department"
+    )]
+    FestivalOperationsDepartment,
+    #[strum(serialize = "Endanbou", to_string = "Chinese Alchemy Study Club")]
+    ChineseAlchemyStudyClub,
+    #[strum(serialize = "Class227", to_string = "Spec Ops #227")]
+    SpecOpsNumber227,
+    #[strum(serialize = "Emergentology", to_string = "Medical Emergency Club")]
+    MedicalEmergencyClub,
+    #[strum(serialize = "FoodService", to_string = "School Lunch Club")]
+    SchoolLunchClub,
+    #[strum(serialize = "PandemoniumSociety", to_string = "Pandemonium Society")]
     PandemoniumSociety,
-    FoodService,
-    KnightsHospitaller,
+    #[strum(serialize = "KnightsHospitaller", to_string = "Remedial Knights")]
+    RemedialKnights,
     Unknown(String),
 }
 
