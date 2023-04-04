@@ -7,6 +7,7 @@ use crate::{Armor, Damage, Position, Role, School, SquadType, Weapon};
     A `enum` that maps queries with given data in each of them.
 */
 
+#[derive(Debug)]
 pub enum Query {
     Role(Role),
     SquadType(SquadType),
@@ -39,6 +40,7 @@ impl std::fmt::Display for Query {
 /// - [`QueryKind::Name`] searching the student by name
 /// - [`QueryKind::Single`] through a single [`Query`] (ID & released are applicable)
 /// - [`QueryKind::Multiple`] through a specified [`Vec`] of [`Query`]
+#[derive(Debug)]
 pub(crate) enum QueryKind {
     Name(String),
     Single(Query),
@@ -48,6 +50,7 @@ pub(crate) enum QueryKind {
 /// Builder pattern for a [`StudentQuery`], which allows for chaining of queries based on a [`QueryKind`].
 ///
 /// **Meant for internal use.**
+#[derive(Debug)]
 pub(crate) struct StudentQueryBuilder {
     pub kind: Option<QueryKind>,
     pub query_string: String,
@@ -111,6 +114,7 @@ impl StudentQueryBuilder {
 /// A simple Query that wraps around a [`String`], and is to be used in fetching the response.
 ///
 /// **Meant for internal use.**
+#[derive(Debug)]
 pub(crate) struct StudentQuery(String);
 
 impl std::fmt::Display for StudentQuery {

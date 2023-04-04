@@ -16,7 +16,7 @@ use strum_macros::{Display, EnumIter, EnumString};
     In the case that a role in the API is not present on the wrapper,
     a [`Role::Unknown(String)`] is returned to represent the unknown role with its name in the `enum`.
 */
-#[derive(EnumString, EnumIter, PartialEq, Eq)]
+#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
 pub enum Role {
     Attacker,
     Healer,
@@ -48,7 +48,7 @@ impl std::fmt::Display for Role {
     In the case that a squad in the API is not present on the wrapper,
     a [`SquadType::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
 */
-#[derive(EnumString, EnumIter, PartialEq, Eq)]
+#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
 pub enum SquadType {
     Special,
     Striker,
@@ -85,15 +85,25 @@ impl std::fmt::Display for SquadType {
 */
 #[derive(EnumString, Debug, Display, EnumIter, PartialEq, Eq)]
 pub enum School {
+    /// **Abydos** High School
     Abydos,
+    /// **Gehenna** Academy
     Gehenna,
+    /// **Hyakkiyako** Alliance Academy
     Hyakkiyako,
+    /// **Millennium** Science School
     Millennium,
+    /// **Shanhaijing** Senior Secondary School
     Shanhaijing,
+    /// **Trinity** General School
     Trinity,
+    /// **Red Winter** Federal Academy
     RedWinter,
+    /// **Valkyrie** Police Academy
     Valkyrie,
+    /// **Arius** Branch School
     Arius,
+    /// **SRT** Special Academy
     SRT,
     Unknown(String),
 }
@@ -130,7 +140,7 @@ impl School {
     In the case that a weapon in the API is not present on the wrapper,
     a [`Position::Unknown(String)`] is returned to represent the unknown weapon with its name in the `enum`.
 */
-#[derive(EnumString, EnumIter, PartialEq, Eq)]
+#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
 pub enum Position {
     Front,
     Middle,
@@ -169,7 +179,7 @@ impl std::fmt::Display for Position {
     In the case that a weapon in the API is not present on the wrapper,
     a [`Weapon::Unknown(String)`] is returned to represent the unknown weapon with its name in the `enum`.
 */
-#[derive(EnumString, Display, EnumIter, PartialEq, Eq)]
+#[derive(Debug, EnumString, Display, EnumIter, PartialEq, Eq)]
 pub enum Weapon {
     AR,
     GL,
@@ -218,7 +228,7 @@ impl Weapon {
     In the case that a damage type in the API is not present on the wrapper,
     a [`Damage::Unknown(String)`] is returned to represent the unknown damage type with its name in the `enum`.
 */
-#[derive(EnumString, EnumIter, PartialEq, Eq)]
+#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
 pub enum Damage {
     Explosion,
     Mystic,
@@ -250,7 +260,7 @@ impl std::fmt::Display for Damage {
     a [`Armor::Unknown(String)`] is returned to represent the unknown armor with its name in the `enum`.
 */
 
-#[derive(EnumString, EnumIter, PartialEq, Eq)]
+#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
 pub enum Armor {
     Heavy,
     Light,
