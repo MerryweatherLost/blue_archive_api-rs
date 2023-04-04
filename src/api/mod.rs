@@ -16,7 +16,7 @@ use crate::api::enums::*;
 use crate::types::*;
 use anyhow::Result;
 use rand::seq::SliceRandom;
-use reqwest::{Response, StatusCode};
+use reqwest::Response;
 
 use enums::Query;
 use errors::BlueArchiveError;
@@ -82,21 +82,6 @@ pub(crate) mod helper {
         }
 
         Ok(students)
-    }
-
-    /**
-        In the case of a [`reqwest::Error`], this function will be used to handle and process it into a [`BlueArchiveError`], depending on what the error results in.
-    */
-    pub(crate) async fn handle_reqwest_error<IS: Into<String>>(
-        query: IS,
-        error: reqwest::Error,
-    ) -> BlueArchiveError {
-        match error.status() == Some(StatusCode::NOT_FOUND) {
-            true => BlueArchiveError::NotFound {
-                query: query.into(),
-            },
-            false => BlueArchiveError::Reqwest(error),
-        }
     }
 }
 
@@ -164,10 +149,7 @@ pub async fn fetch_student_by_name<IS: Into<String>>(
     ))
     .await?;
 
-    match response.error_for_status_ref() {
-        Ok(_) => Ok(response.json::<Student>().await?),
-        Err(why) => Err(helper::handle_reqwest_error(name, why).await),
-    }
+    Ok(response.json::<Student>().await?)
 }
 
 /**
@@ -362,11 +344,7 @@ pub async fn fetch_random_student() -> Result<Option<Student>, BlueArchiveError>
 */
 pub async fn fetch_equipment_by_id(id: u32) -> Result<Equipment, BlueArchiveError> {
     let response = helper::fetch_response(Endpoints::Equipment(IDOrName::ID(id))).await?;
-
-    match response.error_for_status_ref() {
-        Ok(_) => Ok(response.json::<Equipment>().await?),
-        Err(why) => Err(helper::handle_reqwest_error(id.to_string(), why).await),
-    }
+    Ok(response.json::<Equipment>().await?)
 }
 
 /**
