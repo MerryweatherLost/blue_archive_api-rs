@@ -85,15 +85,25 @@ impl std::fmt::Display for SquadType {
 */
 #[derive(EnumString, Debug, Display, EnumIter, PartialEq, Eq)]
 pub enum School {
+    /// **Abydos** High School
     Abydos,
+    /// **Gehenna** Academy
     Gehenna,
+    /// **Hyakkiyako** Alliance Academy
     Hyakkiyako,
+    /// **Millennium** Science School
     Millennium,
+    /// **Shanhaijing** Senior Secondary School
     Shanhaijing,
+    /// **Trinity** General School
     Trinity,
+    /// **Red Winter** Federal Academy
     RedWinter,
+    /// **Valkyrie** Police Academy
     Valkyrie,
+    /// **Arius** Branch School
     Arius,
+    /// **SRT** Special Academy
     SRT,
     Unknown(String),
 }

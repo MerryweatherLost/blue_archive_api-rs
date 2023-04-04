@@ -236,6 +236,13 @@ impl Age {
         self.0.unwrap_or(0)
     }
 }
+
+impl From<u8> for Age {
+    fn from(value: u8) -> Self {
+        Self(Some(value))
+    }
+}
+
 impl std::fmt::Display for Age {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.0 {
