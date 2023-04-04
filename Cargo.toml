@@ -1,6 +1,6 @@
 [package]
 name = "blue_archive"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 license-file = "LICENSE"
 description = "A Blue Archive api wrapper for Rust, based off of torikushiii's API: https://github.com/torikushiii"

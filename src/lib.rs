@@ -1,4 +1,4 @@
-//! blue_archive-rs
+//! blue_archive
 //! ---------------
 //! A Blue Archive API wrapper written in Rust.
 //!
