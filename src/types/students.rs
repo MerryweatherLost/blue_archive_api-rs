@@ -145,7 +145,16 @@ impl Student {
                 Ok(num) => Age(Some(num)),
                 Err(_) => Age(None),
             },
-            None => Age(None),
+            None => {
+                // Check for Japanese: 歳
+                match self.info.age.find(|c| c == '歳') {
+                    Some(ix) => match self.info.age[0..ix].parse::<u8>() {
+                        Ok(num) => Age(Some(num)),
+                        Err(_) => Age(None),
+                    },
+                    None => Age(None),
+                }
+            }
         }
     }
 

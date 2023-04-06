@@ -9,7 +9,7 @@ use anyhow::Result;
 #[tokio::main]
 async fn main() -> Result<()> {
     let mut club_map = HashMap::<Club, Vec<&Student>>::new();
-    let students = blue_archive::fetch_all_students().await?;
+    let students = blue_archive::fetch_all_students(None).await?;
 
     for club in Club::iter() {
         let club_students: Vec<&Student> = students

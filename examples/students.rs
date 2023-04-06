@@ -1,6 +1,6 @@
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let all_students = blue_archive::fetch_all_students().await?;
+    let all_students = blue_archive::fetch_all_students(None).await?;
     for student in &all_students {
         println!(
             "{student} | apart of {} | {}:{}",

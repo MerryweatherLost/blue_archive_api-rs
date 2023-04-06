@@ -5,7 +5,7 @@ use blue_archive::{School, Squad};
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let mut start = Instant::now();
-    let student_fetcher = blue_archive::BlueArchiveFetcher::new().await?;
+    let student_fetcher = blue_archive::BlueArchiveFetcher::new(None).await?;
     println!("StudentFetcher :: {:?}", Instant::now() - start);
 
     start = Instant::now();
@@ -16,7 +16,7 @@ async fn main() -> anyhow::Result<()> {
     println!("Process :: {:?}", Instant::now() - start);
 
     start = Instant::now();
-    blue_archive::fetch_student_by_name("Asuna").await?;
+    blue_archive::fetch_student_by_name("Asuna", None).await?;
     println!("Partial Students :: {:?}", Instant::now() - start);
 
     start = Instant::now();

@@ -14,7 +14,7 @@ pub use query::*;
 
 use crate::api::enums::*;
 
-use crate::types::*;
+use crate::{types::*, Region};
 use anyhow::Result;
 use rand::seq::SliceRandom;
 use reqwest::Response;
@@ -122,14 +122,15 @@ pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
 }
 
 /**
-    Fetches a [`Student`] based on a given name.
+    Fetches a [`Student`] based on a given name & region.
+    If region is [`None`], then it will default to **Global**.
 
     ## Examples
 
     ```
         #[tokio::main]
         async fn main() {
-            match blue_archive::fetch_student_by_name("Asuna").await {
+            match blue_archive::fetch_student_by_name("Asuna", None).await {
                 Ok(student) => {
                     println!(
                         "Name: {}\nProfile:{}",
@@ -145,12 +146,12 @@ pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
 */
 pub async fn fetch_student_by_name<IS: Into<String>>(
     name: IS,
+    region: Option<Region>,
 ) -> Result<Student, BlueArchiveError> {
     let name: String = name.into();
-    let response = helper::fetch_response(Endpoints::Character(
-        StudentQueryBuilder::new().build_with_student_name(name.clone()),
-    ))
-    .await?;
+    let query_string = StudentQueryBuilder::new().build_with_student_name(name.clone(), region);
+    println!("{query_string:#?}");
+    let response = helper::fetch_response(Endpoints::Character(query_string)).await?;
 
     Ok(response.json::<Student>().await?)
 }
@@ -164,7 +165,7 @@ pub async fn fetch_student_by_name<IS: Into<String>>(
     ```
         #[tokio::main]
         async fn main() -> anyhow::Result<()> {
-            match blue_archive::fetch_student_by_id(16001).await {
+            match blue_archive::fetch_student_by_id(16001, None).await {
                 Ok(student) => {
                     println!(
                         "Name: {}\nAge:{}, Club:{}",
@@ -179,10 +180,16 @@ pub async fn fetch_student_by_name<IS: Into<String>>(
         }
     ```
 */
-pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
-    let student_query = StudentQueryBuilder::new().build_with_single(Query::ID(id));
+pub async fn fetch_student_by_id(
+    id: u32,
+    region: Option<Region>,
+) -> Result<Student, BlueArchiveError> {
+    let student_query = StudentQueryBuilder::new().build_with_multiple(vec![
+        Query::ID(id),
+        Query::Region(region.unwrap_or_default()),
+    ]);
     let response = helper::fetch_response(Endpoints::Character(student_query)).await?;
-    fetch_student_by_name(response.json::<IDStudent>().await?.name).await
+    fetch_student_by_name(response.json::<IDStudent>().await?.name, None).await
 }
 /**
     Fetches a [`Vec`] of [`Student`] based on a given set of queries.
@@ -227,7 +234,7 @@ pub async fn fetch_students_by_queries<Q: Into<Vec<Query>>>(
     ```
         #[tokio::main]
         async fn main() {
-            match blue_archive::fetch_all_partial_students().await {
+            match blue_archive::fetch_all_partial_students(None).await {
                 Ok(partial_students) => {
                     for student in partial_students.iter() {
                         println!("Name: {}\nProfile:{}", student.name, student.profile)
@@ -240,8 +247,11 @@ pub async fn fetch_students_by_queries<Q: Into<Vec<Query>>>(
         }
     ```
 */
-pub async fn fetch_all_partial_students() -> Result<Vec<PartialStudent>, BlueArchiveError> {
-    let student_query = StudentQueryBuilder::new().build_empty();
+pub async fn fetch_all_partial_students(
+    region: Option<Region>,
+) -> Result<Vec<PartialStudent>, BlueArchiveError> {
+    let student_query =
+        StudentQueryBuilder::new().build_with_single(Query::Region(region.unwrap_or_default()));
     let response = match helper::fetch_response(Endpoints::Character(student_query)).await {
         Ok(resp) => resp,
         Err(err) => return Err(err),
@@ -257,12 +267,14 @@ pub async fn fetch_all_partial_students() -> Result<Vec<PartialStudent>, BlueArc
 
     **Unfortunately, this function has to do a number of API calls, which is more expensive.**
 
+    [`Region`] will default to [`Region::Global`] if [`None`].
+
     ## Examples
 
     ```
         #[tokio::main]
         async fn main() {
-            match blue_archive::fetch_all_students().await {
+            match blue_archive::fetch_all_students(None).await {
                 Ok(students) => {
                     for student in students.iter() {
                         println!("{student}")
@@ -275,9 +287,9 @@ pub async fn fetch_all_partial_students() -> Result<Vec<PartialStudent>, BlueArc
         }
     ```
 */
-pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
+pub async fn fetch_all_students(region: Option<Region>) -> Result<Vec<Student>, BlueArchiveError> {
     let mut students: Vec<Student> = vec![];
-    let partial_students = fetch_all_partial_students().await?;
+    let partial_students = fetch_all_partial_students(region).await?;
 
     // Concurrent Requests
     let bodies =
@@ -299,12 +311,14 @@ pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
 /**
     Fetches a random [`Student`], though can return [`None`] if the `students` it is iterating over are empty.
 
+    [`Region`] will default to [`Region::Global`] if [`None`].
+
     ## Examples
 
     ```
         #[tokio::main]
         async fn main() {
-            match blue_archive::fetch_random_student().await {
+            match blue_archive::fetch_random_student(None).await {
                 Ok(possible_student) => {
                     match possible_student {
                         Some(student) => {
@@ -322,10 +336,12 @@ pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
         }
     ```
 */
-pub async fn fetch_random_student() -> Result<Option<Student>, BlueArchiveError> {
-    let partial_students = fetch_all_partial_students().await?;
+pub async fn fetch_random_student(
+    region: Option<Region>,
+) -> Result<Option<Student>, BlueArchiveError> {
+    let partial_students = fetch_all_partial_students(region).await?;
     match partial_students.choose(&mut rand::thread_rng()) {
-        Some(found) => Ok(Some(fetch_student_by_name(&found.name).await?)),
+        Some(found) => Ok(Some(fetch_student_by_name(&found.name, None).await?)),
         None => Ok(None),
     }
 }

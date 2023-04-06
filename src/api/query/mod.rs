@@ -219,6 +219,8 @@ pub async fn fetch_students_by_armor(armor: Armor) -> Result<Vec<Student>, BlueA
     Note that this behaves a bit differently compared to other queries, as we will have to use [`fetch_all_students`].
     This will be more of an expensive call.
 
+    [`Region`] will default to [`Region::Global`] if [`None`].
+
     ## Examples
 
     ```
@@ -226,7 +228,7 @@ pub async fn fetch_students_by_armor(armor: Armor) -> Result<Vec<Student>, BlueA
 
         #[tokio::main]
         async fn main() -> anyhow::Result<()> {
-            let cnc_students = blue_archive::fetch_students_by_club(Club::CleaningAndClearing).await?;
+            let cnc_students = blue_archive::fetch_students_by_club(Club::CleaningAndClearing, None).await?;
             for student in &cnc_students {
                 println!("{student} : is apart of {}", student.club())
             }
@@ -234,10 +236,15 @@ pub async fn fetch_students_by_armor(armor: Armor) -> Result<Vec<Student>, BlueA
         }
     ```
 */
-pub async fn fetch_students_by_club(club: Club) -> Result<Vec<Student>, BlueArchiveError> {
-    Ok(StudentFilterOptions::new(&fetch_all_students().await?)
-        .apply(club)
-        .finish())
+pub async fn fetch_students_by_club(
+    club: Club,
+    region: Option<Region>,
+) -> Result<Vec<Student>, BlueArchiveError> {
+    Ok(
+        StudentFilterOptions::new(&fetch_all_students(region).await?)
+            .apply(club)
+            .finish(),
+    )
 }
 
 /**
@@ -246,6 +253,8 @@ pub async fn fetch_students_by_club(club: Club) -> Result<Vec<Student>, BlueArch
     Note that this behaves a bit differently compared to other queries, as we will have to use [`fetch_all_students`].
     This will be more of an expensive call.
 
+    [`Region`] will default to [`Region::Global`] if [`None`].
+
     ## Examples
 
     ```
@@ -253,7 +262,7 @@ pub async fn fetch_students_by_club(club: Club) -> Result<Vec<Student>, BlueArch
 
         #[tokio::main]
         async fn main() -> anyhow::Result<()> {
-            let released_students = blue_archive::fetch_students_by_released(Released(true)).await?;
+            let released_students = blue_archive::fetch_students_by_released(Released(true), None).await?;
             for student in &released_students {
                 println!("{student} : is apart of {}", student.club())
             }
@@ -263,10 +272,13 @@ pub async fn fetch_students_by_club(club: Club) -> Result<Vec<Student>, BlueArch
 */
 pub async fn fetch_students_by_released(
     released: Released,
+    region: Option<Region>,
 ) -> Result<Vec<Student>, BlueArchiveError> {
-    Ok(StudentFilterOptions::new(&fetch_all_students().await?)
-        .apply(released)
-        .finish())
+    Ok(
+        StudentFilterOptions::new(&fetch_all_students(region).await?)
+            .apply(released)
+            .finish(),
+    )
 }
 
 /**
@@ -275,6 +287,8 @@ pub async fn fetch_students_by_released(
     Note that this behaves a bit differently compared to other queries, as we will have to use [`fetch_all_students`].
     This will be more of an expensive call.
 
+    [`Region`] will default to [`Region::Global`] if [`None`].
+
     ## Examples
 
     ```
@@ -282,7 +296,7 @@ pub async fn fetch_students_by_released(
 
         #[tokio::main]
         async fn main() -> anyhow::Result<()> {
-            let age_17_students = blue_archive::fetch_students_by_age(Age::from(17)).await?;
+            let age_17_students = blue_archive::fetch_students_by_age(Age::from(17), None).await?;
             for student in &age_17_students {
                 println!("{student} : is apart of {}", student.club())
             }
@@ -290,10 +304,15 @@ pub async fn fetch_students_by_released(
         }
     ```
 */
-pub async fn fetch_students_by_age(age: Age) -> Result<Vec<Student>, BlueArchiveError> {
-    Ok(StudentFilterOptions::new(&fetch_all_students().await?)
-        .apply(age)
-        .finish())
+pub async fn fetch_students_by_age(
+    age: Age,
+    region: Option<Region>,
+) -> Result<Vec<Student>, BlueArchiveError> {
+    Ok(
+        StudentFilterOptions::new(&fetch_all_students(region).await?)
+            .apply(age)
+            .finish(),
+    )
 }
 
 /// Returns a filter that can be used upon a [`Vec`] of [`Student`].

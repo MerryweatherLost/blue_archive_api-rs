@@ -3,7 +3,9 @@ use blue_archive::{Position, Query, Role, School, Weapon};
 /// Check if **Asuna** can be acquired through means of a [`String`] query.
 #[tokio::test]
 async fn fetch_asuna() {
-    assert!(blue_archive::fetch_student_by_name("Asuna").await.is_ok())
+    assert!(blue_archive::fetch_student_by_name("Asuna", None)
+        .await
+        .is_ok())
 }
 
 /// Fetches all students that have the Role of Attacker.
@@ -36,7 +38,7 @@ async fn fetch_srt_front() {
 /// Fetches a random student.
 #[tokio::test]
 async fn fetch_random_student() {
-    assert!(blue_archive::fetch_random_student().await.is_ok())
+    assert!(blue_archive::fetch_random_student(None).await.is_ok())
 }
 
 /// Fetches Koharu by her ID.

@@ -349,6 +349,19 @@ impl std::fmt::Display for Armor {
     }
 }
 
+#[derive(Debug, Display, EnumString, EnumIter, PartialEq, Eq, Clone)]
+pub enum Region {
+    #[strum(to_string = "global")]
+    Global,
+    #[strum(to_string = "japan")]
+    Japan,
+}
+
+impl Default for Region {
+    fn default() -> Self {
+        Self::Global
+    }
+}
 /**
     **This is a `enum` that contains the current Blue Archive clubs represented in the API.**
 

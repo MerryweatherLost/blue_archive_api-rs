@@ -23,7 +23,7 @@ pub mod api;
 pub mod enums;
 pub mod types;
 
-pub use enums::{Armor, Club, Damage, Position, Rarity, Role, School, Squad, Weapon};
+pub use enums::{Armor, Club, Damage, Position, Rarity, Region, Role, School, Squad, Weapon};
 pub use types::{Age, Released, StudentID};
 
 pub use api::*;

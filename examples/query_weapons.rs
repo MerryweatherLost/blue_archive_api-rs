@@ -13,12 +13,15 @@ async fn main() -> anyhow::Result<()> {
     };
 
     // You can also do this with the filter:
-    let students = blue_archive::fetch_all_students().await?;
-    let rifle_students = blue_archive::filter(&students)
-        .apply(Weapon::RL)
+    let students = blue_archive::fetch_all_students(None).await?;
+    let sniper_rifle_students = blue_archive::filter(&students)
+        .apply(Weapon::SR)
         .finish_ref();
-    println!("Amount of students using rifles: {}", rifle_students.len());
-    for student in &rifle_students {
+    println!(
+        "Amount of students using sniper rifles: {}",
+        sniper_rifle_students.len()
+    );
+    for student in &sniper_rifle_students {
         println!("({})::[{}]", student, student.weapon().full_name())
     }
     Ok(())
