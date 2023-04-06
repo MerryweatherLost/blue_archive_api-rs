@@ -158,14 +158,13 @@ pub async fn fetch_student_by_name<IS: Into<String>>(
 
 /**
     Fetches a [`Student`] based on a given ID.
-    Fetches a [`Vec`] of [`Student`] based on a given name.
 
     ## Examples
 
     ```
         #[tokio::main]
         async fn main() -> anyhow::Result<()> {
-            match blue_archive::fetch_student_by_id(16001, None).await {
+            match blue_archive::fetch_student_by_id(16001).await {
                 Ok(student) => {
                     println!(
                         "Name: {}\nAge:{}, Club:{}",
@@ -180,14 +179,8 @@ pub async fn fetch_student_by_name<IS: Into<String>>(
         }
     ```
 */
-pub async fn fetch_student_by_id(
-    id: u32,
-    region: Option<Region>,
-) -> Result<Student, BlueArchiveError> {
-    let student_query = StudentQueryBuilder::new().build_with_multiple(vec![
-        Query::ID(id),
-        Query::Region(region.unwrap_or_default()),
-    ]);
+pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
+    let student_query = StudentQueryBuilder::new().build_with_single(Query::ID(id));
     let response = helper::fetch_response(Endpoints::Character(student_query)).await?;
     fetch_student_by_name(response.json::<IDStudent>().await?.name, None).await
 }
@@ -267,6 +260,8 @@ pub async fn fetch_all_partial_students(
 
     **Unfortunately, this function has to do a number of API calls, which is more expensive.**
 
+    There is a problem where I am unable to search for the specific Japanese names in the API, so I have to use English names in order to not fail.
+
     [`Region`] will default to [`Region::Global`] if [`None`].
 
     ## Examples
@@ -289,16 +284,17 @@ pub async fn fetch_all_partial_students(
 */
 pub async fn fetch_all_students(region: Option<Region>) -> Result<Vec<Student>, BlueArchiveError> {
     let mut students: Vec<Student> = vec![];
-    let partial_students = fetch_all_partial_students(region).await?;
+    let region = region.unwrap_or_default();
+    let partial_students = fetch_all_partial_students(None).await?;
 
     // Concurrent Requests
     let bodies =
         futures::future::join_all(partial_students.into_iter().map(|partial| async move {
-            let response =
-                match reqwest::get(format!("{}/character/{}", API_URI, partial.name)).await {
-                    Ok(res) => res,
-                    Err(err) => return Err(BlueArchiveError::Reqwest(err)),
-                };
+            let uri = format!("{}/character/{}?{}", API_URI, partial.name, region);
+            let response = match reqwest::get(&uri).await {
+                Ok(res) => res,
+                Err(err) => return Err(BlueArchiveError::Reqwest(err)),
+            };
             Ok(response.json::<Student>().await)
         }))
         .await;

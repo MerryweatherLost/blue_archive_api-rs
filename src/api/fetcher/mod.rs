@@ -17,7 +17,7 @@ pub struct BlueArchiveFetcher {
 impl BlueArchiveFetcher {
     /// Refreshes the cache with new data, should be used rarely.
     pub async fn refresh(&mut self) -> Result<(), BlueArchiveError> {
-        self.students = crate::fetch_all_students(Some(self.region.clone())).await?;
+        self.students = crate::fetch_all_students(Some(self.region)).await?;
         Ok(())
     }
 
@@ -26,7 +26,7 @@ impl BlueArchiveFetcher {
     /// [`Region`] will default to [`Region::Global`] if [`None`].
     pub async fn new(region: Option<Region>) -> Result<Self> {
         Ok(Self {
-            students: crate::fetch_all_students(region.clone()).await?,
+            students: crate::fetch_all_students(region).await?,
             region: region.unwrap_or_default(),
         })
     }

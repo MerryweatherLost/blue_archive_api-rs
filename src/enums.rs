@@ -349,7 +349,9 @@ impl std::fmt::Display for Armor {
     }
 }
 
-#[derive(Debug, Display, EnumString, EnumIter, PartialEq, Eq, Clone)]
+#[derive(
+    Debug, Copy, Display, Serialize, Deserialize, EnumString, EnumIter, PartialEq, Eq, Clone,
+)]
 pub enum Region {
     #[strum(to_string = "global")]
     Global,
