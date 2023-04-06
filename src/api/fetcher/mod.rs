@@ -3,13 +3,13 @@
 use anyhow::Result;
 use rand::seq::SliceRandom;
 
-use crate::{types::*, BlueArchiveError, Query};
+use crate::{filter::StudentFilterOptions, types::*, BlueArchiveError};
 
 /// Allows for caching of Blue Archive data, with a cost of memory and time, although functions and accessing of data will be more easier.
 /// It is recommended if you'd prefer hot-loading all the data first, **rather than making multiple asynchronous queries**, e.g. for fetching all instances of
 /// [`Student`], which is difficult to fetch due to API limitations.
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct BlueArchiveFetcher {
     pub students: Vec<Student>,
 }
@@ -49,30 +49,8 @@ impl BlueArchiveFetcher {
         self.students.choose(&mut rand::thread_rng()).cloned()
     }
 
-    /// Allows you to search for a specific set of [`Student`]'s based on a [`Vec`] of [`Query`]'s.
-    pub fn get_students_by_queries<Q: Into<Vec<Query>>>(&self, queries: Q) -> Vec<Student> {
-        let queries: Vec<Query> = queries.into();
-        let mut filtered_students: Vec<Student> = vec![];
-        for student in self.students.iter() {
-            let mut checks: Vec<bool> = vec![];
-            for query in queries.iter() {
-                let result = match query {
-                    Query::Role(role) => role == &student.role(),
-                    Query::SquadType(squad) => squad == &student.squad_type(),
-                    Query::School(school) => school == &student.school(),
-                    Query::Position(position) => position == &student.position(),
-                    Query::Weapon(weapon) => weapon == &student.weapon(),
-                    Query::Damage(damage) => damage == &student.damage(),
-                    Query::Armor(armor) => armor == &student.armor(),
-                    Query::ID(id) => id == &student.id,
-                    Query::Released(released) => released == &student.is_released,
-                };
-                checks.push(result)
-            }
-            if checks.iter().all(|&x| x) {
-                filtered_students.push(student.clone())
-            }
-        }
-        filtered_students
+    /// Returns a [`StudentFilterOptions`], which allows for chaining of items that implement [`StudentFilter`].
+    pub fn filter(&'_ self) -> StudentFilterOptions<'_> {
+        StudentFilterOptions::new(&self.students)
     }
 }

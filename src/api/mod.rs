@@ -8,6 +8,7 @@ pub mod fetcher;
 
 #[cfg(feature = "query")]
 pub mod query;
+
 #[cfg(feature = "query")]
 pub use query::*;
 
@@ -20,6 +21,8 @@ use reqwest::Response;
 
 use enums::Query;
 use errors::BlueArchiveError;
+
+pub mod filter;
 
 pub use crate::API_URI;
 
@@ -187,12 +190,12 @@ pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
     ## Examples
 
     ```
-        use blue_archive::{School, SquadType, Query};
+        use blue_archive::{School, Squad, Query};
 
         #[tokio::main]
         async fn main() {
             match blue_archive::fetch_students_by_queries([
-                Query::SquadType(SquadType::Striker),
+                Query::Squad(Squad::Striker),
                 Query::School(School::Trinity),
             ])
             .await

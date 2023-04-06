@@ -1,7 +1,7 @@
 //! Enums related to querying students, and also contains a `StudentQuery`
 //! and an associated builder pattern for internal usage.
 
-use crate::{Armor, Damage, Position, Role, School, SquadType, Weapon};
+use crate::{Armor, Damage, Position, Role, School, Squad, Weapon};
 
 /**
     A `enum` that maps queries with given data in each of them.
@@ -10,7 +10,7 @@ use crate::{Armor, Damage, Position, Role, School, SquadType, Weapon};
 #[derive(Debug)]
 pub enum Query {
     Role(Role),
-    SquadType(SquadType),
+    Squad(Squad),
     School(School),
     Position(Position),
     Weapon(Weapon),
@@ -24,7 +24,7 @@ impl std::fmt::Display for Query {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Role(q) => write!(f, "role={}", q),
-            Self::SquadType(q) => write!(f, "type={}", q),
+            Self::Squad(q) => write!(f, "type={}", q),
             Self::School(q) => write!(f, "school={}", q),
             Self::Position(q) => write!(f, "position={}", q),
             Self::Weapon(q) => write!(f, "weapon={}", q),

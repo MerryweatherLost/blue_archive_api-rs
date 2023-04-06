@@ -3,6 +3,13 @@
 use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumIter, EnumString};
 
+use crate::types::Student;
+
+/// Trait that allows for the filtering of [`Student`] data.
+pub trait StudentFilter {
+    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student>;
+}
+
 /**
     **This is a `enum` that contains the current Blue Archive roles represented in the API.**
 
@@ -23,6 +30,15 @@ pub enum Role {
     Supporter,
     Tanker,
     Unknown(String),
+}
+
+impl StudentFilter for Role {
+    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
+        students
+            .iter()
+            .filter(|student| &student.role() == self)
+            .collect::<Vec<&Student>>()
+    }
 }
 
 impl std::fmt::Display for Role {
@@ -46,21 +62,30 @@ impl std::fmt::Display for Role {
     * **Striker**
 
     In the case that a squad in the API is not present on the wrapper,
-    a [`SquadType::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
+    a [`Squad::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
 */
 #[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
-pub enum SquadType {
+pub enum Squad {
     Special,
     Striker,
     Unknown(String),
 }
 
-impl std::fmt::Display for SquadType {
+impl StudentFilter for Squad {
+    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
+        students
+            .iter()
+            .filter(|student| &student.squad() == self)
+            .collect()
+    }
+}
+
+impl std::fmt::Display for Squad {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            SquadType::Special => write!(f, "Special"),
-            SquadType::Striker => write!(f, "Striker"),
-            SquadType::Unknown(unknown_type) => write!(f, "{}", unknown_type),
+            Squad::Special => write!(f, "Special"),
+            Squad::Striker => write!(f, "Striker"),
+            Squad::Unknown(unknown_type) => write!(f, "{}", unknown_type),
         }
     }
 }
@@ -128,6 +153,15 @@ impl School {
     }
 }
 
+impl StudentFilter for School {
+    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
+        students
+            .iter()
+            .filter(|student| &student.school() == self)
+            .collect()
+    }
+}
+
 /**
     **This is a `enum` that contains the current Blue Archive positions represented in the API.**
 
@@ -146,6 +180,15 @@ pub enum Position {
     Middle,
     Back,
     Unknown(String),
+}
+
+impl StudentFilter for Position {
+    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
+        students
+            .iter()
+            .filter(|student| &student.position() == self)
+            .collect()
+    }
 }
 
 impl std::fmt::Display for Position {
@@ -186,7 +229,7 @@ pub enum Weapon {
     HG,
     MG,
     MT,
-    RF,
+    RF, // <- results in not found on the API, unsure if it will be used.
     RG,
     RL,
     SG,
@@ -216,6 +259,15 @@ impl Weapon {
     }
 }
 
+impl StudentFilter for Weapon {
+    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
+        students
+            .iter()
+            .filter(|student| &student.weapon() == self)
+            .collect()
+    }
+}
+
 /**
     **This is a `enum` that contains the current Blue Archive damage types represented in the API.**
 
@@ -234,6 +286,15 @@ pub enum Damage {
     Mystic,
     Penetration,
     Unknown(String),
+}
+
+impl StudentFilter for Damage {
+    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
+        students
+            .iter()
+            .filter(|student| &student.damage() == self)
+            .collect()
+    }
 }
 
 impl std::fmt::Display for Damage {
@@ -266,6 +327,15 @@ pub enum Armor {
     Light,
     Special,
     Unknown(String),
+}
+
+impl StudentFilter for Armor {
+    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
+        students
+            .iter()
+            .filter(|student| &student.armor() == self)
+            .collect()
+    }
 }
 
 impl std::fmt::Display for Armor {
@@ -395,6 +465,15 @@ pub enum Club {
     Unknown(String),
 }
 
+impl StudentFilter for Club {
+    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
+        students
+            .iter()
+            .filter(|student| &student.club() == self)
+            .collect()
+    }
+}
+
 /**
     **This is a `enum` that contains the current Blue Archive rarities represented in the API.**
 
@@ -426,5 +505,14 @@ impl Rarity {
             Rarity::Unknown(string) => string,
         };
         name.to_string()
+    }
+}
+
+impl StudentFilter for Rarity {
+    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
+        students
+            .iter()
+            .filter(|student| &student.rarity() == self)
+            .collect()
     }
 }

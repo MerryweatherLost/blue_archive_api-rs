@@ -1,9 +1,9 @@
-use blue_archive::{Query, School, SquadType};
+use blue_archive::{Query, School, Squad};
 
 #[tokio::main]
 async fn main() {
     match blue_archive::fetch_students_by_queries([
-        Query::SquadType(SquadType::Striker),
+        Query::Squad(Squad::Striker),
         Query::School(School::Trinity),
     ])
     .await
