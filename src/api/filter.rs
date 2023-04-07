@@ -2,7 +2,8 @@ use crate::{enums::StudentFilter, types::Student};
 
 #[derive(Debug)]
 pub struct StudentFilterOptions<'student> {
-    /// The [`Vec`] that will contain the filtered students. If [`None`], then a filter did not happen.
+    /// The [`Vec`] that will contain the filtered students.
+    /// If [`None`], then a filter was not applied.
     pub filtered_students: Option<Vec<&'student Student>>,
     /// The known slice.
     known_slice: &'student [Student],
@@ -29,16 +30,21 @@ impl<'student> StudentFilterOptions<'student> {
     }
 
     /// Finishes the filtering, and clones the values.
+    ///
+    /// If no filter was applied, it will return the entire [`Student`] list provided in the known slice.
     pub fn finish(self) -> Vec<Student> {
         self.filtered_students
-            .unwrap_or(vec![])
+            .unwrap_or(self.known_slice.iter().collect())
             .into_iter()
             .cloned()
             .collect()
     }
 
     /// Finishes the filtering, and returns the reference of the values.
+    ///
+    /// If no filter was applied, it will return the entire [`Student`] list provided in the known slice.
     pub fn finish_ref(self) -> Vec<&'student Student> {
-        self.filtered_students.unwrap_or(vec![])
+        self.filtered_students
+            .unwrap_or(self.known_slice.iter().collect())
     }
 }
