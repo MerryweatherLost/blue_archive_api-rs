@@ -240,11 +240,11 @@ pub async fn fetch_students_by_club(
     club: Club,
     region: Option<Region>,
 ) -> Result<Vec<Student>, BlueArchiveError> {
-    Ok(club
-        .filter(&fetch_all_students(region).await?)
-        .into_iter()
-        .map(|s| s.to_owned())
-        .collect::<Vec<Student>>())
+    Ok(
+        StudentFilterOptions::new(&fetch_all_students(region).await?)
+            .apply(club)
+            .finish(),
+    )
 }
 
 /**

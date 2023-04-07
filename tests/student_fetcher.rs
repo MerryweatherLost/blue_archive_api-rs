@@ -2,11 +2,13 @@ use blue_archive::School;
 
 #[tokio::test]
 async fn fetcher_test() -> anyhow::Result<()> {
-    let student_fetcher = blue_archive::BlueArchiveFetcher::new(None).await?;
+    let mut student_fetcher = blue_archive::BlueArchiveFetcher::new(None).await?;
 
     let random_student = student_fetcher.fetch_random_student().is_some();
     let hina = student_fetcher.get_student_by_id(10004).is_some();
     let asuna = student_fetcher.get_student_by_name("Asuna").is_some();
+
+    assert!(student_fetcher.refresh().await.is_ok());
 
     let trinity = !student_fetcher
         .filter()
