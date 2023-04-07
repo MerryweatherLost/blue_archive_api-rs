@@ -150,7 +150,6 @@ pub async fn fetch_student_by_name<IS: Into<String>>(
 ) -> Result<Student, BlueArchiveError> {
     let name: String = name.into();
     let query_string = StudentQueryBuilder::new().build_with_student_name(name.clone(), region);
-    println!("{query_string:#?}");
     let response = helper::fetch_response(Endpoints::Character(query_string)).await?;
 
     Ok(response.json::<Student>().await?)
