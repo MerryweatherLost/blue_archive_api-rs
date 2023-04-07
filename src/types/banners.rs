@@ -32,8 +32,8 @@ pub struct Banners {
 #[serde(rename_all = "camelCase")]
 pub struct Banner {
     pub gacha_type: Gacha,
-    start_at: u64,
-    end_at: u64,
+    start_at: i64,
+    end_at: i64,
     /// Contains the names of the students who have higher rates of being picked.
     #[serde(alias = "rateups")]
     pub rateup_student_names: Vec<String>,
@@ -42,12 +42,12 @@ pub struct Banner {
 impl Banner {
     /// When the banner starts (or started).
     pub fn starts(&self) -> Option<chrono::NaiveDateTime> {
-        chrono::NaiveDateTime::from_timestamp_millis(self.start_at as i64)
+        chrono::NaiveDateTime::from_timestamp_millis(self.start_at)
     }
 
     /// When the banner ends (or ended).
     pub fn ends(&self) -> Option<chrono::NaiveDateTime> {
-        chrono::NaiveDateTime::from_timestamp_millis(self.end_at as i64)
+        chrono::NaiveDateTime::from_timestamp_millis(self.end_at)
     }
 }
 

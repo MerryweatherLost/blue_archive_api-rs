@@ -1,10 +1,9 @@
-use blue_archive::{Club, Region};
+use blue_archive::Club;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let cnc_students =
-        blue_archive::fetch_students_by_club(Club::CleaningAndClearing, Some(Region::Japan))
-            .await?;
+        blue_archive::fetch_students_by_club(Club::CleaningAndClearing, None).await?;
 
     println!(
         "Students apart of Cleaning & Clearing: [{}]",

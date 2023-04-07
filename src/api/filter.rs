@@ -34,7 +34,7 @@ impl<'student> StudentFilterOptions<'student> {
     /// If no filter was applied, it will return the entire [`Student`] list provided in the known slice.
     pub fn finish(self) -> Vec<Student> {
         self.filtered_students
-            .unwrap_or(self.known_slice.iter().collect())
+            .unwrap_or_else(|| self.known_slice.iter().collect())
             .into_iter()
             .cloned()
             .collect()
@@ -45,6 +45,6 @@ impl<'student> StudentFilterOptions<'student> {
     /// If no filter was applied, it will return the entire [`Student`] list provided in the known slice.
     pub fn finish_ref(self) -> Vec<&'student Student> {
         self.filtered_students
-            .unwrap_or(self.known_slice.iter().collect())
+            .unwrap_or_else(|| self.known_slice.iter().collect())
     }
 }

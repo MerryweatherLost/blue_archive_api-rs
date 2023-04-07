@@ -74,14 +74,11 @@ pub(crate) mod helper {
                     Ok(res) => res,
                     Err(err) => return Err(BlueArchiveError::Reqwest(err)),
                 };
-                Ok(response.json::<Student>().await?)
+                Ok(response.json::<Student>().await)
             }))
             .await;
         for body in bodies {
-            match body {
-                Ok(student) => students.push(student),
-                Err(ex) => return Err(ex),
-            }
+            students.push(body??)
         }
 
         Ok(students)
