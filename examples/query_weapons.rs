@@ -1,6 +1,5 @@
 use blue_archive::Weapon;
 
-#[cfg(feature = "query")]
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // You can use the

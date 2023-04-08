@@ -27,7 +27,7 @@ pub use enums::{Armor, Club, Damage, Position, Rarity, Region, Role, School, Squ
 pub use types::{Age, Released, StudentID};
 
 pub use api::*;
-pub use fetcher::BlueArchiveFetcher;
+pub use fetcher::StudentFetcher;
 
 pub use api::enums::Query;
 pub use errors::BlueArchiveError;

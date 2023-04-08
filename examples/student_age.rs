@@ -1,10 +1,10 @@
 use anyhow::{Context, Result};
-use blue_archive::BlueArchiveFetcher;
+use blue_archive::StudentFetcher;
 
 #[tokio::main]
 async fn main() -> Result<()> {
     // Preliminary Setup
-    let fetcher = BlueArchiveFetcher::new(None).await?;
+    let fetcher = StudentFetcher::new(None).await?;
 
     // -> Asuna's age is 17, and will be reflected as Some(17).
     println!("Fetching Asuna's Age!");
