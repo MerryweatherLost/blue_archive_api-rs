@@ -346,10 +346,8 @@ pub async fn fetch_random_student(
     ```
         #[tokio::main]
         async fn main() {
-            match blue_archive::fetch_equipment_by_id(6000).await {
-                Ok(equipment) => println!("{}", equipment.drops[0].stage_name),
-                Err(err) => println!("{}", err),
-            }
+            let equipment = blue_archive::fetch_equipment_by_id(6000).await.expect("expected equipment!");
+            println!("{}", equipment.drops[0].stage_name);
         }
     ```
 */
