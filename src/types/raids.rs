@@ -1,4 +1,4 @@
-use anyhow::Result;
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
 /**
@@ -17,22 +17,22 @@ pub struct Raids {
 pub struct Raid {
     pub season_id: u32,
     pub boss_name: String,
-    pub start_at: String,
-    pub settle_at: String,
-    pub end_at: String,
+    pub start_at: i64,
+    pub settle_at: i64,
+    pub end_at: i64,
 }
 
 impl Raid {
     /// When the raid started.
-    pub fn start_time(&self) -> Result<chrono::NaiveDate, chrono::ParseError> {
-        chrono::NaiveDate::parse_from_str(&self.start_at, "%a, %d %b %Y %T %Z")
+    pub fn start_time(&self) -> Option<NaiveDateTime> {
+        NaiveDateTime::from_timestamp_millis(self.start_at)
     }
     /// TBD
-    pub fn settle_at_time(&self) -> Result<chrono::NaiveDate, chrono::ParseError> {
-        chrono::NaiveDate::parse_from_str(&self.settle_at, "%a, %d %b %Y %T %Z")
+    pub fn settle_at_time(&self) -> Option<NaiveDateTime> {
+        NaiveDateTime::from_timestamp_millis(self.settle_at)
     }
     /// When the raid ends (or ended at).
-    pub fn end_time(&self) -> Result<chrono::NaiveDate, chrono::ParseError> {
-        chrono::NaiveDate::parse_from_str(&self.end_at, "%a, %d %b %Y %T %Z")
+    pub fn end_time(&self) -> Option<NaiveDateTime> {
+        NaiveDateTime::from_timestamp_millis(self.end_at)
     }
 }

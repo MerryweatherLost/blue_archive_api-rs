@@ -8,18 +8,21 @@ pub mod fetcher;
 
 #[cfg(feature = "query")]
 pub mod query;
+
 #[cfg(feature = "query")]
 pub use query::*;
 
 use crate::api::enums::*;
 
-use crate::types::*;
+use crate::{types::*, Region};
 use anyhow::Result;
 use rand::seq::SliceRandom;
 use reqwest::Response;
 
 use enums::Query;
 use errors::BlueArchiveError;
+
+pub mod filter;
 
 pub use crate::API_URI;
 
@@ -71,14 +74,11 @@ pub(crate) mod helper {
                     Ok(res) => res,
                     Err(err) => return Err(BlueArchiveError::Reqwest(err)),
                 };
-                Ok(response.json::<Student>().await?)
+                Ok(response.json::<Student>().await)
             }))
             .await;
         for body in bodies {
-            match body {
-                Ok(student) => students.push(student),
-                Err(ex) => return Err(ex),
-            }
+            students.push(body??)
         }
 
         Ok(students)
@@ -119,14 +119,15 @@ pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
 }
 
 /**
-    Fetches a [`Student`] based on a given name.
+    Fetches a [`Student`] based on a given name & region.
+    If region is [`None`], then it will default to **Global**.
 
     ## Examples
 
     ```
         #[tokio::main]
         async fn main() {
-            match blue_archive::fetch_student_by_name("Asuna").await {
+            match blue_archive::fetch_student_by_name("Asuna", None).await {
                 Ok(student) => {
                     println!(
                         "Name: {}\nProfile:{}",
@@ -142,19 +143,17 @@ pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
 */
 pub async fn fetch_student_by_name<IS: Into<String>>(
     name: IS,
+    region: Option<Region>,
 ) -> Result<Student, BlueArchiveError> {
     let name: String = name.into();
-    let response = helper::fetch_response(Endpoints::Character(
-        StudentQueryBuilder::new().build_with_student_name(name.clone()),
-    ))
-    .await?;
+    let query_string = StudentQueryBuilder::new().build_with_student_name(name.clone(), region);
+    let response = helper::fetch_response(Endpoints::Character(query_string)).await?;
 
     Ok(response.json::<Student>().await?)
 }
 
 /**
     Fetches a [`Student`] based on a given ID.
-    Fetches a [`Vec`] of [`Student`] based on a given name.
 
     ## Examples
 
@@ -179,7 +178,7 @@ pub async fn fetch_student_by_name<IS: Into<String>>(
 pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
     let student_query = StudentQueryBuilder::new().build_with_single(Query::ID(id));
     let response = helper::fetch_response(Endpoints::Character(student_query)).await?;
-    fetch_student_by_name(response.json::<IDStudent>().await?.name).await
+    fetch_student_by_name(response.json::<IDStudent>().await?.name, None).await
 }
 /**
     Fetches a [`Vec`] of [`Student`] based on a given set of queries.
@@ -187,12 +186,12 @@ pub async fn fetch_student_by_id(id: u32) -> Result<Student, BlueArchiveError> {
     ## Examples
 
     ```
-        use blue_archive::{School, SquadType, Query};
+        use blue_archive::{School, Squad, Query};
 
         #[tokio::main]
         async fn main() {
             match blue_archive::fetch_students_by_queries([
-                Query::SquadType(SquadType::Striker),
+                Query::Squad(Squad::Striker),
                 Query::School(School::Trinity),
             ])
             .await
@@ -224,7 +223,7 @@ pub async fn fetch_students_by_queries<Q: Into<Vec<Query>>>(
     ```
         #[tokio::main]
         async fn main() {
-            match blue_archive::fetch_all_partial_students().await {
+            match blue_archive::fetch_all_partial_students(None).await {
                 Ok(partial_students) => {
                     for student in partial_students.iter() {
                         println!("Name: {}\nProfile:{}", student.name, student.profile)
@@ -237,8 +236,11 @@ pub async fn fetch_students_by_queries<Q: Into<Vec<Query>>>(
         }
     ```
 */
-pub async fn fetch_all_partial_students() -> Result<Vec<PartialStudent>, BlueArchiveError> {
-    let student_query = StudentQueryBuilder::new().build_empty();
+pub async fn fetch_all_partial_students(
+    region: Option<Region>,
+) -> Result<Vec<PartialStudent>, BlueArchiveError> {
+    let student_query =
+        StudentQueryBuilder::new().build_with_single(Query::Region(region.unwrap_or_default()));
     let response = match helper::fetch_response(Endpoints::Character(student_query)).await {
         Ok(resp) => resp,
         Err(err) => return Err(err),
@@ -254,12 +256,16 @@ pub async fn fetch_all_partial_students() -> Result<Vec<PartialStudent>, BlueArc
 
     **Unfortunately, this function has to do a number of API calls, which is more expensive.**
 
+    There is a problem where I am unable to search for the specific Japanese names in the API, so I have to use English names in order to not fail.
+
+    [`Region`] will default to [`Region::Global`] if [`None`].
+
     ## Examples
 
     ```
         #[tokio::main]
         async fn main() {
-            match blue_archive::fetch_all_students().await {
+            match blue_archive::fetch_all_students(None).await {
                 Ok(students) => {
                     for student in students.iter() {
                         println!("{student}")
@@ -272,18 +278,19 @@ pub async fn fetch_all_partial_students() -> Result<Vec<PartialStudent>, BlueArc
         }
     ```
 */
-pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
+pub async fn fetch_all_students(region: Option<Region>) -> Result<Vec<Student>, BlueArchiveError> {
     let mut students: Vec<Student> = vec![];
-    let partial_students = fetch_all_partial_students().await?;
+    let region = region.unwrap_or_default();
+    let partial_students = fetch_all_partial_students(None).await?;
 
     // Concurrent Requests
     let bodies =
         futures::future::join_all(partial_students.into_iter().map(|partial| async move {
-            let response =
-                match reqwest::get(format!("{}/character/{}", API_URI, partial.name)).await {
-                    Ok(res) => res,
-                    Err(err) => return Err(BlueArchiveError::Reqwest(err)),
-                };
+            let uri = format!("{}/character/{}?{}", API_URI, partial.name, region);
+            let response = match reqwest::get(&uri).await {
+                Ok(res) => res,
+                Err(err) => return Err(BlueArchiveError::Reqwest(err)),
+            };
             Ok(response.json::<Student>().await)
         }))
         .await;
@@ -296,12 +303,14 @@ pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
 /**
     Fetches a random [`Student`], though can return [`None`] if the `students` it is iterating over are empty.
 
+    [`Region`] will default to [`Region::Global`] if [`None`].
+
     ## Examples
 
     ```
         #[tokio::main]
         async fn main() {
-            match blue_archive::fetch_random_student().await {
+            match blue_archive::fetch_random_student(None).await {
                 Ok(possible_student) => {
                     match possible_student {
                         Some(student) => {
@@ -319,10 +328,12 @@ pub async fn fetch_all_students() -> Result<Vec<Student>, BlueArchiveError> {
         }
     ```
 */
-pub async fn fetch_random_student() -> Result<Option<Student>, BlueArchiveError> {
-    let partial_students = fetch_all_partial_students().await?;
+pub async fn fetch_random_student(
+    region: Option<Region>,
+) -> Result<Option<Student>, BlueArchiveError> {
+    let partial_students = fetch_all_partial_students(region).await?;
     match partial_students.choose(&mut rand::thread_rng()) {
-        Some(found) => Ok(Some(fetch_student_by_name(&found.name).await?)),
+        Some(found) => Ok(Some(fetch_student_by_name(&found.name, None).await?)),
         None => Ok(None),
     }
 }
@@ -335,10 +346,8 @@ pub async fn fetch_random_student() -> Result<Option<Student>, BlueArchiveError>
     ```
         #[tokio::main]
         async fn main() {
-            match blue_archive::fetch_equipment_by_id(6000).await {
-                Ok(equipment) => println!("{}", equipment.drops[0].stage_name),
-                Err(err) => println!("{}", err),
-            }
+            let equipment = blue_archive::fetch_equipment_by_id(6000).await.expect("expected equipment!");
+            println!("{}", equipment.drops[0].stage_name);
         }
     ```
 */
@@ -381,8 +390,8 @@ pub async fn fetch_equipment_by_name<IS: Into<String>>(
                 Ok(raids) => {
                     for raid in raids.ended {
                         let start_time = match raid.start_time() {
-                            Ok(time) => time.to_string(),
-                            Err(_) => "N/A".to_string(),
+                            Some(time) => time.to_string(),
+                            None => "N/A".to_string(),
                         };
                         println!("Boss: {}, {}", raid.boss_name, start_time)
                     }

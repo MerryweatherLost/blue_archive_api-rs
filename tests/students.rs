@@ -1,9 +1,11 @@
-use blue_archive::{Position, Query, Role, School, Weapon};
+use blue_archive::{Club, Position, Query, Role, School, Weapon};
 
 /// Check if **Asuna** can be acquired through means of a [`String`] query.
 #[tokio::test]
-async fn fetch_asuna() {
-    assert!(blue_archive::fetch_student_by_name("Asuna").await.is_ok())
+async fn fetch_asuna_by_name() {
+    assert!(blue_archive::fetch_student_by_name("Asuna", None)
+        .await
+        .is_ok())
 }
 
 /// Fetches all students that have the Role of Attacker.
@@ -24,7 +26,7 @@ async fn fetch_shotgun_students() {
 
 /// Fetches **SRT** units that have **Front** positioning.
 #[tokio::test]
-async fn fetch_srt_front() {
+async fn fetch_srt_front_by_query() {
     assert!(blue_archive::fetch_students_by_queries([
         Query::School(School::SRT),
         Query::Position(Position::Front)
@@ -33,10 +35,24 @@ async fn fetch_srt_front() {
     .is_ok())
 }
 
+/// Fetches for Trinity Students apart of the club Sisterhood.
+/// This should end up not being empty.
+#[tokio::test]
+async fn fetch_trinity_sisterhood_by_filter() -> anyhow::Result<()> {
+    assert!(
+        !blue_archive::filter(&blue_archive::fetch_all_students(None).await?)
+            .apply(School::Trinity)
+            .apply(Club::Sisterhood)
+            .finish_ref()
+            .is_empty()
+    );
+    Ok(())
+}
+
 /// Fetches a random student.
 #[tokio::test]
 async fn fetch_random_student() {
-    assert!(blue_archive::fetch_random_student().await.is_ok())
+    assert!(blue_archive::fetch_random_student(None).await.is_ok())
 }
 
 /// Fetches Koharu by her ID.

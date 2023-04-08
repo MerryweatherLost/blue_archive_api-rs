@@ -1,7 +1,7 @@
 //! Enums related to querying students, and also contains a `StudentQuery`
 //! and an associated builder pattern for internal usage.
 
-use crate::{Armor, Damage, Position, Role, School, SquadType, Weapon};
+use crate::{Armor, Damage, Position, Region, Role, School, Squad, Weapon};
 
 /**
     A `enum` that maps queries with given data in each of them.
@@ -10,12 +10,13 @@ use crate::{Armor, Damage, Position, Role, School, SquadType, Weapon};
 #[derive(Debug)]
 pub enum Query {
     Role(Role),
-    SquadType(SquadType),
+    Squad(Squad),
     School(School),
     Position(Position),
     Weapon(Weapon),
     Damage(Damage),
     Armor(Armor),
+    Region(Region),
     ID(u32),
     Released(bool),
 }
@@ -24,7 +25,7 @@ impl std::fmt::Display for Query {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Role(q) => write!(f, "role={}", q),
-            Self::SquadType(q) => write!(f, "type={}", q),
+            Self::Squad(q) => write!(f, "type={}", q),
             Self::School(q) => write!(f, "school={}", q),
             Self::Position(q) => write!(f, "position={}", q),
             Self::Weapon(q) => write!(f, "weapon={}", q),
@@ -32,17 +33,18 @@ impl std::fmt::Display for Query {
             Self::Armor(q) => write!(f, "heavy%20armor={}", q),
             Self::ID(id) => write!(f, "{id}?id=true"),
             Self::Released(released) => write!(f, "?released={released}"),
+            Self::Region(region) => write!(f, "?region={region}"),
         }
     }
 }
 
 /// An `enum` that represents querying the API through three values,
-/// - [`QueryKind::Name`] searching the student by name
+/// - [`QueryKind::Name`] searching the student by name & region
 /// - [`QueryKind::Single`] through a single [`Query`] (ID & released are applicable)
 /// - [`QueryKind::Multiple`] through a specified [`Vec`] of [`Query`]
 #[derive(Debug)]
 pub(crate) enum QueryKind {
-    Name(String),
+    Name(String, Option<Region>),
     Single(Query),
     Multiple(Vec<Query>),
 }
@@ -64,16 +66,9 @@ impl StudentQueryBuilder {
         }
     }
 
-    /// Builds with "" as the String for the [`StudentQuery`].
-    ///
-    /// This is used in the case of fetching PartialStudents via the `character/` endpoint.
-    pub fn build_empty(self) -> StudentQuery {
-        StudentQuery("".to_string())
-    }
-
     /// Allows for the building of a [`StudentQuery`] with the `name` of a student.
-    pub fn build_with_student_name(mut self, name: String) -> StudentQuery {
-        self.kind = Some(QueryKind::Name(name));
+    pub fn build_with_student_name(mut self, name: String, region: Option<Region>) -> StudentQuery {
+        self.kind = Some(QueryKind::Name(name, region));
         self.build()
     }
 
@@ -93,7 +88,7 @@ impl StudentQueryBuilder {
         if let Some(query_kind) = self.kind {
             self.query_string = match query_kind {
                 QueryKind::Single(query) => match query {
-                    Query::ID(_) | Query::Released(_) => query.to_string(),
+                    Query::ID(_) | Query::Released(_) | Query::Region(_) => query.to_string(),
                     _ => format!("query?{}", query),
                 },
                 QueryKind::Multiple(queries) => format!(
@@ -104,7 +99,10 @@ impl StudentQueryBuilder {
                         .collect::<Vec<String>>()
                         .join("&")
                 ),
-                QueryKind::Name(name) => name,
+                QueryKind::Name(name, region) => match region {
+                    Some(region) => format!("{name}?region={region}"),
+                    None => name,
+                },
             };
         }
         StudentQuery(self.query_string)

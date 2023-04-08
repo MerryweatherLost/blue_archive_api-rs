@@ -3,8 +3,8 @@ use std::str::FromStr;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    enums::{Club, Rarity, School},
-    Armor, Damage, Position, Role, SquadType, Weapon,
+    enums::{Club, Rarity, School, StudentFilter},
+    Armor, Damage, Position, Role, Squad, Weapon,
 };
 
 /**
@@ -94,7 +94,7 @@ pub struct PartialStudent {
 
     Has special methods to access certain data easier.
 */
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Student {
     /// The ID associated with the student.
@@ -122,6 +122,16 @@ impl Student {
         self.character.name.to_string()
     }
 
+    /// The [`StudentID`] of the [`Student`].
+    pub fn id(&self) -> StudentID {
+        StudentID(self.id)
+    }
+
+    /// Whether the [`Student`] was released or not.
+    pub fn released(&self) -> Released {
+        Released(self.is_released)
+    }
+
     /// The profile of the [`Student`].
     pub fn profile(&self) -> String {
         self.character.profile.to_string()
@@ -135,7 +145,16 @@ impl Student {
                 Ok(num) => Age(Some(num)),
                 Err(_) => Age(None),
             },
-            None => Age(None),
+            None => {
+                // Check for Japanese: 歳
+                match self.info.age.find(|c| c == '歳') {
+                    Some(ix) => match self.info.age[0..ix].parse::<u8>() {
+                        Ok(num) => Age(Some(num)),
+                        Err(_) => Age(None),
+                    },
+                    None => Age(None),
+                }
+            }
         }
     }
 
@@ -144,11 +163,11 @@ impl Student {
         self.character.rarity.clone()
     }
 
-    /// The [`SquadType`] the [`Student`] is apart of.
-    pub fn squad_type(&self) -> SquadType {
-        match SquadType::from_str(self.character.squad_type.as_str()) {
+    /// The [`Squad`] the [`Student`] is apart of.
+    pub fn squad(&self) -> Squad {
+        match Squad::from_str(self.character.squad_type.as_str()) {
             Ok(squad) => squad,
-            Err(_) => SquadType::Unknown(self.character.squad_type.to_string()),
+            Err(_) => Squad::Unknown(self.character.squad_type.to_string()),
         }
     }
 
@@ -222,11 +241,24 @@ impl std::fmt::Display for Student {
     }
 }
 
+/// The ID of a Blue Archive Student.
+#[derive(Debug, Eq, PartialEq)]
+pub struct StudentID(pub u32);
+
+impl StudentFilter for StudentID {
+    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
+        students
+            .iter()
+            .filter(|student| &student.id() == self)
+            .collect()
+    }
+}
+
 /// The Age of a Blue Archive Student.
 ///
 /// The actual [`Option<u8>`] is wrapped under this struct to make it easier to display.
-#[derive(Debug)]
-pub struct Age(Option<u8>);
+#[derive(Debug, PartialEq, Eq)]
+pub struct Age(pub Option<u8>);
 
 impl Age {
     /// A method to represent [`Age`] as a [`u8`].
@@ -252,7 +284,37 @@ impl std::fmt::Display for Age {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+impl StudentFilter for Age {
+    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
+        students
+            .iter()
+            .filter(|student| &student.age() == self)
+            .collect()
+    }
+}
+
+/// Whether the [`Student`] was released or not.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Released(pub bool);
+
+impl StudentFilter for Released {
+    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
+        students
+            .iter()
+            .filter(|student| &student.released() == self)
+            .collect()
+    }
+}
+impl std::fmt::Display for Released {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.0 {
+            true => write!(f, "yes"),
+            false => write!(f, "no"),
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Character {
     /// The type of armor the student has (you can also access this through the given method in [`Student`]).
@@ -277,7 +339,7 @@ pub struct Character {
     pub weapon_type: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Info {
     /// The age of the student (represented as ... years old). (you can also access this through the given method in [`Student`]).
@@ -295,7 +357,7 @@ pub struct Info {
     pub voice_actor: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Stats {
     pub id: u32,
@@ -320,7 +382,7 @@ pub struct Stats {
     pub indoor_mood: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Terrain {
     pub urban: TerrainModifier,
@@ -328,14 +390,14 @@ pub struct Terrain {
     pub indoor: TerrainModifier,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 pub struct TerrainModifier {
     damage_dealt: String,
     shield_block_rate: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Skills {
     ex: Vec<Skill>,
@@ -344,7 +406,7 @@ pub struct Skills {
     sub: Vec<Skill>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Skill {
     level: u32,
