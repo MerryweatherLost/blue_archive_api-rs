@@ -392,8 +392,8 @@ pub async fn fetch_equipment_by_name<IS: Into<String>>(
                 Ok(raids) => {
                     for raid in raids.ended {
                         let start_time = match raid.start_time() {
-                            Ok(time) => time.to_string(),
-                            Err(_) => "N/A".to_string(),
+                            Some(time) => time.to_string(),
+                            None => "N/A".to_string(),
                         };
                         println!("Boss: {}, {}", raid.boss_name, start_time)
                     }
