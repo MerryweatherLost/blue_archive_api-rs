@@ -1,5 +1,6 @@
 //! The types associated with the API.
 
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
 pub mod banners;
@@ -25,8 +26,15 @@ pub struct APIStatus {
     pub code: u16,
     /// The version of the API.
     pub version: String,
-    /// How long the API has been up, I'm unsure of the measurement, but it is most likely in **miliseconds**.
-    pub uptime: u64,
+    // The uptime of the API.
+    pub uptime: i64,
     /// The list of available endpoints for the API.
     pub endpoints: Vec<String>,
+}
+
+impl APIStatus {
+    /// The uptime represented with a [`NaiveDateTime`] object.
+    pub fn uptime(&self) -> Option<NaiveDateTime> {
+        NaiveDateTime::from_timestamp_millis(self.uptime)
+    }
 }
