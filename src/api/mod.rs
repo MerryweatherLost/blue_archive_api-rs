@@ -141,8 +141,8 @@ pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
         }
     ```
 */
-pub async fn fetch_student_by_name<IS: Into<String>>(
-    name: IS,
+pub async fn fetch_student_by_name(
+    name: impl Into<String>,
     region: Option<Region>,
 ) -> Result<Student, BlueArchiveError> {
     let name: String = name.into();
@@ -371,8 +371,8 @@ pub async fn fetch_equipment_by_id(id: u32) -> Result<Equipment, BlueArchiveErro
         }
     ```
 */
-pub async fn fetch_equipment_by_name<IS: Into<String>>(
-    name: IS,
+pub async fn fetch_equipment_by_name(
+    name: impl Into<String>,
 ) -> Result<Equipment, BlueArchiveError> {
     let response =
         helper::fetch_response(Endpoints::Equipment(IDOrName::Name(name.into()))).await?;

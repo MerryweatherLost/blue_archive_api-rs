@@ -26,4 +26,4 @@ If you wish to help out, you can. I am a beginner in Rust, and I do not mind a f
 
 | Syntax      | Description | Default                                                           |
 | :---        |    :----:   | ----------------------------------------------------------------: |
-| Query      | Allows for the usage of extra functions to fetch singular queries.       | YES   |
+| `query`      | Allows for the usage of extra functions to fetch singular queries.       | YES   |

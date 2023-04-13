@@ -32,7 +32,7 @@ impl StudentFetcher {
     }
 
     /// Allows you to search for a [`Student`] by their name, if they exist.
-    pub fn get_student_by_name<IS: Into<String>>(&self, name: IS) -> Option<Student> {
+    pub fn get_student_by_name(&self, name: impl Into<String>) -> Option<Student> {
         let name: String = name.into();
         self.students
             .iter()
