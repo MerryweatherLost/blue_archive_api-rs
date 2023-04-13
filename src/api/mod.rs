@@ -4,6 +4,8 @@
 
 pub mod enums;
 pub mod errors;
+
+#[cfg(feature = "fetcher")]
 pub mod fetcher;
 
 #[cfg(feature = "query")]

@@ -24,6 +24,7 @@ If you wish to help out, you can. I am a beginner in Rust, and I do not mind a f
 
 ## Feature Flags
 
-| Syntax      | Description | Default                                                           |
-| :---        |    :----:   | ----------------------------------------------------------------: |
-| `query`      | Allows for the usage of extra functions to fetch singular queries.       | YES   |
+| Syntax      | Description |                                                                  Default    |
+| :---        |    :-----------------------------------------------------------------------:   | --------: |
+| `query`      | Allows for the usage of extra functions to fetch singular queries.                  | YES  |
+| `fetcher`      | Allows for the usage of a fetcher that will cache student data in a struct.      | YES   |
