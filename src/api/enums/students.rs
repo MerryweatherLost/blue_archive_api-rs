@@ -88,7 +88,7 @@ impl StudentQueryBuilder {
         if let Some(query_kind) = self.kind {
             self.query_string = match query_kind {
                 QueryKind::Single(query) => match query {
-                    Query::ID(_) | Query::Released(_) | Query::Region(_) => query.to_string(),
+                    Query::ID(_) | Query::Released(_) | Query::Region(_) => query.to_string(), // <- does not explicitly require "query?".
                     _ => format!("query?{}", query),
                 },
                 QueryKind::Multiple(queries) => format!(

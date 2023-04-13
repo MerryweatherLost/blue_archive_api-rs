@@ -52,7 +52,9 @@ pub(crate) mod helper {
             Endpoints::Raid => "raid".to_string(),
             Endpoints::Banner => "banner".to_string(),
         };
-        Ok(reqwest::get(format!("{}/{}", API_URI, response_string)).await?)
+        Ok(reqwest::get(format!("{}/{}", API_URI, response_string))
+            .await?
+            .error_for_status()?)
     }
 
     /**
@@ -72,7 +74,7 @@ pub(crate) mod helper {
             futures::future::join_all(student_name_list.into_iter().map(|name| async move {
                 let response = match reqwest::get(format!("{}/character/{}", API_URI, name)).await {
                     Ok(res) => res,
-                    Err(err) => return Err(BlueArchiveError::Reqwest(err)),
+                    Err(err) => return Err(BlueArchiveError(err)),
                 };
                 Ok(response.json::<Student>().await)
             }))
@@ -289,7 +291,7 @@ pub async fn fetch_all_students(region: Option<Region>) -> Result<Vec<Student>, 
             let uri = format!("{}/character/{}?{}", API_URI, partial.name, region);
             let response = match reqwest::get(&uri).await {
                 Ok(res) => res,
-                Err(err) => return Err(BlueArchiveError::Reqwest(err)),
+                Err(err) => return Err(BlueArchiveError(err)),
             };
             Ok(response.json::<Student>().await)
         }))
