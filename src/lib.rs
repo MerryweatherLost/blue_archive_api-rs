@@ -18,6 +18,7 @@
 //! | Feature                      | Description                                                                                                                                                             | Default |
 //! |:-----------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------|
 //! | `query`                      | Allows for the usage of extra functions to fetch singular queries.                                                                                                      | YES     |
+//! | `fetcher`                    | Allows for the usage of a fetcher that will cache student data in a struct.                                                                                           | YES     |
 
 pub mod api;
 pub mod enums;
