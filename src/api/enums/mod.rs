@@ -7,12 +7,14 @@ pub mod students;
 pub use students::Query;
 
 /// An enum that matches either a `ID`: ([`u32`]) or a `Name`: ([`String`]).
+#[derive(Debug)]
 pub(crate) enum IDOrName {
     ID(u32),
     Name(String),
 }
 
 /// All of the API endpoints represented by enum values.
+#[derive(Debug)]
 pub(crate) enum Endpoints {
     Status,
     /**

@@ -232,7 +232,7 @@ impl std::fmt::Display for Student {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "(#{} :: {} :: Age: {} :: School:{})",
+            "(#{} :: {} :: Age: {} :: School: {})",
             self.id,
             self.name(),
             self.age(),

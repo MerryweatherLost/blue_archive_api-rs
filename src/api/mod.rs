@@ -4,6 +4,8 @@
 
 pub mod enums;
 pub mod errors;
+
+#[cfg(feature = "fetcher")]
 pub mod fetcher;
 
 #[cfg(feature = "query")]
@@ -52,7 +54,9 @@ pub(crate) mod helper {
             Endpoints::Raid => "raid".to_string(),
             Endpoints::Banner => "banner".to_string(),
         };
-        Ok(reqwest::get(format!("{}/{}", API_URI, response_string)).await?)
+        Ok(reqwest::get(format!("{}/{}", API_URI, response_string))
+            .await?
+            .error_for_status()?)
     }
 
     /**
@@ -72,7 +76,7 @@ pub(crate) mod helper {
             futures::future::join_all(student_name_list.into_iter().map(|name| async move {
                 let response = match reqwest::get(format!("{}/character/{}", API_URI, name)).await {
                     Ok(res) => res,
-                    Err(err) => return Err(BlueArchiveError::Reqwest(err)),
+                    Err(err) => return Err(BlueArchiveError(err)),
                 };
                 Ok(response.json::<Student>().await)
             }))
@@ -141,8 +145,8 @@ pub async fn fetch_status() -> Result<APIStatus, BlueArchiveError> {
         }
     ```
 */
-pub async fn fetch_student_by_name<IS: Into<String>>(
-    name: IS,
+pub async fn fetch_student_by_name(
+    name: impl Into<String>,
     region: Option<Region>,
 ) -> Result<Student, BlueArchiveError> {
     let name: String = name.into();
@@ -289,7 +293,7 @@ pub async fn fetch_all_students(region: Option<Region>) -> Result<Vec<Student>, 
             let uri = format!("{}/character/{}?{}", API_URI, partial.name, region);
             let response = match reqwest::get(&uri).await {
                 Ok(res) => res,
-                Err(err) => return Err(BlueArchiveError::Reqwest(err)),
+                Err(err) => return Err(BlueArchiveError(err)),
             };
             Ok(response.json::<Student>().await)
         }))
@@ -371,8 +375,8 @@ pub async fn fetch_equipment_by_id(id: u32) -> Result<Equipment, BlueArchiveErro
         }
     ```
 */
-pub async fn fetch_equipment_by_name<IS: Into<String>>(
-    name: IS,
+pub async fn fetch_equipment_by_name(
+    name: impl Into<String>,
 ) -> Result<Equipment, BlueArchiveError> {
     let response =
         helper::fetch_response(Endpoints::Equipment(IDOrName::Name(name.into()))).await?;

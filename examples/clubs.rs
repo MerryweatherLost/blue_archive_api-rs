@@ -21,6 +21,11 @@ async fn main() -> Result<()> {
 
     for (club, club_students) in club_map {
         println!("|> {club} <|",);
+        if let Club::Unknown(name) = club {
+            println!(
+                "{name} -> This is not represented in the API wrapper, and should be reported."
+            )
+        }
         for club_student in club_students {
             println!("{}", club_student.character.name)
         }

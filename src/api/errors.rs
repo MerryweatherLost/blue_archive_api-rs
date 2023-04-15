@@ -2,9 +2,19 @@ use thiserror::Error;
 
 /// Errors for the Blue Archive API.
 ///
-/// Contains a set of enum values for more context on what goes wrong.
+/// Wraps around a [`reqwest::Error`].
 #[derive(Debug, Error)]
-pub enum BlueArchiveError {
-    #[error("requesting data failed. ({0})")]
-    Reqwest(#[from] reqwest::Error),
+#[error(transparent)]
+pub struct BlueArchiveError(#[from] pub reqwest::Error);
+
+impl BlueArchiveError {
+    /// Returns the [`reqwest::Error`], and consumes itself in the process.
+    pub fn reqwest_error(self) -> reqwest::Error {
+        self.0
+    }
+
+    /// Returns the reference of the [`reqwest::Error`].
+    pub fn reqwest_error_ref(&self) -> &reqwest::Error {
+        &self.0
+    }
 }
