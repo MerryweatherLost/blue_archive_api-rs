@@ -3,6 +3,8 @@ use blue_archive::Region;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    // Take caution in using this, as this was recently added to the API.
+
     // Fetching a student from a region should be associated with the actual name in that region.
     let カホ = blue_archive::fetch_student_by_name("カホ", Some(Region::Japan)).await?;
     println!("{カホ}"); // (#10065 :: カホ :: Age: 17 :: School:Hyakkiyako)

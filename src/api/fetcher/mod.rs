@@ -32,25 +32,21 @@ impl StudentFetcher {
     }
 
     /// Allows you to search for a [`Student`] by their name, if they exist.
-    pub fn get_student_by_name(&self, name: impl Into<String>) -> Option<Student> {
+    pub fn get_student_by_name(&self, name: impl Into<String>) -> Option<&Student> {
         let name: String = name.into();
         self.students
             .iter()
             .find(|student| student.character.name.to_lowercase() == name.to_lowercase())
-            .cloned()
     }
 
     /// Allows you to search for a [`Student`] by their id, if they exist.
-    pub fn get_student_by_id(&self, id: u32) -> Option<Student> {
-        self.students
-            .iter()
-            .find(|student| student.id == id)
-            .cloned()
+    pub fn get_student_by_id(&self, id: u32) -> Option<&Student> {
+        self.students.iter().find(|student| student.id == id)
     }
 
     /// Fetches a random [`Student`], could be [`None`] if the `students` are empty.
-    pub fn fetch_random_student(&self) -> Option<Student> {
-        self.students.choose(&mut rand::thread_rng()).cloned()
+    pub fn fetch_random_student(&self) -> Option<&Student> {
+        self.students.choose(&mut rand::thread_rng())
     }
 
     /// Returns a [`StudentFilterOptions`], which allows for chaining of items that implement [`StudentFilter`].
