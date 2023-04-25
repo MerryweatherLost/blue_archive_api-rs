@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{BlueArchiveError, IMAGE_DATA_URI};
 
+use anyhow::Result;
+
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct Student {
@@ -169,27 +171,30 @@ pub struct StudentImageData<'student> {
 }
 
 impl StudentImageData<'_> {
-    /// If there is a portrait associated with this [`Student`].
-    pub async fn portrait(&self) -> Result<Option<String>, BlueArchiveError> {
-        let alt_portrait_url = format!(
-            "{IMAGE_DATA_URI}/student/portrait/Portrait_{}.webp",
-            self.student.dev_name
-        );
-        match reqwest::get(&alt_portrait_url).await?.error_for_status() {
-            Ok(_) => Ok(Some(alt_portrait_url)),
+    async fn fetch_image_with_url(
+        url: impl Into<String>,
+    ) -> Result<Option<String>, BlueArchiveError> {
+        let url: String = url.into();
+        match reqwest::get(&url).await?.error_for_status() {
+            Ok(_) => Ok(Some(url)),
             Err(_) => Ok(None),
         }
+    }
+    /// If there is a portrait associated with this [`Student`].
+    pub async fn portrait(&self) -> Result<Option<String>, BlueArchiveError> {
+        Self::fetch_image_with_url(format!(
+            "{IMAGE_DATA_URI}/student/portrait/Portrait_{}.webp",
+            self.student.dev_name
+        ))
+        .await
     }
 
     /// If there is an alternative portrait associated with this [`Student`].
     pub async fn alternative_portrait(&self) -> Result<Option<String>, BlueArchiveError> {
-        let alt_portrait_url = format!(
+        Self::fetch_image_with_url(format!(
             "{IMAGE_DATA_URI}/student/portrait/Portrait_{}_2.webp",
             self.student.dev_name
-        );
-        match reqwest::get(&alt_portrait_url).await?.error_for_status() {
-            Ok(_) => Ok(Some(alt_portrait_url)),
-            Err(_) => Ok(None),
-        }
+        ))
+        .await
     }
 }

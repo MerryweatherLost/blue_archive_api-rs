@@ -2,6 +2,7 @@ use crate::enums::Language;
 use crate::types::Student;
 use crate::{BlueArchiveError, DATA_URI};
 
+use rand::seq::IteratorRandom;
 pub use reqwest::{Request, Response, StatusCode};
 
 use anyhow::Result;
@@ -65,4 +66,12 @@ pub async fn fetch_student_by_name(
             .into_iter()
             .any(|x| x.to_lowercase() == name.to_lowercase())
         }))
+}
+
+pub async fn fetch_random_student(language: &Language) -> Result<Student, BlueArchiveError> {
+    Ok(fetch_all_students(language)
+        .await?
+        .into_iter()
+        .choose(&mut rand::thread_rng())
+        .expect("failed to randomize students!"))
 }
