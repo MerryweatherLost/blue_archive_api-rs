@@ -2,10 +2,9 @@
 
 ## Crediting
 
-Rust API wrapper of torikushii's BlueArchive API. For more information and to see the current status of the API, go to these links:
+Rust API wrapper of lonqie's SchaleDB. For more information, go to these links:
 
-- **API Github:** <https://github.com/torikushiii/BlueArchiveAPI>
-- **API Link:** <https://api.ennead.cc/buruaka>
+- **Github & Owner:** <https://github.com/lonqie/SchaleDB> : <https://github.com/lonqie>
 
 ---
 
@@ -24,7 +23,7 @@ If you wish to help out, you can. I am a beginner in Rust, and I do not mind a f
 
 ## Feature Flags
 
-| Syntax      | Description |                                                                  Default    |
-| :---        |    :-----------------------------------------------------------------------:   | --------: |
-| `query`      | Allows for the usage of extra functions to fetch singular queries.                  | YES  |
-| `fetcher`      | Allows for the usage of a fetcher that will cache student data in a struct.      | YES   |
+| Syntax       | Description |                                                                      Default  |
+| :---         |    :-----------------------------------------------------------------------:   | --------:  |
+| `query`      | Allows for the usage of extra functions to fetch singular queries.                   | YES  |
+| `fetcher`    | Allows for the usage of a fetcher that will cache student data in a struct.          | YES  |

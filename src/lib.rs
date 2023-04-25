@@ -3,9 +3,13 @@
 //!
 
 pub mod api;
+pub mod enums;
 pub mod errors;
 pub mod types;
 
+pub use api::*;
+pub use enums::Language;
 pub use errors::BlueArchiveError;
 
-const DATA_URI: &str = "https://github.com/lonqie/SchaleDB/tree/main/data";
+pub const DATA_URI: &str = "https://raw.githubusercontent.com/lonqie/SchaleDB/main/data";
+pub const IMAGE_DATA_URI: &str = "https://raw.githubusercontent.com/lonqie/SchaleDB/main/images";
