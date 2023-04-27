@@ -1,3 +1,3 @@
 pub mod students;
 
-pub use students::Student;
+pub use students::{Age, Student};

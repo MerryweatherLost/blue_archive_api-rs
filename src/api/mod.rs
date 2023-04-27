@@ -1,8 +1,10 @@
 use crate::enums::Language;
+use crate::filter::StudentFilterOptions;
 use crate::types::Student;
 use crate::{BlueArchiveError, DATA_URI};
 
 use rand::seq::IteratorRandom;
+use reqwest::Client;
 pub use reqwest::{Request, Response, StatusCode};
 
 use anyhow::Result;
@@ -39,12 +41,26 @@ pub(crate) mod internal {
         );
         Ok(reqwest::get(url).await?.error_for_status()?)
     }
+
+    /// Obtains all Students without adding extra content, useful for filtered [`Student`]'s.
+    pub(crate) async fn fetch_all_students_without_extra(
+        language: &Language,
+    ) -> Result<Vec<Student>, BlueArchiveError> {
+        let response = internal::fetch_response(&Endpoint::Students, language).await?;
+        Ok(response.json::<Vec<Student>>().await?)
+    }
 }
 
 /// TBD
 pub async fn fetch_all_students(language: &Language) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = internal::fetch_response(&Endpoint::Students, language).await?;
-    Ok(response.json::<Vec<Student>>().await?)
+    let mut students = internal::fetch_all_students_without_extra(language).await?;
+    futures::future::join_all(
+        students
+            .iter_mut()
+            .map(|student| async move { student.fetch_extra_data(&Client::new()).await }),
+    )
+    .await;
+    Ok(students)
 }
 
 /// TBD
@@ -53,7 +69,7 @@ pub async fn fetch_student_by_name(
     language: &Language,
 ) -> Result<Option<Student>, BlueArchiveError> {
     let name: String = name.into();
-    Ok(fetch_all_students(language)
+    let possible_student = internal::fetch_all_students_without_extra(language)
         .await?
         .into_iter()
         .find(|student| {
@@ -65,7 +81,14 @@ pub async fn fetch_student_by_name(
             ]
             .into_iter()
             .any(|x| x.to_lowercase() == name.to_lowercase())
-        }))
+        });
+    match possible_student {
+        Some(mut student) => {
+            student.fetch_extra_data(&Client::new()).await;
+            Ok(Some(student))
+        }
+        None => Ok(None),
+    }
 }
 
 pub async fn fetch_random_student(language: &Language) -> Result<Student, BlueArchiveError> {
@@ -74,4 +97,8 @@ pub async fn fetch_random_student(language: &Language) -> Result<Student, BlueAr
         .into_iter()
         .choose(&mut rand::thread_rng())
         .expect("failed to randomize students!"))
+}
+
+pub fn filter(students: &Vec<Student>) -> StudentFilterOptions {
+    StudentFilterOptions::new(students)
 }

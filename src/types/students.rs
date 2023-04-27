@@ -1,10 +1,11 @@
+use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
 use crate::{BlueArchiveError, IMAGE_DATA_URI};
 
 use anyhow::Result;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 pub struct Student {
     pub id: u32,
@@ -85,6 +86,9 @@ pub struct Student {
     skill_ex_material_amount: Vec<Vec<u8>>,
     skill_material: Vec<Vec<u16>>,
     skill_material_amount: Vec<Vec<u8>>,
+    /// Image data related to the [`Student`].
+    #[serde(skip)]
+    pub image: StudentImageData,
 }
 
 impl Student {
@@ -108,8 +112,21 @@ impl Student {
         format!("{} {}", self.personal_name, self.family_name)
     }
 
-    pub fn image(&self) -> StudentImageData {
-        StudentImageData { student: self }
+    /// Gets the age of the [`Student`].
+    pub fn age(&self) -> Age {
+        if let Some(ix) = self.character_age.find(|c| c == ' ') {
+            if let Ok(num) = self.character_age[0..ix].parse::<u8>() {
+                return Age(Some(num));
+            }
+        }
+        Age(None)
+    }
+
+    /// Fetches extra data of this [`Student`].
+    pub(crate) async fn fetch_extra_data(&mut self, client: &Client) {
+        if let Ok(data) = StudentImageData::new(self, client).await {
+            self.image = data
+        }
     }
 }
 
@@ -119,13 +136,32 @@ impl std::fmt::Display for Student {
             f,
             "({} : {} : {})",
             self.full_name_with_last(),
-            self.character_age,
+            self.age(),
             self.school
         )
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq)]
+pub struct Age(pub Option<u8>);
+impl Age {
+    pub fn as_u8(&self) -> u8 {
+        self.0.unwrap_or(0)
+    }
+}
+
+impl std::fmt::Display for Age {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.0 {
+            Some(age) => {
+                write!(f, "{}", age)
+            }
+            None => write!(f, "None"),
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 pub struct StudentSummon {
     id: u32,
@@ -147,7 +183,7 @@ pub struct Gear {
     tier_up_material_amount: Vec<Vec<u8>>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 pub struct Weapon {
     name: String,
@@ -165,36 +201,47 @@ pub struct Weapon {
     stat_level_up_type: String, // todo: Coerce to enum.
 }
 
-#[derive(Debug)]
-pub struct StudentImageData<'student> {
-    student: &'student Student,
+#[derive(Debug, Default, PartialEq, Eq)]
+pub struct StudentImageData {
+    /// If there is a portrait associated with this [`Student`].
+    pub portrait_url: Option<String>,
+    /// If there is an alternative portrait associated with this [`Student`].
+    pub alternative_portrait_url: Option<String>,
 }
 
-impl StudentImageData<'_> {
-    async fn fetch_image_with_url(
-        url: impl Into<String>,
-    ) -> Result<Option<String>, BlueArchiveError> {
-        let url: String = url.into();
-        match reqwest::get(&url).await?.error_for_status() {
-            Ok(_) => Ok(Some(url)),
-            Err(_) => Ok(None),
-        }
-    }
-    /// If there is a portrait associated with this [`Student`].
-    pub async fn portrait(&self) -> Result<Option<String>, BlueArchiveError> {
-        Self::fetch_image_with_url(format!(
-            "{IMAGE_DATA_URI}/student/portrait/Portrait_{}.webp",
-            self.student.dev_name
-        ))
-        .await
+impl StudentImageData {
+    pub async fn new(
+        student: &Student,
+        client: &Client,
+    ) -> Result<StudentImageData, BlueArchiveError> {
+        Ok(Self {
+            portrait_url: Self::fetch_image_with_url(
+                client,
+                format!(
+                    "{IMAGE_DATA_URI}/student/portrait/Portrait_{}.webp",
+                    student.dev_name
+                ),
+            )
+            .await,
+            alternative_portrait_url: Self::fetch_image_with_url(
+                client,
+                format!(
+                    "{IMAGE_DATA_URI}/student/portrait/Portrait_{}_2.webp",
+                    student.dev_name
+                ),
+            )
+            .await,
+        })
     }
 
-    /// If there is an alternative portrait associated with this [`Student`].
-    pub async fn alternative_portrait(&self) -> Result<Option<String>, BlueArchiveError> {
-        Self::fetch_image_with_url(format!(
-            "{IMAGE_DATA_URI}/student/portrait/Portrait_{}_2.webp",
-            self.student.dev_name
-        ))
-        .await
+    async fn fetch_image_with_url(client: &Client, url: impl Into<String>) -> Option<String> {
+        let url: String = url.into();
+        match client.get(&url).send().await {
+            Ok(response) => match response.error_for_status() {
+                Ok(_) => Some(url),
+                Err(_) => None,
+            },
+            Err(_) => None,
+        }
     }
 }
