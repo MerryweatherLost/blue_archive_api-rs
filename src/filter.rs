@@ -13,6 +13,22 @@ impl StudentFilter for Age {
     }
 }
 
+// todo: resolve the complication in implementing a Released filter.
+// impl StudentFilter for Released {
+//     fn filter(self, students: &[Student]) -> Vec<&Student> {
+//         todo!()
+//     }
+// }
+
+impl StudentFilter for ID {
+    fn filter(self, students: &[Student]) -> Vec<&Student> {
+        students
+            .iter()
+            .filter(|student| student.id == self.0)
+            .collect()
+    }
+}
+
 #[derive(Debug)]
 pub struct StudentFilterOptions<'s> {
     pub filtered_students: Option<Vec<&'s Student>>,

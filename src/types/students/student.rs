@@ -5,11 +5,13 @@ use crate::{BlueArchiveError, IMAGE_DATA_URI};
 
 use anyhow::Result;
 
+use super::{Age, Released};
+
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 pub struct Student {
     pub id: u32,
-    is_released: Vec<bool>,
+    is_released: (bool, bool),
     default_order: u32, // <- ?
     path_name: String,
     dev_name: String,
@@ -122,6 +124,12 @@ impl Student {
         Age(None)
     }
 
+    /// Released status of the [`Student`].
+    /// Represented in data as (bool, bool)
+    pub fn released(&self) -> Released {
+        Released(self.is_released)
+    }
+
     /// Fetches extra data of this [`Student`].
     pub(crate) async fn fetch_extra_data(&mut self, client: &Client) {
         if let Ok(data) = StudentImageData::new(self, client).await {
@@ -142,25 +150,6 @@ impl std::fmt::Display for Student {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
-pub struct Age(pub Option<u8>);
-impl Age {
-    pub fn as_u8(&self) -> u8 {
-        self.0.unwrap_or(0)
-    }
-}
-
-impl std::fmt::Display for Age {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self.0 {
-            Some(age) => {
-                write!(f, "{}", age)
-            }
-            None => write!(f, "None"),
-        }
-    }
-}
-
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 pub struct StudentSummon {
@@ -173,7 +162,7 @@ pub struct StudentSummon {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct Gear {
-    released: Vec<bool>,
+    released: (bool, bool),
     stat_type: Vec<String>,
     stat_value: Vec<Vec<u8>>,
     name: String,
