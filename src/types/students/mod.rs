@@ -23,15 +23,9 @@ impl Display for Age {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct Released((bool, bool));
-
-impl Released {
-    pub fn japan(&self) -> bool {
-        self.0 .0
-    }
-    pub fn global(&self) -> bool {
-        self.0 .1
-    }
+pub struct Released {
+    japan: bool,
+    global: bool,
 }
 
 impl Display for Released {
@@ -39,11 +33,11 @@ impl Display for Released {
         write!(
             f,
             "(Japan: {} | Global: {})",
-            match self.japan() {
+            match self.japan {
                 true => "Yes",
                 false => "No",
             },
-            match self.global() {
+            match self.global {
                 true => "Yes",
                 false => "No",
             }
@@ -52,4 +46,4 @@ impl Display for Released {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct ID(pub u32);
+pub struct StudentID(pub u32);

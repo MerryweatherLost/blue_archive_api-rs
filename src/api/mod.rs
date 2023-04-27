@@ -1,5 +1,5 @@
 use crate::enums::Language;
-use crate::filter::StudentFilterOptions;
+use crate::filters::student::StudentFilterOptions;
 use crate::types::Student;
 use crate::{BlueArchiveError, DATA_URI};
 

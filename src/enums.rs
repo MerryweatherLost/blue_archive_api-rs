@@ -1,4 +1,4 @@
-use strum_macros::Display;
+use strum_macros::{Display, EnumIter, EnumString};
 
 #[derive(Debug, Display)]
 pub enum Language {
@@ -24,6 +24,70 @@ impl Language {
             Language::Vietnamese => "vi",
         }
         .to_string()
+    }
+}
+
+/**
+    **This is a `enum` that contains the current Blue Archive schools represented in the API.**
+
+    As of the `27th of April, 2023`,
+    this is the current list of schools represented in the API.
+    * **Abydos** High School
+    * **Gehenna** Academy
+    * **Hyakkiyako** Alliance Academy
+    * **Millennium** Science School
+    * **Shanhaijing** Senior Secondary School
+    * **Trinity** General School
+    * **Red Winter** Federal Academy
+    * **Valkyrie** Police Academy
+    * **Arius** Branch School
+    * **SRT** Special Academy
+
+    In the case that a school in the API is not present on the wrapper,
+    a [`School::Unknown(String)`] is returned to represent the unknown school with its name in the `enum`.
+*/
+#[derive(EnumString, Debug, Display, EnumIter, PartialEq, Eq)]
+pub enum School {
+    /// **Abydos** High School
+    Abydos,
+    /// **Gehenna** Academy
+    Gehenna,
+    /// **Hyakkiyako** Alliance Academy
+    Hyakkiyako,
+    /// **Millennium** Science School
+    Millennium,
+    /// **Shanhaijing** Senior Secondary School
+    Shanhaijing,
+    /// **Trinity** General School
+    Trinity,
+    /// **Red Winter** Federal Academy
+    RedWinter,
+    /// **Valkyrie** Police Academy
+    Valkyrie,
+    /// **Arius** Branch School
+    Arius,
+    /// **SRT** Special Academy
+    SRT,
+    Unknown(String),
+}
+
+impl School {
+    /// The full name of the school.
+    pub fn full_name(&self) -> String {
+        let name = match self {
+            School::Abydos => "Abydos High School",
+            School::Gehenna => "Gehenna Academy",
+            School::Hyakkiyako => "Hyakkiyako Alliance Academy",
+            School::Millennium => "Millennium Science School",
+            School::Shanhaijing => "Shanhaijing Senior Secondary School",
+            School::Trinity => "Trinity General School",
+            School::RedWinter => "Red Winter Federal Academy",
+            School::Valkyrie => "Valkyrie Police Academy",
+            School::Arius => "Arius Branch School",
+            School::SRT => "SRT Special Academy",
+            School::Unknown(string) => string.as_ref(),
+        };
+        name.to_string()
     }
 }
 
@@ -109,78 +173,6 @@ impl Language {
 //             Squad::Striker => write!(f, "Striker"),
 //             Squad::Unknown(unknown_type) => write!(f, "{}", unknown_type),
 //         }
-//     }
-// }
-// /**
-//     **This is a `enum` that contains the current Blue Archive schools represented in the API.**
-
-//     As of the `4th of April, 2023`,
-//     this is the current list of schools represented in the API.
-//     * **Abydos** High School
-//     * **Gehenna** Academy
-//     * **Hyakkiyako** Alliance Academy
-//     * **Millennium** Science School
-//     * **Shanhaijing** Senior Secondary School
-//     * **Trinity** General School
-//     * **Red Winter** Federal Academy
-//     * **Valkyrie** Police Academy
-//     * **Arius** Branch School
-//     * **SRT** Special Academy
-
-//     In the case that a school in the API is not present on the wrapper,
-//     a [`School::Unknown(String)`] is returned to represent the unknown school with its name in the `enum`.
-// */
-// #[derive(EnumString, Debug, Display, EnumIter, PartialEq, Eq)]
-// pub enum School {
-//     /// **Abydos** High School
-//     Abydos,
-//     /// **Gehenna** Academy
-//     Gehenna,
-//     /// **Hyakkiyako** Alliance Academy
-//     Hyakkiyako,
-//     /// **Millennium** Science School
-//     Millennium,
-//     /// **Shanhaijing** Senior Secondary School
-//     Shanhaijing,
-//     /// **Trinity** General School
-//     Trinity,
-//     /// **Red Winter** Federal Academy
-//     RedWinter,
-//     /// **Valkyrie** Police Academy
-//     Valkyrie,
-//     /// **Arius** Branch School
-//     Arius,
-//     /// **SRT** Special Academy
-//     SRT,
-//     Unknown(String),
-// }
-
-// impl School {
-//     /// The full name of the school.
-//     pub fn full_name(&self) -> String {
-//         let name = match self {
-//             School::Abydos => "Abydos High School",
-//             School::Gehenna => "Gehenna Academy",
-//             School::Hyakkiyako => "Hyakkiyako Alliance Academy",
-//             School::Millennium => "Millennium Science School",
-//             School::Shanhaijing => "Shanhaijing Senior Secondary School",
-//             School::Trinity => "Trinity General School",
-//             School::RedWinter => "Red Winter Federal Academy",
-//             School::Valkyrie => "Valkyrie Police Academy",
-//             School::Arius => "Arius Branch School",
-//             School::SRT => "SRT Special Academy",
-//             School::Unknown(string) => string.as_ref(),
-//         };
-//         name.to_string()
-//     }
-// }
-
-// impl StudentFilter for School {
-//     fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-//         students
-//             .iter()
-//             .filter(|student| &student.school() == self)
-//             .collect()
 //     }
 // }
 

@@ -1,4 +1,4 @@
-use crate::types::*;
+use crate::{enums::School, types::*};
 
 pub trait StudentFilter {
     fn filter(self, students: &[Student]) -> Vec<&Student>;
@@ -14,17 +14,26 @@ impl StudentFilter for Age {
 }
 
 // todo: resolve the complication in implementing a Released filter.
-// impl StudentFilter for Released {
-//     fn filter(self, students: &[Student]) -> Vec<&Student> {
-//         todo!()
-//     }
-// }
+impl StudentFilter for Released {
+    fn filter(self, students: &[Student]) -> Vec<&Student> {
+        todo!()
+    }
+}
 
-impl StudentFilter for ID {
+impl StudentFilter for StudentID {
     fn filter(self, students: &[Student]) -> Vec<&Student> {
         students
             .iter()
             .filter(|student| student.id == self.0)
+            .collect()
+    }
+}
+
+impl StudentFilter for School {
+    fn filter(self, students: &[Student]) -> Vec<&Student> {
+        students
+            .iter()
+            .filter(|student| student.school() == self)
             .collect()
     }
 }

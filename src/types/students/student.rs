@@ -1,7 +1,9 @@
+use std::str::FromStr;
+
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
-use crate::{BlueArchiveError, IMAGE_DATA_URI};
+use crate::{enums::School, BlueArchiveError, IMAGE_DATA_URI};
 
 use anyhow::Result;
 
@@ -124,10 +126,18 @@ impl Student {
         Age(None)
     }
 
+    /// Gets the school of the [`Student`].
+    pub fn school(&self) -> School {
+        School::from_str(&self.school).unwrap_or(School::Unknown(self.school.clone()))
+    }
+
     /// Released status of the [`Student`].
     /// Represented in data as (bool, bool)
     pub fn released(&self) -> Released {
-        Released(self.is_released)
+        Released {
+            japan: self.is_released.0,
+            global: self.is_released.1,
+        }
     }
 
     /// Fetches extra data of this [`Student`].
