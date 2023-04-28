@@ -7,20 +7,22 @@ use crate::{enums::School, BlueArchiveError, IMAGE_DATA_URI};
 
 use anyhow::Result;
 
-use super::{Age, Released};
+use super::{Age, Released, StudentID};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 pub struct Student {
-    pub id: u32,
+    id: u32,
     is_released: (bool, bool),
-    default_order: u32, // <- ?
+    default_order: u32,
     path_name: String,
     dev_name: String,
     name: String,
     school: String,
     club: String,
-    star_grade: u8,
+    /// The amount of stars a [`Student`] is rated.
+    #[serde(alias = "StarGrade")]
+    stars: u8,
     squad_type: String,
     tactic_role: String,
     summons: Vec<StudentSummon>,
@@ -116,6 +118,11 @@ impl Student {
         format!("{} {}", self.personal_name, self.family_name)
     }
 
+    /// The ID of the [`Student`].
+    pub fn id(&self) -> StudentID {
+        StudentID(self.id)
+    }
+
     /// Gets the age of the [`Student`].
     pub fn age(&self) -> Age {
         if let Some(ix) = self.character_age.find(|c| c == ' ') {
@@ -128,7 +135,10 @@ impl Student {
 
     /// Gets the school of the [`Student`].
     pub fn school(&self) -> School {
-        School::from_str(&self.school).unwrap_or(School::Unknown(self.school.clone()))
+        match School::from_str(&self.school) {
+            Ok(school) => school,
+            Err(_) => School::Unknown(self.school.clone()),
+        }
     }
 
     /// Released status of the [`Student`].

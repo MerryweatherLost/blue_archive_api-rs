@@ -24,7 +24,7 @@ impl StudentFilter for StudentID {
     fn filter(self, students: &[Student]) -> Vec<&Student> {
         students
             .iter()
-            .filter(|student| student.id == self.0)
+            .filter(|student| student.id() == self)
             .collect()
     }
 }

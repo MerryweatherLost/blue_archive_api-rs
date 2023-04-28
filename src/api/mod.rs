@@ -42,7 +42,7 @@ pub(crate) mod internal {
         Ok(reqwest::get(url).await?.error_for_status()?)
     }
 
-    /// Obtains all Students without adding extra content, useful for filtered [`Student`]'s.
+    /// Obtains all Students without adding extra content.
     pub(crate) async fn fetch_all_students_without_extra(
         language: &Language,
     ) -> Result<Vec<Student>, BlueArchiveError> {
