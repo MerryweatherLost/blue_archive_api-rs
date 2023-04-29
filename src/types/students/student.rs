@@ -3,16 +3,18 @@ use std::str::FromStr;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
-use crate::{enums::School, BlueArchiveError, IMAGE_DATA_URI};
+use crate::{
+    enums::{School, Squad, TacticRole},
+    types::{Age, Released, ID},
+    BlueArchiveError, IMAGE_DATA_URI,
+};
 
 use anyhow::Result;
-
-use super::{Age, Released, StudentID};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 pub struct Student {
-    id: u32,
+    pub id: ID,
     is_released: (bool, bool),
     default_order: u32,
     path_name: String,
@@ -40,7 +42,7 @@ pub struct Student {
     collection_bg: String,
     collection_texture: String,
     family_name: String,
-    family_name_ruby: String,
+    family_name_ruby: Option<String>,
     personal_name: String,
     school_year: String,
     character_age: String,
@@ -118,16 +120,13 @@ impl Student {
         format!("{} {}", self.personal_name, self.family_name)
     }
 
-    /// The ID of the [`Student`].
-    pub fn id(&self) -> StudentID {
-        StudentID(self.id)
-    }
-
     /// Gets the age of the [`Student`].
     pub fn age(&self) -> Age {
-        if let Some(ix) = self.character_age.find(|c| c == ' ') {
-            if let Ok(num) = self.character_age[0..ix].parse::<u8>() {
-                return Age(Some(num));
+        for id in [" ", "歳", "세", " ปี", "歲"] {
+            if let Some(ix) = self.character_age.find(id) {
+                if let Ok(num) = self.character_age[0..ix].parse::<u8>() {
+                    return Age(Some(num));
+                }
             }
         }
         Age(None)
@@ -150,6 +149,22 @@ impl Student {
         }
     }
 
+    /// TBD
+    pub fn tactic_role(&self) -> TacticRole {
+        match TacticRole::from_str(&self.tactic_role) {
+            Ok(tr) => tr,
+            Err(_) => TacticRole::Unknown(self.tactic_role.clone()),
+        }
+    }
+
+    /// TBD
+    pub fn squad(&self) -> Squad {
+        match Squad::from_str(&self.squad_type) {
+            Ok(s) => s,
+            Err(_) => Squad::Unknown(self.squad_type.clone()),
+        }
+    }
+
     /// Fetches extra data of this [`Student`].
     pub(crate) async fn fetch_extra_data(&mut self, client: &Client) {
         if let Ok(data) = StudentImageData::new(self, client).await {
@@ -162,10 +177,11 @@ impl std::fmt::Display for Student {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "({} : {} : {})",
+            "Student : {} :-: ID#:{} | Age:{} | School: {}",
             self.full_name_with_last(),
+            self.id,
             self.age(),
-            self.school
+            self.school()
         )
     }
 }

@@ -1,5 +1,6 @@
 use strum_macros::{Display, EnumIter, EnumString};
 
+/// Languages that **SchaleDB** supports.
 #[derive(Debug, Display)]
 pub enum Language {
     English,
@@ -28,10 +29,10 @@ impl Language {
 }
 
 /**
-    **This is a `enum` that contains the current Blue Archive schools represented in the API.**
+    **This is a `enum` that contains the current Blue Archive schools represented in the data.**
 
     As of the `27th of April, 2023`,
-    this is the current list of schools represented in the API.
+    this is the current list of schools represented in the data.
     * **Abydos** High School
     * **Gehenna** Academy
     * **Hyakkiyako** Alliance Academy
@@ -91,80 +92,63 @@ impl School {
     }
 }
 
-// /// Trait that allows for the filtering of [`Student`] data.
-// pub trait StudentFilter {
-//     fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student>;
-// }
+/**
+    **This is a `enum` that contains the current Blue Archive roles represented in the data.**
 
-// /**
-//     **This is a `enum` that contains the current Blue Archive roles represented in the API.**
+    As of the `27th of April, 2023`,
+    this is the list of current roles represented in the data.
+    - **Tanker**
+    - **Vehicle**
+    - **DamageDealer**
+    - **Healer**
+    - **Supporter**
 
-//     As of the `11th of December, 2022`,
-//     this is the list of current roles represented in the API.
-//     * **Attacker**
-//     * **Healer**
-//     * **Supporter**
-//     * **Tanker**
+    In the case that a tactic role in the API is not present on the wrapper,
+    a [`TacticRole::Unknown(String)`] is returned to represent the unknown tactic role with its name in the `enum`.
+*/
+#[derive(Debug, Display, EnumString, EnumIter, PartialEq, Eq)]
+pub enum TacticRole {
+    Tanker,
+    Vehicle,
+    DamageDealer,
+    Healer,
+    Supporter,
+    Unknown(String),
+}
 
-//     In the case that a role in the API is not present on the wrapper,
-//     a [`Role::Unknown(String)`] is returned to represent the unknown role with its name in the `enum`.
-// */
-// #[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
-// pub enum Role {
-//     Attacker,
-//     Healer,
-//     Supporter,
-//     Tanker,
-//     Unknown(String),
-// }
+/**
+    **This is a `enum` that contains the current Blue Archive squads represented in the data.**
 
-// impl StudentFilter for Role {
-//     fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-//         students
-//             .iter()
-//             .filter(|student| &student.role() == self)
-//             .collect::<Vec<&Student>>()
-//     }
-// }
+    As of the `29th of April, 2023`,
+    this is the current list of squads represented in the data.
+    * **Main** (Striker)
+    * **Support** (Special)
 
-// impl std::fmt::Display for Role {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         match self {
-//             Role::Attacker => write!(f, "Attacker"),
-//             Role::Healer => write!(f, "Healer"),
-//             Role::Supporter => write!(f, "Supporter"),
-//             Role::Tanker => write!(f, "Tanker"),
-//             Role::Unknown(unknown_role) => write!(f, "{}", unknown_role),
-//         }
-//     }
-// }
+    In the case that a squad in the API is not present on the wrapper,
+    a [`Squad::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
+*/
+#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
+pub enum Squad {
+    Main,
+    Support,
+    Unknown(String),
+}
 
-// /**
-//     **This is a `enum` that contains the current Blue Archive squads represented in the API.**
-
-//     As of the `29th of March, 2023`,
-//     this is the current list of squads represented in the API.
-//     * **Special**
-//     * **Striker**
-
-//     In the case that a squad in the API is not present on the wrapper,
-//     a [`Squad::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
-// */
-// #[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
-// pub enum Squad {
-//     Special,
-//     Striker,
-//     Unknown(String),
-// }
-
-// impl StudentFilter for Squad {
-//     fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-//         students
-//             .iter()
-//             .filter(|student| &student.squad() == self)
-//             .collect()
-//     }
-// }
+impl Squad {
+    /// Obtains an alternative name for the [Squad] that some may be familiar with.
+    ///
+    /// - **Main** -> Striker
+    /// - **Support** -> Special
+    ///
+    /// Although, if [Squad::Unknown], the inner value will just be returned.
+    pub fn alt_name(&self) -> String {
+        match self {
+            Squad::Main => "Striker".to_string(),
+            Squad::Support => "Special".to_string(),
+            Squad::Unknown(squad) => squad.to_string(),
+        }
+    }
+}
 
 // impl std::fmt::Display for Squad {
 //     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -177,10 +161,10 @@ impl School {
 // }
 
 // /**
-//     **This is a `enum` that contains the current Blue Archive positions represented in the API.**
+//     **This is a `enum` that contains the current Blue Archive positions represented in the data.**
 
 //     As of the `14th of December, 2022`,
-//     this is the current list of weapons represented in the API.
+//     this is the current list of weapons represented in the data.
 //     * **Front**
 //     * **Middle**
 //     * **Back**
@@ -217,10 +201,10 @@ impl School {
 // }
 
 // /**
-//     **This is a `enum` that contains the current Blue Archive weapons represented in the API.**
+//     **This is a `enum` that contains the current Blue Archive weapons represented in the data.**
 
 //     As of the `27th of November, 2022`,
-//     this is the current list of weapons represented in the API.
+//     this is the current list of weapons represented in the data.
 //     * **AR** (Assault Rifle)
 //     * **GL** (Grenade Launcher)
 //     * **HG** (Handgun)
@@ -283,10 +267,10 @@ impl School {
 // }
 
 // /**
-//     **This is a `enum` that contains the current Blue Archive damage types represented in the API.**
+//     **This is a `enum` that contains the current Blue Archive damage types represented in the data.**
 
 //     As of the `14th of December, 2022`,
-//     this is the current list of damage types represented in the API.
+//     this is the current list of damage types represented in the data.
 //     * **Explosion**
 //     * **Mystic**
 //     * **Penetration**
@@ -323,10 +307,10 @@ impl School {
 // }
 
 // /**
-//     **This is a `enum` that contains the current Blue Archive armor represented in the API.**
+//     **This is a `enum` that contains the current Blue Archive armor represented in the data.**
 
 //     As of the `3rd of April, 2023`,
-//     this is the current list of armor represented in the API.
+//     this is the current list of armor represented in the data.
 //     * **Explosion**
 //     * **Mystic**
 //     * **Penetration**
@@ -378,10 +362,10 @@ impl School {
 //     }
 // }
 // /**
-//     **This is a `enum` that contains the current Blue Archive clubs represented in the API.**
+//     **This is a `enum` that contains the current Blue Archive clubs represented in the data.**
 
 //     As of the `4th of April, 2023`,
-//     this is the current list of armor represented in the API.
+//     this is the current list of armor represented in the data.
 
 //     - **Problem Solver 68**
 //     - **Super Phenomenon Task Force**
@@ -503,10 +487,10 @@ impl School {
 // }
 
 // /**
-//     **This is a `enum` that contains the current Blue Archive rarities represented in the API.**
+//     **This is a `enum` that contains the current Blue Archive rarities represented in the data.**
 
 //     As of the `3rd of April, 2023`,
-//     this is the current list of armor represented in the API.
+//     this is the current list of armor represented in the data.
 
 //     * **R** (Rare)
 //     * **SR** (Super Rare)

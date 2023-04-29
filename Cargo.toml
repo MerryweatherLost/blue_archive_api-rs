@@ -19,8 +19,3 @@ futures = "0.3"
 thiserror = "1.0"
 strum = "0.24"
 strum_macros = "0.24"
-
-[features]
-default = ["query", "fetcher"]
-query = []
-fetcher = []

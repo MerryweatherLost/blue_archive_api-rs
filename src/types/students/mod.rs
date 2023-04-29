@@ -24,26 +24,12 @@ impl Display for Age {
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Released {
-    japan: bool,
-    global: bool,
+    pub japan: bool,
+    pub global: bool,
 }
 
 impl Display for Released {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "(Japan: {} | Global: {})",
-            match self.japan {
-                true => "Yes",
-                false => "No",
-            },
-            match self.global {
-                true => "Yes",
-                false => "No",
-            }
-        )
+        write!(f, "(Japan: {} | Global: {})", self.japan, self.global)
     }
 }
-
-#[derive(Debug, PartialEq, Eq)]
-pub struct StudentID(pub u32);
