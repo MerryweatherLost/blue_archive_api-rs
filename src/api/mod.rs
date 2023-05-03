@@ -1,3 +1,4 @@
+//! The main module where obtaining the data happens.
 pub mod student;
 pub mod summon;
 

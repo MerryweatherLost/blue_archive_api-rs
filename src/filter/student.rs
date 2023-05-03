@@ -1,6 +1,10 @@
+//! All [`StudentFilter`] implementations, including its own trait are in this module.
+
 use crate::{enums::*, types::*};
 
+/// Used to filter **[`Students`][`Student`]**.
 pub trait StudentFilter {
+    /// Filters a slice of [`Student`], and returns a **[`Vec<Student>`]**.
     fn filter(self, students: &[Student]) -> Vec<&Student>;
 }
 
@@ -72,6 +76,33 @@ impl StudentFilter for Position {
         students
             .iter()
             .filter(|student| student.position() == self)
+            .collect()
+    }
+}
+
+impl StudentFilter for BulletType {
+    fn filter(self, students: &[Student]) -> Vec<&Student> {
+        students
+            .iter()
+            .filter(|student| student.bullet_type() == self)
+            .collect()
+    }
+}
+
+impl StudentFilter for Club {
+    fn filter(self, students: &[Student]) -> Vec<&Student> {
+        students
+            .iter()
+            .filter(|student| student.club() == self)
+            .collect()
+    }
+}
+
+impl StudentFilter for WeaponType {
+    fn filter(self, students: &[Student]) -> Vec<&Student> {
+        students
+            .iter()
+            .filter(|student| student.weapon_type() == self)
             .collect()
     }
 }

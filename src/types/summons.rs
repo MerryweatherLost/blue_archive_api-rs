@@ -1,3 +1,5 @@
+//! Contains types for the [`Summon`] structure and its respective structures.
+
 use serde::{Deserialize, Serialize};
 
 use super::ID;

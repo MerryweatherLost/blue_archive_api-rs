@@ -1,3 +1,5 @@
+//! Contains many structures that make up the deserialized data.
+
 pub mod students;
 pub mod summons;
 
@@ -8,7 +10,7 @@ pub use summons::Summon;
 /// **A Blue Archive ID**.
 ///
 /// Basically wraps around a [`u32`], and exists for representation of an identifier that can be filtered and have extra functionality.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct ID(pub u32);
 
 impl std::fmt::Display for ID {

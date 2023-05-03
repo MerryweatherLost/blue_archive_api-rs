@@ -1,3 +1,5 @@
+//! Contains useful public enums to be used when working with the API wrapper.
+
 use strum_macros::{Display, EnumIter, EnumString};
 
 /// Languages that **SchaleDB** supports.
@@ -44,7 +46,7 @@ impl Language {
     * **Arius** Branch School
     * **SRT** Special Academy
 
-    In the case that a school in the API is not present on the wrapper,
+    In the case that a school in the data is not present on the wrapper,
     a [`School::Unknown(String)`] is returned to represent the unknown school with its name in the `enum`.
 */
 #[derive(EnumString, Debug, Display, EnumIter, PartialEq, Eq)]
@@ -103,7 +105,7 @@ impl School {
     - **Healer**
     - **Supporter**
 
-    In the case that a tactic role in the API is not present on the wrapper,
+    In the case that a tactic role in the data is not present on the wrapper,
     a [`TacticRole::Unknown(String)`] is returned to represent the unknown tactic role with its name in the `enum`.
 */
 #[derive(Debug, Display, EnumString, EnumIter, PartialEq, Eq)]
@@ -124,7 +126,7 @@ pub enum TacticRole {
     * **Main** (Striker)
     * **Support** (Special)
 
-    In the case that a squad in the API is not present on the wrapper,
+    In the case that a squad in the data is not present on the wrapper,
     a [`Squad::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
 */
 #[derive(Debug, Display, EnumString, EnumIter, PartialEq, Eq)]
@@ -160,17 +162,17 @@ impl Squad {
     * **HeavyArmor**
     * **LightArmor**
 
-    In the case that a armor in the API is not present on the wrapper,
+    In the case that a armor in the data is not present on the wrapper,
     a [`Armor::Unknown(String)`] is returned to represent the unknown armor with its name in the `enum`.
 */
 #[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
 pub enum Armor {
     Unarmed,
-    #[strum(to_string = "Elastic Armor")]
+    #[strum(serialize = "ElasticArmor", to_string = "Elastic Armor")]
     ElasticArmor,
-    #[strum(to_string = "Heavy Armor")]
+    #[strum(serialize = "HeavyArmor", to_string = "Heavy Armor")]
     HeavyArmor,
-    #[strum(to_string = "Light Armor")]
+    #[strum(serialize = "LightArmor", to_string = "Light Armor")]
     LightArmor,
     Unknown(String),
 }
@@ -184,7 +186,7 @@ pub enum Armor {
     * **Middle**
     * **Back**
 
-    In the case that a position in the API is not present on the wrapper,
+    In the case that a position in the data is not present on the wrapper,
     a [`Position::Unknown(String)`] is returned to represent the unknown position with its name in the `enum`.
 */
 #[derive(Debug, Display, EnumString, EnumIter, PartialEq, Eq)]
@@ -195,291 +197,201 @@ pub enum Position {
     Unknown(String),
 }
 
-// /**
-//     **This is a `enum` that contains the current Blue Archive weapons represented in the data.**
+/**
+    **This is a `enum` that contains the current Blue Archive bullet types represented in the data.**
 
-//     As of the `27th of November, 2022`,
-//     this is the current list of weapons represented in the data.
-//     * **AR** (Assault Rifle)
-//     * **GL** (Grenade Launcher)
-//     * **HG** (Handgun)
-//     * **MG** (Machine Gun)
-//     * **MT** (Mortar)
-//     * **RF** (Rifle)
-//     * **RG** (Railgun)
-//     * **RL** (Rocket Launcher)
-//     * **SG** (Shotgun)
-//     * **SMG** (Submachine Gun)
-//     * **SR** (Sniper RIfle)
+    As of the `3rd of May, 2023`,
+    this is the current list of bullet types represented in the data.
+    * **Explosion**
+    * **Mystic**
+    * **Piercing**
 
-//     In the case that a weapon in the API is not present on the wrapper,
-//     a [`Weapon::Unknown(String)`] is returned to represent the unknown weapon with its name in the `enum`.
-// */
-// #[derive(Debug, EnumString, Display, EnumIter, PartialEq, Eq)]
-// pub enum Weapon {
-//     AR,
-//     GL,
-//     HG,
-//     MG,
-//     MT,
-//     RF, // <- results in not found on the API, unsure if it will be used.
-//     RG,
-//     RL,
-//     SG,
-//     SMG,
-//     SR,
-//     Unknown(String),
-// }
+    In the case that a bullet type in the data is not present on the wrapper,
+    a [`BulletType::Unknown(String)`] is returned to represent the unknown bullet type with its name in the `enum`.
+*/
+#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
+pub enum BulletType {
+    Explosion,
+    Mystic,
+    Penetration,
+    Unknown(String),
+}
 
-// impl Weapon {
-//     /// The full name of the weapon.
-//     pub fn full_name(&self) -> String {
-//         let name = match self {
-//             Weapon::AR => "Assault Rifle",
-//             Weapon::GL => "Grenade Launcher",
-//             Weapon::HG => "Handgun",
-//             Weapon::MG => "Machine Gun",
-//             Weapon::MT => "Mortar",
-//             Weapon::RF => "Rifle",
-//             Weapon::RG => "Railgun",
-//             Weapon::RL => "Rocket Launcher",
-//             Weapon::SG => "Shotgun",
-//             Weapon::SMG => "Submachine Gun",
-//             Weapon::SR => "Sniper Rifle",
-//             Weapon::Unknown(string) => string,
-//         };
-//         name.to_string()
-//     }
-// }
+/**
+    **This is a `enum` that contains the current Blue Archive clubs represented in the data.**
 
-// impl StudentFilter for Weapon {
-//     fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-//         students
-//             .iter()
-//             .filter(|student| &student.weapon() == self)
-//             .collect()
-//     }
-// }
+    As of the `5th of May, 2023`,
+    this is the current list of armor represented in the data.
 
-// /**
-//     **This is a `enum` that contains the current Blue Archive damage types represented in the data.**
+    - **Problem Solver 68**
+    - **Super Phenomenon Task Force**
+    - **Gourmet Research Society**
+    - **Make Up Work Club**
+    - **Prefect Team**
+    - **Foreclosure Task Force**
+    - **Veritas**
+    - **Cleaning & Clearing**
+    - **Plum Blossom Garden**
+    - **Athletics Training Club**
+    - **Ninjutsu Research Department**
+    - **Justice Task Force**
+    - **Game Development Department**
+    - **Red Winter Secretary**
+    - **After School Sweets Club**
+    - **Unassigned**
+    - **Inner Discipline Club**
+    - **Library Committee**
+    - **Sisterhood**
+    - **RABBIT Squad**
+    - **Arius Squad**
+    - **Yin-Yang Club**
+    - **Seminar**
+    - **Public Safety Bureau**
+    - **Engineering Club**
+    - **Trinity Vigilante Crew**
+    - **Festival Operations Department**
+    - **Chinese Alchemy Study Club**
+    - **Spec Ops #227**
+    - **Medical Emergency Club**
+    - **Pandemonium Society**
+    - **School Lunch Club**
+    - **Remedial Knights**
 
-//     As of the `14th of December, 2022`,
-//     this is the current list of damage types represented in the data.
-//     * **Explosion**
-//     * **Mystic**
-//     * **Penetration**
+    In the case that a club in the data is not present on the wrapper,
+    a [`Club::Unknown(String)`] is returned to represent the unknown club with its name in the `enum`.
+*/
+#[derive(Debug, Hash, Eq, PartialEq, EnumIter, EnumString, Display)]
+pub enum Club {
+    #[strum(serialize = "Kohshinjo68", to_string = "Problem Solver 68")]
+    ProblemSolver68,
+    #[strum(serialize = "SPTF", to_string = "Super Phenomenon Task Force")]
+    SuperPhenomenonTaskForce,
+    #[strum(serialize = "GourmetClub", to_string = "Gourmet Research Society")]
+    GourmetResearchSociety,
+    #[strum(serialize = "RemedialClass", to_string = "Make-Up Work Club")]
+    MakeUpWorkClub,
+    #[strum(serialize = "Fuuki", to_string = "Prefect Team")]
+    PrefectTeam,
+    #[strum(serialize = "Countermeasure", to_string = "Foreclosure Task Force")]
+    ForeclosureTaskForce,
+    Veritas,
+    #[strum(serialize = "CleanNClearing", to_string = "Cleaning & Clearing")]
+    CleaningAndClearing,
+    #[strum(serialize = "Meihuayuan", to_string = "Plum Blossom Garden")]
+    PlumBlossomGarden,
+    #[strum(serialize = "TrainingClub", to_string = "Athletics Training Club")]
+    AthleticsTrainingClub,
+    #[strum(serialize = "NinpoKenkyubu", to_string = "Ninjutsu Research Club")]
+    NinjutsuResearchClub,
+    #[strum(serialize = "Justice", to_string = "Justice Task Force")]
+    JusticeTaskForce,
+    #[strum(serialize = "GameDev", to_string = "Game Development Club")]
+    GameDevelopmentClub,
+    #[strum(serialize = "RedwinterSecretary", to_string = "Red Winter Office")]
+    RedWinterSecretary,
+    #[strum(serialize = "HoukagoDessert", to_string = "After-School Sweets Club")]
+    AfterSchoolSweetsClub,
+    #[strum(serialize = "EmptyClub", to_string = "Unassigned")]
+    Unassigned,
+    #[strum(serialize = "Shugyobu", to_string = "Inner Discipline Club")]
+    InnerDisciplineClub,
+    #[strum(serialize = "BookClub", to_string = "Library Committee")]
+    LibraryCommittee,
+    #[strum(serialize = "SisterHood", to_string = "Sisterhood")]
+    Sisterhood,
+    #[strum(serialize = "RabbitPlatoon", to_string = "RABBIT Squad")]
+    RABBITSquad,
+    #[strum(serialize = "AriusSqud", to_string = "Arius Squad")]
+    AriusSquad,
+    #[strum(serialize = "Onmyobu", to_string = "Yin-Yang Club")]
+    YinYangClub,
+    #[strum(serialize = "TheSeminar", to_string = "Seminar")]
+    Seminar,
+    #[strum(serialize = "anzenkyoku", to_string = "Public Safety Bureau")]
+    PublicSafetyBureau,
+    #[strum(serialize = "PublicPeaceBureau", to_string = "Public Peace Bureau")]
+    PublicPeaceBureau,
+    #[strum(serialize = "Engineer", to_string = "Engineering Club")]
+    EngineeringClub,
+    #[strum(serialize = "TrinityVigilance", to_string = "Trinity Vigilante Crew")]
+    TrinityVigilanteCrew,
+    #[strum(
+        serialize = "MatsuriOffice",
+        to_string = "Festival Operations Department"
+    )]
+    FestivalOperationsDepartment,
+    #[strum(serialize = "Endanbou", to_string = "Chinese Alchemy Study Club")]
+    ChineseAlchemyStudyClub,
+    #[strum(serialize = "Class227", to_string = "Spec Ops #227")]
+    SpecOpsNumber227,
+    #[strum(serialize = "Emergentology", to_string = "Medical Emergency Club")]
+    MedicalEmergencyClub,
+    #[strum(serialize = "FoodService", to_string = "School Lunch Club")]
+    SchoolLunchClub,
+    #[strum(serialize = "PandemoniumSociety", to_string = "Pandemonium Society")]
+    PandemoniumSociety,
+    #[strum(serialize = "KnightsHospitaller", to_string = "Remedial Knights")]
+    RemedialKnights,
+    #[strum(serialize = "TeaParty", to_string = "Tea Party")]
+    TeaParty,
+    #[strum(serialize = "HotSpringsDepartment", to_string = "Hot Spring Club")]
+    HotSpringsClub,
+    Unknown(String),
+}
 
-//     In the case that a damage type in the API is not present on the wrapper,
-//     a [`Damage::Unknown(String)`] is returned to represent the unknown damage type with its name in the `enum`.
-// */
-// #[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
-// pub enum Damage {
-//     Explosion,
-//     Mystic,
-//     Penetration,
-//     Unknown(String),
-// }
+/**
+    **This is a `enum` that contains the current Blue Archive weapon types represented in the data.**
 
-// impl StudentFilter for Damage {
-//     fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-//         students
-//             .iter()
-//             .filter(|student| &student.damage() == self)
-//             .collect()
-//     }
-// }
+    As of the `3rd of May, 2023`,
+    this is the current list of weapon types represented in the data.
+    * **AR** (Assault Rifle)
+    * **GL** (Grenade Launcher)
+    * **FT** (Flamethrower)
+    * **HG** (Handgun)
+    * **MG** (Machine Gun)
+    * **MT** (Mortar)
+    * **RG** (Railgun)
+    * **RL** (Rocket Launcher)
+    * **SG** (Shotgun)
+    * **SMG** (Submachine Gun)
+    * **SR** (Sniper RIfle)
 
-// impl std::fmt::Display for Damage {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         match self {
-//             Damage::Explosion => write!(f, "Explosion"),
-//             Damage::Mystic => write!(f, "Mystic"),
-//             Damage::Penetration => write!(f, "Penetration"),
-//             Damage::Unknown(string) => write!(f, "{string}"),
-//         }
-//     }
-// }
+    In the case that a weapon type in the data is not present on the wrapper,
+    a [`WeaponType::Unknown(String)`] is returned to represent the unknown weapon type with its name in the `enum`.
+*/
+#[derive(Debug, EnumString, Display, EnumIter, PartialEq, Eq)]
+pub enum WeaponType {
+    AR,
+    RL,
+    FT,
+    SR,
+    MG,
+    MT,
+    HG,
+    SMG,
+    SG,
+    GL,
+    RG,
+    Unknown(String),
+}
 
-// #[derive(
-//     Debug, Copy, Display, Serialize, Deserialize, EnumString, EnumIter, PartialEq, Eq, Clone,
-// )]
-// pub enum Region {
-//     #[strum(to_string = "global")]
-//     Global,
-//     #[strum(to_string = "japan")]
-//     Japan,
-// }
-
-// impl Default for Region {
-//     fn default() -> Self {
-//         Self::Global
-//     }
-// }
-// /**
-//     **This is a `enum` that contains the current Blue Archive clubs represented in the data.**
-
-//     As of the `4th of April, 2023`,
-//     this is the current list of armor represented in the data.
-
-//     - **Problem Solver 68**
-//     - **Super Phenomenon Task Force**
-//     - **Gourmet Research Society**
-//     - **Make Up Work Club**
-//     - **Prefect Team**
-//     - **Foreclosure Task Force**
-//     - **Veritas**
-//     - **Cleaning & Clearing**
-//     - **Plum Blossom Garden**
-//     - **Athletics Training Club**
-//     - **Ninjutsu Research Department**
-//     - **Justice Task Force**
-//     - **Game Development Department**
-//     - **Red Winter Secretary**
-//     - **After School Sweets Club**
-//     - **Unassigned**
-//     - **Inner Discipline Club**
-//     - **Library Committee**
-//     - **Sisterhood**
-//     - **RABBIT Squad**
-//     - **Arius Squad**
-//     - **Yin-Yang Club**
-//     - **Seminar**
-//     - **Public Safety Bureau**
-//     - **Engineering Club**
-//     - **Trinity Vigilante Crew**
-//     - **Festival Operations Department**
-//     - **Chinese Alchemy Study Club**
-//     - **Spec Ops #227**
-//     - **Medical Emergency Club**
-//     - **Pandemonium Society**
-//     - **School Lunch Club**
-//     - **Remedial Knights**
-
-//     In the case that a club in the API is not present on the wrapper,
-//     a [`Club::Unknown(String)`] is returned to represent the unknown club with its name in the `enum`.
-// */
-// #[derive(Debug, Hash, Eq, PartialEq, EnumIter, EnumString, Display)]
-// pub enum Club {
-//     #[strum(serialize = "Kohshinjo68", to_string = "Problem Solver 68")]
-//     ProblemSolver68,
-//     #[strum(serialize = "SPTF", to_string = "Super Phenomenon Task Force")]
-//     SuperPhenomenonTaskForce,
-//     #[strum(serialize = "GourmetClub", to_string = "Gourmet Research Society")]
-//     GourmetResearchSociety,
-//     #[strum(serialize = "RemedialClass", to_string = "Make-Up Work Club")]
-//     MakeUpWorkClub,
-//     #[strum(serialize = "Fuuki", to_string = "Prefect Team")]
-//     PrefectTeam,
-//     #[strum(serialize = "Countermeasure", to_string = "Foreclosure Task Force")]
-//     ForeclosureTaskForce,
-//     Veritas,
-//     #[strum(serialize = "CleanNClearing", to_string = "Cleaning & Clearing")]
-//     CleaningAndClearing,
-//     #[strum(serialize = "Meihuayuan", to_string = "Plum Blossom Garden")]
-//     PlumBlossomGarden,
-//     #[strum(serialize = "TrainingClub", to_string = "Athletics Training Club")]
-//     AthleticsTrainingClub,
-//     #[strum(serialize = "NinpoKenkyubu", to_string = "Ninjutsu Research Club")]
-//     NinjutsuResearchDepartment,
-//     #[strum(serialize = "Justice", to_string = "Justice Task Force")]
-//     JusticeTaskForce,
-//     #[strum(serialize = "GameDev", to_string = "Game Development Department")]
-//     GameDevelopmentDepartment,
-//     #[strum(serialize = "RedwinterSecretary", to_string = "Red Winter Office")]
-//     RedWinterSecretary,
-//     #[strum(serialize = "HoukagoDessert", to_string = "After-School Sweets Club")]
-//     AfterSchoolSweetsClub,
-//     #[strum(serialize = "EmptyClub", to_string = "Unassigned")]
-//     Unassigned,
-//     #[strum(serialize = "Shugyobu", to_string = "Inner Discipline Club")]
-//     InnerDisciplineClub,
-//     #[strum(serialize = "BookClub", to_string = "Library Committee")]
-//     LibraryCommittee,
-//     #[strum(serialize = "SisterHood", to_string = "Sisterhood")]
-//     Sisterhood,
-//     #[strum(serialize = "RabbitPlatoon", to_string = "RABBIT Squad")]
-//     RABBITSquad,
-//     #[strum(serialize = "AriusSqud", to_string = "Arius Squad")]
-//     AriusSquad,
-//     #[strum(serialize = "Onmyobu", to_string = "Yin-Yang Club")]
-//     YinYangClub,
-//     #[strum(serialize = "TheSeminar", to_string = "Seminar")]
-//     Seminar,
-//     #[strum(serialize = "anzenkyoku", to_string = "Public Safety Bureau")]
-//     PublicSafetyBureau,
-//     #[strum(serialize = "Engineer", to_string = "Engineering Club")]
-//     EngineeringClub,
-//     #[strum(serialize = "TrinityVigilance", to_string = "Trinity Vigilante Crew")]
-//     TrinityVigilanteCrew,
-//     #[strum(
-//         serialize = "MatsuriOffice",
-//         to_string = "Festival Operations Department"
-//     )]
-//     FestivalOperationsDepartment,
-//     #[strum(serialize = "Endanbou", to_string = "Chinese Alchemy Study Club")]
-//     ChineseAlchemyStudyClub,
-//     #[strum(serialize = "Class227", to_string = "Spec Ops #227")]
-//     SpecOpsNumber227,
-//     #[strum(serialize = "Emergentology", to_string = "Medical Emergency Club")]
-//     MedicalEmergencyClub,
-//     #[strum(serialize = "FoodService", to_string = "School Lunch Club")]
-//     SchoolLunchClub,
-//     #[strum(serialize = "PandemoniumSociety", to_string = "Pandemonium Society")]
-//     PandemoniumSociety,
-//     #[strum(serialize = "KnightsHospitaller", to_string = "Remedial Knights")]
-//     RemedialKnights,
-//     Unknown(String),
-// }
-
-// impl StudentFilter for Club {
-//     fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-//         students
-//             .iter()
-//             .filter(|student| &student.club() == self)
-//             .collect()
-//     }
-// }
-
-// /**
-//     **This is a `enum` that contains the current Blue Archive rarities represented in the data.**
-
-//     As of the `3rd of April, 2023`,
-//     this is the current list of armor represented in the data.
-
-//     * **R** (Rare)
-//     * **SR** (Super Rare)
-//     * **SSR** (Super-Super Rare)
-
-//     In the case that a rarity in the API is not present on the wrapper,
-//     a [`Rarity::Unknown(String)`] is returned to represent the unknown rarity with its name in the `enum`.
-// */
-// #[derive(Clone, Debug, Display, Deserialize, Serialize, EnumString, Eq, PartialEq)]
-// pub enum Rarity {
-//     R,
-//     SR,
-//     SSR,
-//     Unknown(String),
-// }
-
-// impl Rarity {
-//     /// The full name of the rarity type.
-//     pub fn full_name(&self) -> String {
-//         let name = match self {
-//             Rarity::R => "Rare",
-//             Rarity::SR => "Super Rare",
-//             Rarity::SSR => "Super-Super Rare",
-//             Rarity::Unknown(string) => string,
-//         };
-//         name.to_string()
-//     }
-// }
-
-// impl StudentFilter for Rarity {
-//     fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-//         students
-//             .iter()
-//             .filter(|student| &student.rarity() == self)
-//             .collect()
-//     }
-// }
+impl WeaponType {
+    /// The full name of the weapon.
+    pub fn full_name(&self) -> String {
+        match self {
+            WeaponType::AR => "Assault Rifle",
+            WeaponType::GL => "Grenade Launcher",
+            WeaponType::FT => "Flamethrower",
+            WeaponType::HG => "Handgun",
+            WeaponType::MG => "Machine Gun",
+            WeaponType::MT => "Mortar",
+            WeaponType::RG => "Railgun",
+            WeaponType::RL => "Rocket Launcher",
+            WeaponType::SG => "Shotgun",
+            WeaponType::SMG => "Submachine Gun",
+            WeaponType::SR => "Sniper Rifle",
+            WeaponType::Unknown(string) => string,
+        }
+        .to_string()
+    }
+}

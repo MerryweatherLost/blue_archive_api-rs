@@ -1,8 +1,10 @@
+//! Functions primarily for fetching [`Summon`] data.
+
 use crate::types::Summon;
 
 use super::{internal::Endpoint, *};
 
-/// Fetches all **[`Summon`]'s** from the data.
+/// Fetches all **[`Summon's`][`Summon`]** from the data.
 pub async fn fetch_all_summons(language: &Language) -> Result<Vec<Summon>> {
     let response = super::internal::fetch_response(&Endpoint::Summons, language, &Client::new())
         .await?

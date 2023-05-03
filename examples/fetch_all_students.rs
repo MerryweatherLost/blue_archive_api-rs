@@ -4,7 +4,10 @@ use blue_archive::Language;
 async fn main() -> anyhow::Result<()> {
     let students = blue_archive::fetch_all_students(&Language::English).await?;
     for student in students {
-        println!("{student} : {:?}", student.image)
+        println!(
+            "{student} : Full Body: [{:?}]",
+            student.image.portrait.full_body_url
+        )
     }
     Ok(())
 }

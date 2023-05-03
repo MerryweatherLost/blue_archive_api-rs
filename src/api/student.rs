@@ -1,3 +1,5 @@
+//! Functions primarily for fetching [`Student`] data.
+
 use super::{
     internal::{fetch_response, Endpoint},
     *,
@@ -5,7 +7,7 @@ use super::{
 
 /// **Obtains all Students without adding extra content**.
 ///
-/// Extra content such as images will not be retrieved unless the **[`Student`]'s** are mutated and are fetched by using `fetch_extra_data`.
+/// Extra content such as images will not be retrieved unless the **[`Students`][`Student`]** are mutated and are fetched by using `fetch_extra_data`.
 /// It can be beneficial to use this in a context where you want information retrieved as quickly as possible.
 pub async fn fetch_all_students_without_extra(
     language: &Language,
@@ -16,7 +18,7 @@ pub async fn fetch_all_students_without_extra(
     Ok(response.json::<Vec<Student>>().await?)
 }
 
-/// Lets you fetch all students with extra data, which includes the images of the **[`Student`]'s** among other things.
+/// Lets you fetch all students with extra data, which includes the images of the **[`Students`][`Student`]** among other things.
 pub async fn fetch_all_students(language: &Language) -> Result<Vec<Student>, BlueArchiveError> {
     let client = Client::new();
     let mut students = fetch_response(&Endpoint::Students, language, &client)
@@ -62,15 +64,17 @@ pub async fn fetch_student_by_name(
 
 /// Attempts to fetch a random **[`Student`]**.
 ///
-/// If the [`Vec`] is empty or fetching the data fails, then it will return a [`BlueArchiveError`], as the data would not have any **[`Student`]'s**.
-pub async fn fetch_random_student(language: &Language) -> Result<Student, BlueArchiveError> {
+/// If fetching the data fails, then it will return a [`BlueArchiveError`], as the data would not have any **[`Students`][`Student`]**.
+pub async fn fetch_random_student(
+    language: &Language,
+) -> Result<Option<Student>, BlueArchiveError> {
     Ok(fetch_all_students(language)
         .await?
         .into_iter()
-        .choose(&mut rand::thread_rng())
-        .expect("could not randomize students!"))
+        .choose(&mut rand::thread_rng()))
 }
 
+/// Returns **[`StudentFilterOptions`]** to be used with the provided **[`Vec<Student>`]** for filtering.
 pub fn filter(students: &Vec<Student>) -> StudentFilterOptions {
     StudentFilterOptions::new(students)
 }

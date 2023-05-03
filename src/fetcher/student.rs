@@ -1,9 +1,12 @@
+//! Contains the **[`StudentFetcher`]** structure.
+
 use crate::{filter::student::StudentFilterOptions, types::Student, BlueArchiveError, Language};
 
 use anyhow::Result;
 use rand::seq::SliceRandom;
 
-#[derive(Debug)]
+/// A `struct` that is able to be cached
+#[derive(Debug, Clone)]
 pub struct StudentFetcher {
     pub students: Vec<Student>,
 }
