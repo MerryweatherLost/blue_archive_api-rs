@@ -46,3 +46,8 @@ pub struct Height {
     /// The student height in imperial standard. Due to ambiguity of the structure, it may be missing from the data.
     pub imperial: Option<String>,
 }
+impl Display for Height {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "(Metric: {} | Global: {:?})", self.metric, self.imperial)
+    }
+}
