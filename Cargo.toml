@@ -1,12 +1,13 @@
 [package]
 name = "blue_archive"
-version = "0.3.0"
+version = "0.3.1"
 edition = "2021"
 license-file = "LICENSE"
 description = "A Blue Archive api wrapper for Rust, based off of SchaleDB's data: https://github.com/lonqie/SchaleDB"
 readme = "README.md"
 repository = "https://github.com/MerryweatherLost/blue_archive_api-rs"
 categories = ["api-bindings"]
+keywords = ["bluearchive", "SchaleDB"]
 
 [dependencies]
 reqwest = { version = "0.11", features = ["json"] }
