@@ -162,7 +162,7 @@ impl Squad {
     In the case that a armor in the data is not present on the wrapper,
     a [`Armor::Unknown(String)`] is returned to represent the unknown armor with its name in the `enum`.
 */
-#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
+#[derive(Debug, Display, EnumString, EnumIter, PartialEq, Eq)]
 pub enum Armor {
     Unarmed,
     #[strum(serialize = "ElasticArmor", to_string = "Elastic Armor")]
@@ -204,7 +204,7 @@ pub enum Position {
     In the case that a bullet type in the data is not present on the wrapper,
     a [`BulletType::Unknown(String)`] is returned to represent the unknown bullet type with its name in the `enum`.
 */
-#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
+#[derive(Debug, Display, EnumString, EnumIter, PartialEq, Eq)]
 pub enum BulletType {
     Explosion,
     Mystic,
