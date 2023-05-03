@@ -30,6 +30,7 @@ pub use enums::{
     Armor, BulletType, Club, Language, Position, School, Squad, TacticalRole, WeaponType,
 };
 pub use errors::BlueArchiveError;
+pub use fetcher::StudentFetcher;
 pub use filter::student::StudentFilter;
 
 pub const DATA_URI: &str = "https://raw.githubusercontent.com/lonqie/SchaleDB/main/data";
