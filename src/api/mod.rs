@@ -20,13 +20,13 @@ pub(crate) mod internal {
     /// Contains the endpoints for the data, they mainly just represent the path of what data is obtained.
     #[derive(Debug, Display)]
     pub(crate) enum Endpoint {
-        Currency,
-        Enemies,
-        Equipment,
-        Furniture,
-        Items,
-        Localization,
-        Raids,
+        _Currency,
+        _Enemies,
+        _Equipment,
+        _Furniture,
+        _Items,
+        _Localization,
+        _Raids,
         Students,
         Summons,
     }
@@ -35,6 +35,7 @@ pub(crate) mod internal {
     pub(crate) async fn fetch_response(
         endpoint: &Endpoint,
         language: &Language,
+        client: &Client,
     ) -> Result<Response, BlueArchiveError> {
         let url = format!(
             "{}/{}/{}.json",
@@ -42,6 +43,6 @@ pub(crate) mod internal {
             language.id(),
             endpoint.to_string().to_lowercase()
         );
-        Ok(reqwest::get(url).await?.error_for_status()?)
+        Ok(client.get(url).send().await?.error_for_status()?)
     }
 }

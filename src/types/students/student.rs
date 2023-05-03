@@ -4,7 +4,7 @@ use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    enums::{School, Squad, TacticRole},
+    enums::{Armor, Position, School, Squad, TacticRole},
     types::{Age, Released, ID},
     BlueArchiveError, IMAGE_DATA_URI,
 };
@@ -44,11 +44,11 @@ pub struct Student {
     family_name: String,
     family_name_ruby: Option<String>,
     personal_name: String,
-    school_year: String,
+    school_year: Option<String>,
     character_age: String,
     birthday: String,
     #[serde(alias = "CharacterSSRNew")]
-    character_ssr_new: String,
+    character_ssr_new: Option<String>,
     profile_introduction: String,
     hobby: String,
     character_voice: String,
@@ -162,6 +162,22 @@ impl Student {
         match Squad::from_str(&self.squad_type) {
             Ok(s) => s,
             Err(_) => Squad::Unknown(self.squad_type.clone()),
+        }
+    }
+
+    /// TBD
+    pub fn armor(&self) -> Armor {
+        match Armor::from_str(&self.armor_type) {
+            Ok(a) => a,
+            Err(_) => Armor::Unknown(self.armor_type.clone()),
+        }
+    }
+
+    /// TBD
+    pub fn position(&self) -> Position {
+        match Position::from_str(&self.armor_type) {
+            Ok(p) => p,
+            Err(_) => Position::Unknown(self.armor_type.clone()),
         }
     }
 

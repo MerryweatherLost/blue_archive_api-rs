@@ -127,7 +127,7 @@ pub enum TacticRole {
     In the case that a squad in the API is not present on the wrapper,
     a [`Squad::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
 */
-#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
+#[derive(Debug, Display, EnumString, EnumIter, PartialEq, Eq)]
 pub enum Squad {
     Main,
     Support,
@@ -150,55 +150,50 @@ impl Squad {
     }
 }
 
-// impl std::fmt::Display for Squad {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         match self {
-//             Squad::Special => write!(f, "Special"),
-//             Squad::Striker => write!(f, "Striker"),
-//             Squad::Unknown(unknown_type) => write!(f, "{}", unknown_type),
-//         }
-//     }
-// }
+/**
+    **This is a `enum` that contains the current Blue Archive armor represented in the data.**
 
-// /**
-//     **This is a `enum` that contains the current Blue Archive positions represented in the data.**
+    As of the `3rd of May, 2023`,
+    this is the current list of armor represented in the data.
+    * **Unarmed**
+    * **ElasticArmor**
+    * **HeavyArmor**
+    * **LightArmor**
 
-//     As of the `14th of December, 2022`,
-//     this is the current list of weapons represented in the data.
-//     * **Front**
-//     * **Middle**
-//     * **Back**
+    In the case that a armor in the API is not present on the wrapper,
+    a [`Armor::Unknown(String)`] is returned to represent the unknown armor with its name in the `enum`.
+*/
+#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
+pub enum Armor {
+    Unarmed,
+    #[strum(to_string = "Elastic Armor")]
+    ElasticArmor,
+    #[strum(to_string = "Heavy Armor")]
+    HeavyArmor,
+    #[strum(to_string = "Light Armor")]
+    LightArmor,
+    Unknown(String),
+}
 
-//     In the case that a weapon in the API is not present on the wrapper,
-//     a [`Position::Unknown(String)`] is returned to represent the unknown weapon with its name in the `enum`.
-// */
-// #[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
-// pub enum Position {
-//     Front,
-//     Middle,
-//     Back,
-//     Unknown(String),
-// }
+/**
+    **This is a `enum` that contains the current Blue Archive positions represented in the data.**
 
-// impl StudentFilter for Position {
-//     fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-//         students
-//             .iter()
-//             .filter(|student| &student.position() == self)
-//             .collect()
-//     }
-// }
+    As of the `3rd of May, 2023`,
+    this is the current list of positions represented in the data.
+    * **Front**
+    * **Middle**
+    * **Back**
 
-// impl std::fmt::Display for Position {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         match self {
-//             Position::Front => write!(f, "Front"),
-//             Position::Middle => write!(f, "Middle"),
-//             Position::Back => write!(f, "Back"),
-//             Position::Unknown(string) => write!(f, "{string}"),
-//         }
-//     }
-// }
+    In the case that a position in the API is not present on the wrapper,
+    a [`Position::Unknown(String)`] is returned to represent the unknown position with its name in the `enum`.
+*/
+#[derive(Debug, Display, EnumString, EnumIter, PartialEq, Eq)]
+pub enum Position {
+    Front,
+    Middle,
+    Back,
+    Unknown(String),
+}
 
 // /**
 //     **This is a `enum` that contains the current Blue Archive weapons represented in the data.**
@@ -302,46 +297,6 @@ impl Squad {
 //             Damage::Mystic => write!(f, "Mystic"),
 //             Damage::Penetration => write!(f, "Penetration"),
 //             Damage::Unknown(string) => write!(f, "{string}"),
-//         }
-//     }
-// }
-
-// /**
-//     **This is a `enum` that contains the current Blue Archive armor represented in the data.**
-
-//     As of the `3rd of April, 2023`,
-//     this is the current list of armor represented in the data.
-//     * **Explosion**
-//     * **Mystic**
-//     * **Penetration**
-
-//     In the case that a armor in the API is not present on the wrapper,
-//     a [`Armor::Unknown(String)`] is returned to represent the unknown armor with its name in the `enum`.
-// */
-// #[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
-// pub enum Armor {
-//     Heavy,
-//     Light,
-//     Special,
-//     Unknown(String),
-// }
-
-// impl StudentFilter for Armor {
-//     fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-//         students
-//             .iter()
-//             .filter(|student| &student.armor() == self)
-//             .collect()
-//     }
-// }
-
-// impl std::fmt::Display for Armor {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         match self {
-//             Armor::Heavy => write!(f, "Heavy"),
-//             Armor::Light => write!(f, "Light"),
-//             Armor::Special => write!(f, "Special"),
-//             Armor::Unknown(string) => write!(f, "{string}"),
 //         }
 //     }
 // }

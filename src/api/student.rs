@@ -1,4 +1,7 @@
-use super::{internal::Endpoint, *};
+use super::{
+    internal::{fetch_response, Endpoint},
+    *,
+};
 
 /// **Obtains all Students without adding extra content**.
 ///
@@ -7,19 +10,23 @@ use super::{internal::Endpoint, *};
 pub async fn fetch_all_students_without_extra(
     language: &Language,
 ) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = internal::fetch_response(&Endpoint::Students, language)
+    let response = internal::fetch_response(&Endpoint::Students, language, &Client::new())
         .await?
         .error_for_status()?;
     Ok(response.json::<Vec<Student>>().await?)
 }
 
-/// TBD
+/// Lets you fetch all students with extra data, which includes the images of the **[`Student`]'s** among other things.
 pub async fn fetch_all_students(language: &Language) -> Result<Vec<Student>, BlueArchiveError> {
-    let mut students = fetch_all_students_without_extra(language).await?;
+    let client = Client::new();
+    let mut students = fetch_response(&Endpoint::Students, language, &client)
+        .await?
+        .json::<Vec<Student>>()
+        .await?;
     futures::future::join_all(
         students
             .iter_mut()
-            .map(|student| async move { student.fetch_extra_data(&Client::new()).await }),
+            .map(|student| async { student.fetch_extra_data(&client).await }),
     )
     .await;
     Ok(students)

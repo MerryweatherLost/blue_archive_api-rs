@@ -58,6 +58,24 @@ impl StudentFilter for Squad {
     }
 }
 
+impl StudentFilter for Armor {
+    fn filter(self, students: &[Student]) -> Vec<&Student> {
+        students
+            .iter()
+            .filter(|student| student.armor() == self)
+            .collect()
+    }
+}
+
+impl StudentFilter for Position {
+    fn filter(self, students: &[Student]) -> Vec<&Student> {
+        students
+            .iter()
+            .filter(|student| student.position() == self)
+            .collect()
+    }
+}
+
 #[derive(Debug)]
 pub struct StudentFilterOptions<'s> {
     pub filtered_students: Option<Vec<&'s Student>>,
