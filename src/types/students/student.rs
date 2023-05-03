@@ -179,8 +179,8 @@ impl Student {
         }
     }
 
-    /// Gets the **[`TacticRole`]** of the student.
-    pub fn tactic_role(&self) -> TacticalRole {
+    /// Gets the **[`TacticalRole`]** of the student.
+    pub fn tactical_role(&self) -> TacticalRole {
         match TacticalRole::from_str(&self.tactic_role) {
             Ok(tr) => tr,
             Err(_) => TacticalRole::Unknown(self.tactic_role.clone()),
@@ -189,56 +189,43 @@ impl Student {
 
     /// Gets the **[`Squad`]** of the student.
     pub fn squad(&self) -> Squad {
-        match Squad::from_str(&self.squad_type) {
-            Ok(s) => s,
-            Err(_) => Squad::Unknown(self.squad_type.clone()),
-        }
+        Squad::from_str(&self.squad_type)
+            .unwrap_or_else(|_| Squad::Unknown(self.squad_type.clone()))
     }
 
     /// Gets the **[`Armor`]** of the student.
     pub fn armor(&self) -> Armor {
-        match Armor::from_str(&self.armor_type) {
-            Ok(a) => a,
-            Err(_) => Armor::Unknown(self.armor_type.clone()),
-        }
+        Armor::from_str(&self.armor_type)
+            .unwrap_or_else(|_| Armor::Unknown(self.armor_type.clone()))
     }
 
     /// Gets the **[`Position`]** of the student.
     pub fn position(&self) -> Position {
-        match Position::from_str(&self.armor_type) {
-            Ok(p) => p,
-            Err(_) => Position::Unknown(self.armor_type.clone()),
-        }
+        Position::from_str(&self.armor_type)
+            .unwrap_or_else(|_| Position::Unknown(self.armor_type.clone()))
     }
 
     /// Gets the **[`BulletType`]** of the student.
     pub fn bullet_type(&self) -> BulletType {
-        match BulletType::from_str(&self.bullet_type) {
-            Ok(b) => b,
-            Err(_) => BulletType::Unknown(self.bullet_type.clone()),
-        }
+        BulletType::from_str(&self.bullet_type)
+            .unwrap_or_else(|_| BulletType::Unknown(self.bullet_type.clone()))
     }
 
     /// Gets the **[`Club`]** of the student.
     pub fn club(&self) -> Club {
-        match Club::from_str(&self.club) {
-            Ok(c) => c,
-            Err(_) => Club::Unknown(self.club.clone()),
-        }
+        Club::from_str(&self.club).unwrap_or_else(|_| Club::Unknown(self.club.clone()))
     }
 
     /// Gets the **[`WeaponType`]** of the student.
     pub fn weapon_type(&self) -> WeaponType {
-        match WeaponType::from_str(&self.weapon_type) {
-            Ok(w) => w,
-            Err(_) => WeaponType::Unknown(self.weapon_type.clone()),
-        }
+        WeaponType::from_str(&self.weapon_type)
+            .unwrap_or_else(|_| WeaponType::Unknown(self.weapon_type.clone()))
     }
 
     /// Fetches extra data of this [`Student`].
     pub(crate) async fn fetch_extra_data(&mut self, client: &Client) {
         if let Ok(data) = StudentImageData::new(self, client).await {
-            self.image = data
+            self.image = data;
         }
     }
 }
@@ -277,10 +264,10 @@ pub enum GearKind {
 }
 impl GearKind {
     /// Attempts to get a **[`Gear`]**, though if it gets an [`GearKind::Empty`], it will return [`None`].
-    pub fn get(&self) -> Option<&Gear> {
+    pub const fn get(&self) -> Option<&Gear> {
         match self {
-            GearKind::Present(gear) => Some(gear),
-            GearKind::Empty(_) => None,
+            Self::Present(gear) => Some(gear),
+            Self::Empty(_) => None,
         }
     }
 }
@@ -371,10 +358,7 @@ pub struct StudentImageData {
 
 impl StudentImageData {
     /// Creates itself from a given **[`Student`]** and **[`reqwest::Client`]**.
-    pub async fn new(
-        student: &Student,
-        client: &Client,
-    ) -> Result<StudentImageData, BlueArchiveError> {
+    pub async fn new(student: &Student, client: &Client) -> Result<Self, BlueArchiveError> {
         Ok(Self {
             portrait: Portrait {
                 full_body_url: format!(
@@ -401,13 +385,10 @@ impl StudentImageData {
 
     async fn fetch_image_with_url(client: &Client, url: impl Into<String>) -> Option<String> {
         let url: String = url.into();
-        match client.get(&url).send().await {
-            Ok(response) => match response.error_for_status() {
-                Ok(_) => Some(url),
-                Err(_) => None,
-            },
+        (client.get(&url).send().await).map_or(None, |response| match response.error_for_status() {
+            Ok(_) => Some(url),
             Err(_) => None,
-        }
+        })
     }
 }
 

@@ -2,7 +2,7 @@
 
 use crate::types::Summon;
 
-use super::{internal::Endpoint, *};
+use super::{internal::Endpoint, Client, Language, Result};
 
 /// Fetches all **[`Summons`][`Summon`]** from the data.
 pub async fn fetch_all_summons(language: &Language) -> Result<Vec<Summon>> {

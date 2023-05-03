@@ -1,6 +1,9 @@
 //! All [`StudentFilter`] implementations, including its own trait are in this module.
 
-use crate::{enums::*, types::*};
+use crate::{
+    enums::{Armor, BulletType, Club, Position, School, Squad, TacticalRole, WeaponType},
+    types::{Age, Released, Student, ID},
+};
 
 /// Used to filter **[`Students`][`Student`]**.
 pub trait StudentFilter {
@@ -48,7 +51,7 @@ impl StudentFilter for TacticalRole {
     fn filter(self, students: &[Student]) -> Vec<&Student> {
         students
             .iter()
-            .filter(|student| student.tactic_role() == self)
+            .filter(|student| student.tactical_role() == self)
             .collect()
     }
 }

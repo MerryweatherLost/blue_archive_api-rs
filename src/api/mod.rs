@@ -16,11 +16,11 @@ use strum_macros::Display;
 
 /// Internal functions to work with the data easier.
 pub(crate) mod internal {
-    use super::*;
+    use super::{BlueArchiveError, Client, Display, Language, Response, Result, DATA_URI};
 
     /// Contains the endpoints for the data, they mainly just represent the path of what data is obtained.
     #[derive(Debug, Display)]
-    pub(crate) enum Endpoint {
+    pub enum Endpoint {
         _Currency,
         _Enemies,
         _Equipment,

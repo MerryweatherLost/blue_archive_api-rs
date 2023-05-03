@@ -1,8 +1,9 @@
 //! Functions primarily for fetching [`Student`] data.
 
 use super::{
+    internal,
     internal::{fetch_response, Endpoint},
-    *,
+    BlueArchiveError, Client, IteratorRandom, Language, Result, Student, StudentFilterOptions,
 };
 
 /// **Obtains all Students without adding extra content**.

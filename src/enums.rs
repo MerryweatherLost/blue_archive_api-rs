@@ -2,7 +2,7 @@
 
 use strum_macros::{Display, EnumIter, EnumString};
 
-/// Languages that **SchaleDB** supports.
+/// Languages that **``SchaleDB``** supports.
 #[derive(Debug, Display)]
 pub enum Language {
     English,
@@ -18,13 +18,13 @@ impl Language {
     /// The identifier of the Language, e.g. (en, tw, kr)
     pub fn id(&self) -> String {
         match self {
-            Language::English => "en",
-            Language::Chinese => "cn",
-            Language::Japanese => "jp",
-            Language::Korean => "kr",
-            Language::Thai => "th",
-            Language::Taiwanese => "tw",
-            Language::Vietnamese => "vi",
+            Self::English => "en",
+            Self::Chinese => "cn",
+            Self::Japanese => "jp",
+            Self::Korean => "kr",
+            Self::Thai => "th",
+            Self::Taiwanese => "tw",
+            Self::Vietnamese => "vi",
         }
         .to_string()
     }
@@ -76,20 +76,20 @@ pub enum School {
 impl School {
     /// The full name of the school.
     pub fn full_name(&self) -> String {
-        let name = match self {
-            School::Abydos => "Abydos High School",
-            School::Gehenna => "Gehenna Academy",
-            School::Hyakkiyako => "Hyakkiyako Alliance Academy",
-            School::Millennium => "Millennium Science School",
-            School::Shanhaijing => "Shanhaijing Senior Secondary School",
-            School::Trinity => "Trinity General School",
-            School::RedWinter => "Red Winter Federal Academy",
-            School::Valkyrie => "Valkyrie Police Academy",
-            School::Arius => "Arius Branch School",
-            School::SRT => "SRT Special Academy",
-            School::Unknown(string) => string.as_ref(),
-        };
-        name.to_string()
+        match self {
+            Self::Abydos => "Abydos High School",
+            Self::Gehenna => "Gehenna Academy",
+            Self::Hyakkiyako => "Hyakkiyako Alliance Academy",
+            Self::Millennium => "Millennium Science School",
+            Self::Shanhaijing => "Shanhaijing Senior Secondary School",
+            Self::Trinity => "Trinity General School",
+            Self::RedWinter => "Red Winter Federal Academy",
+            Self::Valkyrie => "Valkyrie Police Academy",
+            Self::Arius => "Arius Branch School",
+            Self::SRT => "SRT Special Academy",
+            Self::Unknown(string) => string.as_ref(),
+        }
+        .to_string()
     }
 }
 
@@ -140,12 +140,12 @@ impl Squad {
     /// - **Main** -> Striker
     /// - **Support** -> Special
     ///
-    /// Although, if [Squad::Unknown], the inner value will just be returned.
+    /// Although, if [``Squad::Unknown``], the inner value will just be returned.
     pub fn alt_name(&self) -> String {
         match self {
-            Squad::Main => "Striker".to_string(),
-            Squad::Support => "Special".to_string(),
-            Squad::Unknown(squad) => squad.to_string(),
+            Self::Main => "Striker".to_string(),
+            Self::Support => "Special".to_string(),
+            Self::Unknown(squad) => squad.to_string(),
         }
     }
 }
@@ -371,18 +371,18 @@ impl WeaponType {
     /// The full name of the weapon.
     pub fn full_name(&self) -> String {
         match self {
-            WeaponType::AR => "Assault Rifle",
-            WeaponType::GL => "Grenade Launcher",
-            WeaponType::FT => "Flamethrower",
-            WeaponType::HG => "Handgun",
-            WeaponType::MG => "Machine Gun",
-            WeaponType::MT => "Mortar",
-            WeaponType::RG => "Railgun",
-            WeaponType::RL => "Rocket Launcher",
-            WeaponType::SG => "Shotgun",
-            WeaponType::SMG => "Submachine Gun",
-            WeaponType::SR => "Sniper Rifle",
-            WeaponType::Unknown(string) => string,
+            Self::AR => "Assault Rifle",
+            Self::GL => "Grenade Launcher",
+            Self::FT => "Flamethrower",
+            Self::HG => "Handgun",
+            Self::MG => "Machine Gun",
+            Self::MT => "Mortar",
+            Self::RG => "Railgun",
+            Self::RL => "Rocket Launcher",
+            Self::SG => "Shotgun",
+            Self::SMG => "Submachine Gun",
+            Self::SR => "Sniper Rifle",
+            Self::Unknown(string) => string,
         }
         .to_string()
     }
