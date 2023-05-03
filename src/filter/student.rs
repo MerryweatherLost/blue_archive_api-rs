@@ -44,7 +44,7 @@ impl StudentFilter for School {
     }
 }
 
-impl StudentFilter for TacticRole {
+impl StudentFilter for TacticalRole {
     fn filter(self, students: &[Student]) -> Vec<&Student> {
         students
             .iter()

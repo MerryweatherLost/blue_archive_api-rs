@@ -27,7 +27,7 @@ pub mod types;
 
 pub use api::{student::*, summon::*};
 pub use enums::{
-    Armor, BulletType, Club, Language, Position, School, Squad, TacticRole, WeaponType,
+    Armor, BulletType, Club, Language, Position, School, Squad, TacticalRole, WeaponType,
 };
 pub use errors::BlueArchiveError;
 pub use filter::student::StudentFilter;

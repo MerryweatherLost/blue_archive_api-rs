@@ -180,10 +180,10 @@ impl Student {
     }
 
     /// Gets the **[`TacticRole`]** of the student.
-    pub fn tactic_role(&self) -> TacticRole {
-        match TacticRole::from_str(&self.tactic_role) {
+    pub fn tactic_role(&self) -> TacticalRole {
+        match TacticalRole::from_str(&self.tactic_role) {
             Ok(tr) => tr,
-            Err(_) => TacticRole::Unknown(self.tactic_role.clone()),
+            Err(_) => TacticalRole::Unknown(self.tactic_role.clone()),
         }
     }
 

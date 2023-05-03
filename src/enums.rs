@@ -33,8 +33,7 @@ impl Language {
 /**
     **This is a `enum` that contains the current Blue Archive schools represented in the data.**
 
-    As of the `27th of April, 2023`,
-    this is the current list of schools represented in the data.
+    This is the current list of schools represented in the data.
     * **Abydos** High School
     * **Gehenna** Academy
     * **Hyakkiyako** Alliance Academy
@@ -95,21 +94,20 @@ impl School {
 }
 
 /**
-    **This is a `enum` that contains the current Blue Archive roles represented in the data.**
+    **This is a `enum` that contains the current Blue Archive tactical roles represented in the data.**
 
-    As of the `27th of April, 2023`,
-    this is the list of current roles represented in the data.
+    This is the list of current tactical roles represented in the data.
     - **Tanker**
     - **Vehicle**
     - **DamageDealer**
     - **Healer**
     - **Supporter**
 
-    In the case that a tactic role in the data is not present on the wrapper,
-    a [`TacticRole::Unknown(String)`] is returned to represent the unknown tactic role with its name in the `enum`.
+    In the case that a tactical role in the data is not present on the wrapper,
+    a [`TacticalRole::Unknown(String)`] is returned to represent the unknown tactical role with its name in the `enum`.
 */
 #[derive(Debug, Display, EnumString, EnumIter, PartialEq, Eq)]
-pub enum TacticRole {
+pub enum TacticalRole {
     Tanker,
     Vehicle,
     #[strum(serialize = "DamageDealer", to_string = "Damage Dealer")]
@@ -122,8 +120,7 @@ pub enum TacticRole {
 /**
     **This is a `enum` that contains the current Blue Archive squads represented in the data.**
 
-    As of the `29th of April, 2023`,
-    this is the current list of squads represented in the data.
+    This is the current list of squads represented in the data.
     * **Main** (Striker)
     * **Support** (Special)
 
@@ -156,8 +153,7 @@ impl Squad {
 /**
     **This is a `enum` that contains the current Blue Archive armor represented in the data.**
 
-    As of the `3rd of May, 2023`,
-    this is the current list of armor represented in the data.
+    This is the current list of armor represented in the data.
     * **Unarmed**
     * **ElasticArmor**
     * **HeavyArmor**
@@ -181,8 +177,7 @@ pub enum Armor {
 /**
     **This is a `enum` that contains the current Blue Archive positions represented in the data.**
 
-    As of the `3rd of May, 2023`,
-    this is the current list of positions represented in the data.
+    This is the current list of positions represented in the data.
     * **Front**
     * **Middle**
     * **Back**
@@ -201,8 +196,7 @@ pub enum Position {
 /**
     **This is a `enum` that contains the current Blue Archive bullet types represented in the data.**
 
-    As of the `3rd of May, 2023`,
-    this is the current list of bullet types represented in the data.
+    This is the current list of bullet types represented in the data.
     * **Explosion**
     * **Mystic**
     * **Piercing**
@@ -221,9 +215,7 @@ pub enum BulletType {
 /**
     **This is a `enum` that contains the current Blue Archive clubs represented in the data.**
 
-    As of the `5th of May, 2023`,
-    this is the current list of armor represented in the data.
-
+    This is the current list of clubs represented in the data.
     - **Problem Solver 68**
     - **Super Phenomenon Task Force**
     - **Gourmet Research Society**
@@ -343,8 +335,7 @@ pub enum Club {
 /**
     **This is a `enum` that contains the current Blue Archive weapon types represented in the data.**
 
-    As of the `3rd of May, 2023`,
-    this is the current list of weapon types represented in the data.
+    This is the current list of weapon types represented in the data.
     * **AR** (Assault Rifle)
     * **GL** (Grenade Launcher)
     * **FT** (Flamethrower)
