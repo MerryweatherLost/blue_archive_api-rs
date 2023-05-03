@@ -93,7 +93,7 @@ pub struct Student {
     pub ammo_cost: u16,
     pub range: u16,
     pub regen_cost: u16,
-    /// Contains a collection of **[`Skill's`][`Skill`]**.
+    /// Contains a collection of **[`Skills`][`Skill`]**.
     pub skills: Vec<Skill>,
     pub favor_stat_type: Vec<String>,   // todo
     pub favor_stat_value: Vec<Vec<u8>>, // todo
