@@ -112,6 +112,7 @@ impl School {
 pub enum TacticRole {
     Tanker,
     Vehicle,
+    #[strum(serialize = "DamageDealer", to_string = "Damage Dealer")]
     DamageDealer,
     Healer,
     Supporter,
