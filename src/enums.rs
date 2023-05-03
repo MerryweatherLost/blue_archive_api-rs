@@ -1,99 +1,39 @@
-//! Enums for external use via querying, and general accessibility.
+//! Contains useful public enums to be used when working with the API wrapper.
 
-use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumIter, EnumString};
 
-use crate::types::Student;
-
-/// Trait that allows for the filtering of [`Student`] data.
-pub trait StudentFilter {
-    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student>;
+/// Languages that **SchaleDB** supports.
+#[derive(Debug, Display)]
+pub enum Language {
+    English,
+    Chinese,
+    Japanese,
+    Korean,
+    Thai,
+    Taiwanese,
+    Vietnamese,
 }
 
-/**
-    **This is a `enum` that contains the current Blue Archive roles represented in the API.**
-
-    As of the `11th of December, 2022`,
-    this is the list of current roles represented in the API.
-    * **Attacker**
-    * **Healer**
-    * **Supporter**
-    * **Tanker**
-
-    In the case that a role in the API is not present on the wrapper,
-    a [`Role::Unknown(String)`] is returned to represent the unknown role with its name in the `enum`.
-*/
-#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
-pub enum Role {
-    Attacker,
-    Healer,
-    Supporter,
-    Tanker,
-    Unknown(String),
-}
-
-impl StudentFilter for Role {
-    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-        students
-            .iter()
-            .filter(|student| &student.role() == self)
-            .collect::<Vec<&Student>>()
-    }
-}
-
-impl std::fmt::Display for Role {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Language {
+    /// The identifier of the Language, e.g. (en, tw, kr)
+    pub fn id(&self) -> String {
         match self {
-            Role::Attacker => write!(f, "Attacker"),
-            Role::Healer => write!(f, "Healer"),
-            Role::Supporter => write!(f, "Supporter"),
-            Role::Tanker => write!(f, "Tanker"),
-            Role::Unknown(unknown_role) => write!(f, "{}", unknown_role),
+            Language::English => "en",
+            Language::Chinese => "cn",
+            Language::Japanese => "jp",
+            Language::Korean => "kr",
+            Language::Thai => "th",
+            Language::Taiwanese => "tw",
+            Language::Vietnamese => "vi",
         }
+        .to_string()
     }
 }
 
 /**
-    **This is a `enum` that contains the current Blue Archive squads represented in the API.**
+    **This is a `enum` that contains the current Blue Archive schools represented in the data.**
 
-    As of the `29th of March, 2023`,
-    this is the current list of squads represented in the API.
-    * **Special**
-    * **Striker**
-
-    In the case that a squad in the API is not present on the wrapper,
-    a [`Squad::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
-*/
-#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
-pub enum Squad {
-    Special,
-    Striker,
-    Unknown(String),
-}
-
-impl StudentFilter for Squad {
-    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-        students
-            .iter()
-            .filter(|student| &student.squad() == self)
-            .collect()
-    }
-}
-
-impl std::fmt::Display for Squad {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Squad::Special => write!(f, "Special"),
-            Squad::Striker => write!(f, "Striker"),
-            Squad::Unknown(unknown_type) => write!(f, "{}", unknown_type),
-        }
-    }
-}
-/**
-    **This is a `enum` that contains the current Blue Archive schools represented in the API.**
-
-    As of the `4th of April, 2023`,
-    this is the current list of schools represented in the API.
+    This is the current list of schools represented in the data.
     * **Abydos** High School
     * **Gehenna** Academy
     * **Hyakkiyako** Alliance Academy
@@ -105,7 +45,7 @@ impl std::fmt::Display for Squad {
     * **Arius** Branch School
     * **SRT** Special Academy
 
-    In the case that a school in the API is not present on the wrapper,
+    In the case that a school in the data is not present on the wrapper,
     a [`School::Unknown(String)`] is returned to represent the unknown school with its name in the `enum`.
 */
 #[derive(EnumString, Debug, Display, EnumIter, PartialEq, Eq)]
@@ -153,28 +93,99 @@ impl School {
     }
 }
 
-impl StudentFilter for School {
-    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-        students
-            .iter()
-            .filter(|student| &student.school() == self)
-            .collect()
+/**
+    **This is a `enum` that contains the current Blue Archive tactical roles represented in the data.**
+
+    This is the list of current tactical roles represented in the data.
+    - **Tanker**
+    - **Vehicle**
+    - **DamageDealer**
+    - **Healer**
+    - **Supporter**
+
+    In the case that a tactical role in the data is not present on the wrapper,
+    a [`TacticalRole::Unknown(String)`] is returned to represent the unknown tactical role with its name in the `enum`.
+*/
+#[derive(Debug, Display, EnumString, EnumIter, PartialEq, Eq)]
+pub enum TacticalRole {
+    Tanker,
+    Vehicle,
+    #[strum(serialize = "DamageDealer", to_string = "Damage Dealer")]
+    DamageDealer,
+    Healer,
+    Supporter,
+    Unknown(String),
+}
+
+/**
+    **This is a `enum` that contains the current Blue Archive squads represented in the data.**
+
+    This is the current list of squads represented in the data.
+    * **Main** (Striker)
+    * **Support** (Special)
+
+    In the case that a squad in the data is not present on the wrapper,
+    a [`Squad::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
+*/
+#[derive(Debug, Display, EnumString, EnumIter, PartialEq, Eq)]
+pub enum Squad {
+    Main,
+    Support,
+    Unknown(String),
+}
+
+impl Squad {
+    /// Obtains an alternative name for the [Squad] that some may be familiar with.
+    ///
+    /// - **Main** -> Striker
+    /// - **Support** -> Special
+    ///
+    /// Although, if [Squad::Unknown], the inner value will just be returned.
+    pub fn alt_name(&self) -> String {
+        match self {
+            Squad::Main => "Striker".to_string(),
+            Squad::Support => "Special".to_string(),
+            Squad::Unknown(squad) => squad.to_string(),
+        }
     }
 }
 
 /**
-    **This is a `enum` that contains the current Blue Archive positions represented in the API.**
+    **This is a `enum` that contains the current Blue Archive armor represented in the data.**
 
-    As of the `14th of December, 2022`,
-    this is the current list of weapons represented in the API.
+    This is the current list of armor represented in the data.
+    * **Unarmed**
+    * **ElasticArmor**
+    * **HeavyArmor**
+    * **LightArmor**
+
+    In the case that a armor in the data is not present on the wrapper,
+    a [`Armor::Unknown(String)`] is returned to represent the unknown armor with its name in the `enum`.
+*/
+#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
+pub enum Armor {
+    Unarmed,
+    #[strum(serialize = "ElasticArmor", to_string = "Elastic Armor")]
+    ElasticArmor,
+    #[strum(serialize = "HeavyArmor", to_string = "Heavy Armor")]
+    HeavyArmor,
+    #[strum(serialize = "LightArmor", to_string = "Light Armor")]
+    LightArmor,
+    Unknown(String),
+}
+
+/**
+    **This is a `enum` that contains the current Blue Archive positions represented in the data.**
+
+    This is the current list of positions represented in the data.
     * **Front**
     * **Middle**
     * **Back**
 
-    In the case that a weapon in the API is not present on the wrapper,
-    a [`Position::Unknown(String)`] is returned to represent the unknown weapon with its name in the `enum`.
+    In the case that a position in the data is not present on the wrapper,
+    a [`Position::Unknown(String)`] is returned to represent the unknown position with its name in the `enum`.
 */
-#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
+#[derive(Debug, Display, EnumString, EnumIter, PartialEq, Eq)]
 pub enum Position {
     Front,
     Middle,
@@ -182,194 +193,29 @@ pub enum Position {
     Unknown(String),
 }
 
-impl StudentFilter for Position {
-    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-        students
-            .iter()
-            .filter(|student| &student.position() == self)
-            .collect()
-    }
-}
-
-impl std::fmt::Display for Position {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Position::Front => write!(f, "Front"),
-            Position::Middle => write!(f, "Middle"),
-            Position::Back => write!(f, "Back"),
-            Position::Unknown(string) => write!(f, "{string}"),
-        }
-    }
-}
-
 /**
-    **This is a `enum` that contains the current Blue Archive weapons represented in the API.**
+    **This is a `enum` that contains the current Blue Archive bullet types represented in the data.**
 
-    As of the `27th of November, 2022`,
-    this is the current list of weapons represented in the API.
-    * **AR** (Assault Rifle)
-    * **GL** (Grenade Launcher)
-    * **HG** (Handgun)
-    * **MG** (Machine Gun)
-    * **MT** (Mortar)
-    * **RF** (Rifle)
-    * **RG** (Railgun)
-    * **RL** (Rocket Launcher)
-    * **SG** (Shotgun)
-    * **SMG** (Submachine Gun)
-    * **SR** (Sniper RIfle)
-
-    In the case that a weapon in the API is not present on the wrapper,
-    a [`Weapon::Unknown(String)`] is returned to represent the unknown weapon with its name in the `enum`.
-*/
-#[derive(Debug, EnumString, Display, EnumIter, PartialEq, Eq)]
-pub enum Weapon {
-    AR,
-    GL,
-    HG,
-    MG,
-    MT,
-    RF, // <- results in not found on the API, unsure if it will be used.
-    RG,
-    RL,
-    SG,
-    SMG,
-    SR,
-    Unknown(String),
-}
-
-impl Weapon {
-    /// The full name of the weapon.
-    pub fn full_name(&self) -> String {
-        let name = match self {
-            Weapon::AR => "Assault Rifle",
-            Weapon::GL => "Grenade Launcher",
-            Weapon::HG => "Handgun",
-            Weapon::MG => "Machine Gun",
-            Weapon::MT => "Mortar",
-            Weapon::RF => "Rifle",
-            Weapon::RG => "Railgun",
-            Weapon::RL => "Rocket Launcher",
-            Weapon::SG => "Shotgun",
-            Weapon::SMG => "Submachine Gun",
-            Weapon::SR => "Sniper Rifle",
-            Weapon::Unknown(string) => string,
-        };
-        name.to_string()
-    }
-}
-
-impl StudentFilter for Weapon {
-    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-        students
-            .iter()
-            .filter(|student| &student.weapon() == self)
-            .collect()
-    }
-}
-
-/**
-    **This is a `enum` that contains the current Blue Archive damage types represented in the API.**
-
-    As of the `14th of December, 2022`,
-    this is the current list of damage types represented in the API.
+    This is the current list of bullet types represented in the data.
     * **Explosion**
     * **Mystic**
-    * **Penetration**
+    * **Piercing**
 
-    In the case that a damage type in the API is not present on the wrapper,
-    a [`Damage::Unknown(String)`] is returned to represent the unknown damage type with its name in the `enum`.
+    In the case that a bullet type in the data is not present on the wrapper,
+    a [`BulletType::Unknown(String)`] is returned to represent the unknown bullet type with its name in the `enum`.
 */
 #[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
-pub enum Damage {
+pub enum BulletType {
     Explosion,
     Mystic,
     Penetration,
     Unknown(String),
 }
 
-impl StudentFilter for Damage {
-    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-        students
-            .iter()
-            .filter(|student| &student.damage() == self)
-            .collect()
-    }
-}
-
-impl std::fmt::Display for Damage {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Damage::Explosion => write!(f, "Explosion"),
-            Damage::Mystic => write!(f, "Mystic"),
-            Damage::Penetration => write!(f, "Penetration"),
-            Damage::Unknown(string) => write!(f, "{string}"),
-        }
-    }
-}
-
 /**
-    **This is a `enum` that contains the current Blue Archive armor represented in the API.**
+    **This is a `enum` that contains the current Blue Archive clubs represented in the data.**
 
-    As of the `3rd of April, 2023`,
-    this is the current list of armor represented in the API.
-    * **Explosion**
-    * **Mystic**
-    * **Penetration**
-
-    In the case that a armor in the API is not present on the wrapper,
-    a [`Armor::Unknown(String)`] is returned to represent the unknown armor with its name in the `enum`.
-*/
-
-#[derive(Debug, EnumString, EnumIter, PartialEq, Eq)]
-pub enum Armor {
-    Heavy,
-    Light,
-    Special,
-    Unknown(String),
-}
-
-impl StudentFilter for Armor {
-    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-        students
-            .iter()
-            .filter(|student| &student.armor() == self)
-            .collect()
-    }
-}
-
-impl std::fmt::Display for Armor {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Armor::Heavy => write!(f, "Heavy"),
-            Armor::Light => write!(f, "Light"),
-            Armor::Special => write!(f, "Special"),
-            Armor::Unknown(string) => write!(f, "{string}"),
-        }
-    }
-}
-
-#[derive(
-    Debug, Copy, Display, Serialize, Deserialize, EnumString, EnumIter, PartialEq, Eq, Clone,
-)]
-pub enum Region {
-    #[strum(to_string = "global")]
-    Global,
-    #[strum(to_string = "japan")]
-    Japan,
-}
-
-impl Default for Region {
-    fn default() -> Self {
-        Self::Global
-    }
-}
-/**
-    **This is a `enum` that contains the current Blue Archive clubs represented in the API.**
-
-    As of the `4th of April, 2023`,
-    this is the current list of armor represented in the API.
-
+    This is the current list of clubs represented in the data.
     - **Problem Solver 68**
     - **Super Phenomenon Task Force**
     - **Gourmet Research Society**
@@ -404,7 +250,7 @@ impl Default for Region {
     - **School Lunch Club**
     - **Remedial Knights**
 
-    In the case that a club in the API is not present on the wrapper,
+    In the case that a club in the data is not present on the wrapper,
     a [`Club::Unknown(String)`] is returned to represent the unknown club with its name in the `enum`.
 */
 #[derive(Debug, Hash, Eq, PartialEq, EnumIter, EnumString, Display)]
@@ -429,11 +275,11 @@ pub enum Club {
     #[strum(serialize = "TrainingClub", to_string = "Athletics Training Club")]
     AthleticsTrainingClub,
     #[strum(serialize = "NinpoKenkyubu", to_string = "Ninjutsu Research Club")]
-    NinjutsuResearchDepartment,
+    NinjutsuResearchClub,
     #[strum(serialize = "Justice", to_string = "Justice Task Force")]
     JusticeTaskForce,
-    #[strum(serialize = "GameDev", to_string = "Game Development Department")]
-    GameDevelopmentDepartment,
+    #[strum(serialize = "GameDev", to_string = "Game Development Club")]
+    GameDevelopmentClub,
     #[strum(serialize = "RedwinterSecretary", to_string = "Red Winter Office")]
     RedWinterSecretary,
     #[strum(serialize = "HoukagoDessert", to_string = "After-School Sweets Club")]
@@ -456,6 +302,8 @@ pub enum Club {
     Seminar,
     #[strum(serialize = "anzenkyoku", to_string = "Public Safety Bureau")]
     PublicSafetyBureau,
+    #[strum(serialize = "PublicPeaceBureau", to_string = "Public Peace Bureau")]
+    PublicPeaceBureau,
     #[strum(serialize = "Engineer", to_string = "Engineering Club")]
     EngineeringClub,
     #[strum(serialize = "TrinityVigilance", to_string = "Trinity Vigilante Crew")]
@@ -477,57 +325,65 @@ pub enum Club {
     PandemoniumSociety,
     #[strum(serialize = "KnightsHospitaller", to_string = "Remedial Knights")]
     RemedialKnights,
+    #[strum(serialize = "TeaParty", to_string = "Tea Party")]
+    TeaParty,
+    #[strum(serialize = "HotSpringsDepartment", to_string = "Hot Spring Club")]
+    HotSpringsClub,
     Unknown(String),
-}
-
-impl StudentFilter for Club {
-    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-        students
-            .iter()
-            .filter(|student| &student.club() == self)
-            .collect()
-    }
 }
 
 /**
-    **This is a `enum` that contains the current Blue Archive rarities represented in the API.**
+    **This is a `enum` that contains the current Blue Archive weapon types represented in the data.**
 
-    As of the `3rd of April, 2023`,
-    this is the current list of armor represented in the API.
+    This is the current list of weapon types represented in the data.
+    * **AR** (Assault Rifle)
+    * **GL** (Grenade Launcher)
+    * **FT** (Flamethrower)
+    * **HG** (Handgun)
+    * **MG** (Machine Gun)
+    * **MT** (Mortar)
+    * **RG** (Railgun)
+    * **RL** (Rocket Launcher)
+    * **SG** (Shotgun)
+    * **SMG** (Submachine Gun)
+    * **SR** (Sniper RIfle)
 
-    * **R** (Rare)
-    * **SR** (Super Rare)
-    * **SSR** (Super-Super Rare)
-
-    In the case that a rarity in the API is not present on the wrapper,
-    a [`Rarity::Unknown(String)`] is returned to represent the unknown rarity with its name in the `enum`.
+    In the case that a weapon type in the data is not present on the wrapper,
+    a [`WeaponType::Unknown(String)`] is returned to represent the unknown weapon type with its name in the `enum`.
 */
-#[derive(Clone, Debug, Display, Deserialize, Serialize, EnumString, Eq, PartialEq)]
-pub enum Rarity {
-    R,
+#[derive(Debug, EnumString, Display, EnumIter, PartialEq, Eq)]
+pub enum WeaponType {
+    AR,
+    RL,
+    FT,
     SR,
-    SSR,
+    MG,
+    MT,
+    HG,
+    SMG,
+    SG,
+    GL,
+    RG,
     Unknown(String),
 }
 
-impl Rarity {
-    /// The full name of the rarity type.
+impl WeaponType {
+    /// The full name of the weapon.
     pub fn full_name(&self) -> String {
-        let name = match self {
-            Rarity::R => "Rare",
-            Rarity::SR => "Super Rare",
-            Rarity::SSR => "Super-Super Rare",
-            Rarity::Unknown(string) => string,
-        };
-        name.to_string()
-    }
-}
-
-impl StudentFilter for Rarity {
-    fn filter<'student>(&self, students: &'student [Student]) -> Vec<&'student Student> {
-        students
-            .iter()
-            .filter(|student| &student.rarity() == self)
-            .collect()
+        match self {
+            WeaponType::AR => "Assault Rifle",
+            WeaponType::GL => "Grenade Launcher",
+            WeaponType::FT => "Flamethrower",
+            WeaponType::HG => "Handgun",
+            WeaponType::MG => "Machine Gun",
+            WeaponType::MT => "Mortar",
+            WeaponType::RG => "Railgun",
+            WeaponType::RL => "Rocket Launcher",
+            WeaponType::SG => "Shotgun",
+            WeaponType::SMG => "Submachine Gun",
+            WeaponType::SR => "Sniper Rifle",
+            WeaponType::Unknown(string) => string,
+        }
+        .to_string()
     }
 }

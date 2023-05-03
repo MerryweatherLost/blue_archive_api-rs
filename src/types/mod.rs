@@ -1,40 +1,43 @@
-//! The types associated with the API.
+//! Contains many structures that make up the deserialized data.
 
-use chrono::NaiveDateTime;
-use serde::{Deserialize, Serialize};
-
-pub mod banners;
-pub mod equipment;
-pub mod raids;
 pub mod students;
+pub mod summons;
 
-pub use banners::*;
-pub use equipment::*;
-pub use raids::*;
-pub use students::*;
+use serde::{Deserialize, Serialize};
+pub use students::{Age, Released, Student};
+pub use summons::Summon;
 
-/**
-Contains the current status of the API, created by [**torikushiii**](https://github.com/torikushiii)
+/// **A Blue Archive ID**.
+///
+/// Basically wraps around a [`u32`], and exists for representation of an identifier that can be filtered and have extra functionality.
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct ID(pub u32);
 
-**Github:** <https://github.com/torikushiii/BlueArchiveAPI>
-*/
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct APIStatus {
-    /// The status code of the API.
-    #[serde(alias = "status")]
-    pub code: u16,
-    /// The version of the API.
-    pub version: String,
-    // The uptime of the API.
-    pub uptime: i64,
-    /// The list of available endpoints for the API.
-    pub endpoints: Vec<String>,
-}
-
-impl APIStatus {
-    /// The uptime represented with a [`NaiveDateTime`] object.
-    pub fn uptime(&self) -> Option<NaiveDateTime> {
-        NaiveDateTime::from_timestamp_millis(self.uptime)
+impl std::fmt::Display for ID {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "SID#:({})", self.0)
     }
 }
+
+impl Serialize for ID {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_newtype_struct("ID", &self.0)
+    }
+}
+
+impl<'de> Deserialize<'de> for ID {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value: u32 = Deserialize::deserialize(deserializer)?;
+        Ok(Self(value))
+    }
+}
+
+/// **A Blue Archive Skill**.
+#[derive(Debug, PartialEq, Eq)]
+pub struct Skill;

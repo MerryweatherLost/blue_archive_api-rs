@@ -1,9 +1,9 @@
 [package]
 name = "blue_archive"
-version = "0.2.1"
+version = "0.3.0"
 edition = "2021"
 license-file = "LICENSE"
-description = "A Blue Archive api wrapper for Rust, based off of torikushiii's API: https://github.com/torikushiii"
+description = "A Blue Archive api wrapper for Rust, based off of SchaleDB's data: https://github.com/lonqie/SchaleDB"
 readme = "README.md"
 repository = "https://github.com/MerryweatherLost/blue_archive_api-rs"
 categories = ["api-bindings"]
@@ -19,8 +19,3 @@ futures = "0.3"
 thiserror = "1.0"
 strum = "0.24"
 strum_macros = "0.24"
-
-[features]
-default = ["query", "fetcher"]
-query = []
-fetcher = []

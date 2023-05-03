@@ -1,39 +1,36 @@
 //! blue_archive
-//! ---------------
-//! A Blue Archive API wrapper written in Rust.
+//! ------------
 //!
-//! **Consider this crate to be at an unfinished stage, though queries work properly, there is some work to be done with specific structures.**
+//! Rust API wrapper of lonqie's SchaleDB. For more information, go to these links:
 //!
-//! I'm also a beginner when it comes to this language, so a lot of stuff may be in bad practice! You can pitch in to flag issues or provide assistance [**here.**](https://github.com/MerryweatherLost/blue_archive_api-rs)
+//! **Github & Owner:** <https://github.com/lonqie/SchaleDB> & <https://github.com/lonqie>
 //!
-//! It mainly holds information from the **Global** Version.
-//! The API primarily focuses on drop rates of each stages on Blue Archive.
 //!
-//! The Rest API that is used is from [**torikushiii**](https://github.com/torikushiii).
+//! ## Information
+//! Something I wanted to make in Rust was a simple api wrapper, picked something and the rest was history.
+//! Much of it is still a work in progress.
 //!
-//! You can find it here: **<https://github.com/torikushiii/BlueArchiveAPI>**
+//! The former versions **`<= 2.*`** used a different API, and to migrate to the new one, a lot of changes needed to be done.
 //!
-//! ### Feature Flags
+//! **Crate Github:** <https://github.com/MerryweatherLost/blue_archive_api-rs>
 //!
-//! | Feature                      | Description                                                                                                                                                             | Default |
-//! |:-----------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------|
-//! | `query`                      | Allows for the usage of extra functions to fetch singular queries.                                                                                                      | YES     |
-//! | `fetcher`                    | Allows for the usage of a fetcher that will cache student data in a struct.                                                                                           | YES     |
+//!
+//! ## Contributing
+//! If you wish to help out, you can. I am a beginner in Rust, and I do not mind a few pointers.
 
 pub mod api;
 pub mod enums;
+pub mod errors;
+pub mod fetcher;
+pub mod filter;
 pub mod types;
 
-pub use enums::{Armor, Club, Damage, Position, Rarity, Region, Role, School, Squad, Weapon};
-pub use types::{Age, Released, StudentID};
-
-pub use api::*;
-
-#[cfg(feature = "fetcher")]
-pub use fetcher::StudentFetcher;
-
-pub use api::enums::Query;
+pub use api::{student::*, summon::*};
+pub use enums::{
+    Armor, BulletType, Club, Language, Position, School, Squad, TacticalRole, WeaponType,
+};
 pub use errors::BlueArchiveError;
+pub use filter::student::StudentFilter;
 
-/// The API uri that is used for all the endpoints & queries.
-pub const API_URI: &str = "https://api.ennead.cc/buruaka";
+pub const DATA_URI: &str = "https://raw.githubusercontent.com/lonqie/SchaleDB/main/data";
+pub const IMAGE_DATA_URI: &str = "https://raw.githubusercontent.com/lonqie/SchaleDB/main/images";

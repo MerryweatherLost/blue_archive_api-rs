@@ -1,12 +1,12 @@
+use blue_archive::Language;
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let all_students = blue_archive::fetch_all_students(None).await?;
-    for student in &all_students {
+    let students = blue_archive::fetch_all_students(&Language::English).await?;
+    for student in students {
         println!(
-            "{student} | apart of {} | {}:{}",
-            student.club(),
-            student.rarity(),
-            "⭐".repeat(student.character.base_star as usize)
+            "{student} : Full Body: [{:?}]",
+            student.image.portrait.full_body_url
         )
     }
     Ok(())
