@@ -70,6 +70,7 @@ pub enum School {
     Arius,
     /// **SRT** Special Academy
     SRT,
+    /// An **`unknown`** type that contains the inner value.
     Unknown(String),
 }
 
@@ -114,6 +115,7 @@ pub enum TacticalRole {
     DamageDealer,
     Healer,
     Supporter,
+    /// An **`unknown`** type that contains the inner value.
     Unknown(String),
 }
 
@@ -131,6 +133,7 @@ pub enum TacticalRole {
 pub enum Squad {
     Main,
     Support,
+    /// An **`unknown`** type that contains the inner value.
     Unknown(String),
 }
 
@@ -171,6 +174,7 @@ pub enum Armor {
     HeavyArmor,
     #[strum(serialize = "LightArmor", to_string = "Light Armor")]
     LightArmor,
+    /// An **`unknown`** type that contains the inner value.
     Unknown(String),
 }
 
@@ -190,6 +194,7 @@ pub enum Position {
     Front,
     Middle,
     Back,
+    /// An **`unknown`** type that contains the inner value.
     Unknown(String),
 }
 
@@ -209,6 +214,7 @@ pub enum BulletType {
     Explosion,
     Mystic,
     Penetration,
+    /// An **`unknown`** type that contains the inner value.
     Unknown(String),
 }
 
@@ -329,6 +335,7 @@ pub enum Club {
     TeaParty,
     #[strum(serialize = "HotSpringsDepartment", to_string = "Hot Spring Club")]
     HotSpringsClub,
+    /// An **`unknown`** type that contains the inner value.
     Unknown(String),
 }
 
@@ -353,17 +360,29 @@ pub enum Club {
 */
 #[derive(Debug, EnumString, Display, EnumIter, PartialEq, Eq)]
 pub enum WeaponType {
+    /// **`Assault Rifle`**
     AR,
-    RL,
+    /// **`Flamethrower`**
     FT,
+    /// **`Sniper Rifle`**
     SR,
+    /// **`Machine Gun`**
     MG,
+    /// **`Mortar`**
     MT,
+    /// **`Handgun`**
     HG,
+    /// **`Submachine Gun`**
     SMG,
+    /// **`Rocket Launcher`**
+    RL,
+    /// **`Shotgun`**
     SG,
+    /// **`Grenade Launcher`**
     GL,
+    /// **`Railgun`**
     RG,
+    /// An **`unknown`** type that contains the inner value.
     Unknown(String),
 }
 

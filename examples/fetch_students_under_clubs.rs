@@ -3,22 +3,22 @@ use strum::IntoEnumIterator;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let students =
-        blue_archive::fetch_all_students_without_extra(&blue_archive::Language::English).await?;
-
+    // Just calculating the club with the longest name...
     let max = Club::iter()
         .map(|club| club.to_string().len())
         .max()
         .unwrap();
 
-    println!("{max:?}");
+    // Let's now fetch some students.
+    let students = blue_archive::fetch_all_students(&blue_archive::Language::English).await?;
 
+    // We will iterate through every club (thanks strum macros!), and perform certain behavior to print out each student in a specific club.
     Club::iter().for_each(|club| {
+        // Formatting and justifying spaces to the right!
         println!("|::{club}{}::|", " ".repeat(max - club.to_string().len()));
+        // Iterating over each student and checking if they associate with the club.
         students.iter().for_each(|student| {
-            if student.club() == club {
-                println!("{student}")
-            }
+            (student.club() == club).then(|| println!("{student}"));
         })
     });
 

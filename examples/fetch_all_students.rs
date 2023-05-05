@@ -2,12 +2,9 @@ use blue_archive::Language;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let students = blue_archive::fetch_all_students(&Language::English).await?;
-    for student in students {
-        println!(
-            "{student} : Full Body: [{:?}]",
-            student.image.portrait.full_body_url
-        )
-    }
+    // Let us fetch some students. This time, we will use the Korean Language enum.
+    let students = blue_archive::fetch_all_students(&Language::Korean).await?;
+    // Time to iterate over each student and print their displayed implementation!
+    students.iter().for_each(|student| println!("{student}"));
     Ok(())
 }

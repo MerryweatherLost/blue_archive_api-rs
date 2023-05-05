@@ -15,7 +15,7 @@ pub struct ID(pub u32);
 
 impl std::fmt::Display for ID {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "SID#:({})", self.0)
+        write!(f, "ID#:({})", self.0)
     }
 }
 
