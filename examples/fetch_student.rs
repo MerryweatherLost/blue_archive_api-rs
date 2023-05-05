@@ -6,8 +6,27 @@ async fn main() -> anyhow::Result<()> {
     // We can do this through simply calling the below crate function.
     let hina = (blue_archive::fetch_student_by_name("Hina", &Language::English).await?).unwrap();
 
-    // Let us print the details of Hina!
-    println!("Details of Hina: {hina}");
+    // Let us print some important details of Hina!
+    let header = format!("|:: {} : Details", hina.full_name_last());
+    println!("{header}");
+    println!("{}", "-".repeat(header.len()));
+    let segments = [
+        ("age", format!("{}", hina.age())),
+        ("school", format!("{}", hina.school())),
+        ("club", format!("{}", hina.club())),
+        ("armor", format!("{}", hina.armor())),
+        (
+            "weapon",
+            format!(
+                "[{}] - {} : {}",
+                hina.weapon.name,
+                hina.weapon_type(),
+                hina.bullet_type()
+            ),
+        ),
+    ];
+    let max = segments.iter().map(|(n, _)| n.len()).max().unwrap();
+    segments.map(|(name, details)| println!("{}{name}: {}", " ".repeat(max - name.len()), details));
 
     println!();
 

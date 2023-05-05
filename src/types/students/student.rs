@@ -57,11 +57,8 @@ pub struct Student {
     pub birthday: String,
     #[serde(alias = "CharacterSSRNew")]
     character_ssr_new: Option<String>,
-    /// Also known as the profile of the student. Provides a brief explanation of their background.
-    #[serde(alias = "ProfileIntroduction")]
-    pub description: String,
-    /// The hobby of the student.
-    pub hobby: String,
+    profile_introduction: String,
+    hobby: String,
     /// The voice actor of the student.
     #[serde(alias = "CharacterVoice")]
     pub voice_actor: String,
@@ -138,6 +135,18 @@ impl Student {
         format!("{} {}", self.personal_name, self.family_name)
     }
 
+    /// Also known as the **profile** of the student. Provides a brief explanation of their background.
+    pub fn description(&self) -> String {
+        html_escape::decode_html_entities(&self.profile_introduction).into()
+    }
+
+    /// The quote said when obtaining this student (if an SSR).
+    pub fn quote_ssr(&self) -> Option<String> {
+        self.character_ssr_new.as_ref().and_then(|quote| {
+            (!quote.is_empty()).then_some(html_escape::decode_html_entities(&quote).into())
+        })
+    }
+
     /// Gets the **[`Age`]** of the student.
     pub fn age(&self) -> Age {
         let radix = 10_u8;
@@ -164,8 +173,16 @@ impl Student {
     pub fn height(&self) -> Height {
         Height {
             metric: self.char_height_metric.clone(),
-            imperial: self.char_height_imperial.clone(),
+            imperial: self
+                .char_height_imperial
+                .as_ref()
+                .map(|height| html_escape::decode_html_entities(&height).to_string()),
         }
+    }
+
+    /// The hobby of the student if they have one.
+    pub fn hobby(&self) -> Option<String> {
+        (self.hobby != "None").then_some(self.hobby.clone())
     }
 
     /// Tries to get a **[`Gear`]** from data.

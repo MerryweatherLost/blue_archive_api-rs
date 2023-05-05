@@ -48,6 +48,10 @@ pub struct Height {
 }
 impl Display for Height {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "(Metric: {} | Global: {:?})", self.metric, self.imperial)
+        write!(
+            f,
+            "(Metric: {} | Imperial: {:?})",
+            self.metric, self.imperial
+        )
     }
 }
