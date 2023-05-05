@@ -57,11 +57,8 @@ pub struct Student {
     pub birthday: String,
     #[serde(alias = "CharacterSSRNew")]
     character_ssr_new: Option<String>,
-    /// Also known as the profile of the student. Provides a brief explanation of their background.
-    #[serde(alias = "ProfileIntroduction")]
-    pub description: String,
-    /// The hobby of the student.
-    pub hobby: String,
+    profile_introduction: String,
+    hobby: String,
     /// The voice actor of the student.
     #[serde(alias = "CharacterVoice")]
     pub voice_actor: String,
@@ -118,36 +115,50 @@ pub struct Student {
 }
 
 impl Student {
-    /// The name of the student.
+    /// The **first name (`personal_name`)** of the student.
     pub fn first_name(&self) -> String {
         self.personal_name.clone()
     }
 
-    /// The last name (surname or family name) of the student.
+    /// The **last name/surname (`family_name`)** of the student.
     pub fn last_name(&self) -> String {
         self.family_name.clone()
     }
 
-    /// Gets the full name of a student, with the family name (surname) coming first.
-    pub fn full_name_with_last(&self) -> String {
+    /// Gets the full name of a student, with the **surname (`family_name`)** coming first.
+    pub fn full_name_last(&self) -> String {
         format!("{} {}", self.family_name, self.personal_name)
     }
 
-    /// Gets the full name of a student, with the personal name coming first.
-    pub fn full_name_with_first(&self) -> String {
+    /// Gets the full name of a student, with the **first name (`personal_name`)** coming first.
+    pub fn full_name_first(&self) -> String {
         format!("{} {}", self.personal_name, self.family_name)
+    }
+
+    /// Also known as the **profile** of the student. Provides a brief explanation of their background.
+    pub fn description(&self) -> String {
+        html_escape::decode_html_entities(&self.profile_introduction).into()
+    }
+
+    /// The quote said when obtaining this student (if an SSR).
+    pub fn quote_ssr(&self) -> Option<String> {
+        self.character_ssr_new.as_ref().and_then(|quote| {
+            (!quote.is_empty()).then_some(html_escape::decode_html_entities(&quote).into())
+        })
     }
 
     /// Gets the **[`Age`]** of the student.
     pub fn age(&self) -> Age {
-        for id in [" ", "歳", "세", " ปี", "歲"] {
-            if let Some(ix) = self.character_age.find(id) {
-                if let Ok(num) = self.character_age[0..ix].parse::<u8>() {
-                    return Age(Some(num));
-                }
+        let radix = 10_u8;
+        let mut num_sequence: Vec<u8> = vec![];
+        for char in self.character_age.chars() {
+            match char.to_digit(radix.into()) {
+                Some(digit) => num_sequence.push(digit as u8),
+                None => break,
             }
         }
-        Age(None)
+        Age((!num_sequence.is_empty())
+            .then_some(num_sequence.iter().fold(0, |acc, el| acc * radix + el)))
     }
 
     /// The **[`Released`]** status of the student.
@@ -162,8 +173,16 @@ impl Student {
     pub fn height(&self) -> Height {
         Height {
             metric: self.char_height_metric.clone(),
-            imperial: self.char_height_imperial.clone(),
+            imperial: self
+                .char_height_imperial
+                .as_ref()
+                .map(|height| html_escape::decode_html_entities(&height).to_string()),
         }
+    }
+
+    /// The hobby of the student if they have one.
+    pub fn hobby(&self) -> Option<String> {
+        (self.hobby != "None").then_some(self.hobby.clone())
     }
 
     /// Tries to get a **[`Gear`]** from data.
@@ -173,18 +192,13 @@ impl Student {
 
     /// Gets the **[`School`]** of the student.
     pub fn school(&self) -> School {
-        match School::from_str(&self.school) {
-            Ok(school) => school,
-            Err(_) => School::Unknown(self.school.clone()),
-        }
+        School::from_str(&self.school).unwrap_or_else(|_| School::Unknown(self.school.clone()))
     }
 
     /// Gets the **[`TacticalRole`]** of the student.
     pub fn tactical_role(&self) -> TacticalRole {
-        match TacticalRole::from_str(&self.tactic_role) {
-            Ok(tr) => tr,
-            Err(_) => TacticalRole::Unknown(self.tactic_role.clone()),
-        }
+        TacticalRole::from_str(&self.tactic_role)
+            .unwrap_or_else(|_| TacticalRole::Unknown(self.tactic_role.clone()))
     }
 
     /// Gets the **[`Squad`]** of the student.
@@ -222,11 +236,15 @@ impl Student {
             .unwrap_or_else(|_| WeaponType::Unknown(self.weapon_type.clone()))
     }
 
-    /// Fetches extra data of this [`Student`].
-    pub(crate) async fn fetch_extra_data(&mut self, client: &Client) {
-        if let Ok(data) = StudentImageData::new(self, client).await {
-            self.image = data;
-        }
+    /// Fetches extra data of this **[`Student`]**.
+    ///
+    /// Has a possibility of failing when trying to use the [`Client`].
+    pub(crate) async fn fetch_extra_data(
+        &mut self,
+        client: &Client,
+    ) -> Result<(), BlueArchiveError> {
+        self.image = StudentImageData::new(self, client).await?;
+        Ok(())
     }
 }
 
@@ -234,8 +252,8 @@ impl std::fmt::Display for Student {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "Student : {} :-: ID#:{} | Age:{} | School: {}",
-            self.full_name_with_last(),
+            "Student : {} :-: {} | Age:{} | School: {}",
+            self.full_name_last(),
             self.id,
             self.age(),
             self.school()

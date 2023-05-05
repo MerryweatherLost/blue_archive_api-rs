@@ -19,7 +19,7 @@ pub async fn fetch_all_students_without_extra(
     Ok(response.json::<Vec<Student>>().await?)
 }
 
-/// Lets you fetch all students with extra data, which includes the images of the **[`Students`][`Student`]** among other things.
+/// Fetches all students with extra data, which includes the images of the **[`Students`][`Student`]** among other things.
 pub async fn fetch_all_students(language: &Language) -> Result<Vec<Student>, BlueArchiveError> {
     let client = Client::new();
     let mut students = fetch_response(&Endpoint::Students, language, &client)
@@ -35,7 +35,28 @@ pub async fn fetch_all_students(language: &Language) -> Result<Vec<Student>, Blu
     Ok(students)
 }
 
-/// Fetches a **[`Student`]** by a `name` from a set of pattern matching.
+/**
+    Fetches a **[`Student`]** by a `name` from a set of names.
+
+    It is recommended to use the last name and an associated tag such as **`Iori (Swimsuit)`** of the **[`Student`]**.
+
+    Until a proper system is figured out, perhaps with an associated [`Option`] of an `enum` that can discern a **[`Student`]** from their alternate with the same name.
+
+    # Examples
+    ```
+    use anyhow::Result;
+
+    use blue_archive::Language;
+
+    #[tokio::main]
+    async fn main() -> Result<()> {
+        // Fetching asuna is relatively simple...
+        let asuna = blue_archive::fetch_student_by_name("Asuna", &Language::English).await?.unwrap();
+        println!("{}", asuna);
+        Ok(())
+    }
+    ```
+*/
 pub async fn fetch_student_by_name(
     name: impl Into<String>,
     language: &Language,
@@ -48,15 +69,15 @@ pub async fn fetch_student_by_name(
             [
                 &student.first_name(),
                 &student.last_name(),
-                &student.full_name_with_last(),
-                &student.full_name_with_first(),
+                &student.full_name_last(),
+                &student.full_name_first(),
             ]
             .into_iter()
             .any(|x| x.to_lowercase() == name.to_lowercase())
         });
     match possible_student {
         Some(mut student) => {
-            student.fetch_extra_data(&Client::new()).await;
+            student.fetch_extra_data(&Client::new()).await?;
             Ok(Some(student))
         }
         None => Ok(None),

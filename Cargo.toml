@@ -1,6 +1,6 @@
 [package]
 name = "blue_archive"
-version = "0.3.2"
+version = "0.3.3"
 edition = "2021"
 license-file = "LICENSE"
 description = "A Blue Archive api wrapper for Rust, based off of SchaleDB's data: https://github.com/lonqie/SchaleDB"
@@ -10,13 +10,20 @@ categories = ["api-bindings"]
 keywords = ["bluearchive", "SchaleDB"]
 
 [dependencies]
-reqwest = { version = "0.11", features = ["json"] }
 tokio = { version = "1", features = ["full"] }
-serde = { version = "1", features = ["derive"] }
-chrono = { version = "0.4", features = ["serde"] }
-anyhow = "1"
-rand = "0.8"
 futures = "0.3"
+reqwest = { version = "0.11", features = ["json"] }
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+html-escape = "0.2"
+
+rand = "0.8"
+
+anyhow = "1"
 thiserror = "1.0"
+
 strum = "0.24"
 strum_macros = "0.24"
+
+# chrono = { version = "0.4", features = ["serde"] }

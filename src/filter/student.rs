@@ -7,7 +7,7 @@ use crate::{
 
 /// Used to filter **[`Students`][`Student`]**.
 pub trait StudentFilter {
-    /// Filters a slice of [`Student`], and returns a **[`Vec<Student>`]**.
+    /// Filters a borrowed slice of [`Student`], and returns a **[`Vec<Student>`]**.
     fn filter(self, students: &[Student]) -> Vec<&Student>;
 }
 
@@ -110,6 +110,8 @@ impl StudentFilter for WeaponType {
     }
 }
 
+/// Provides the options to apply any **[`StudentFilter`]** on a **[`Vec<&Student>`]**.
+/// It is recommended to use the `new` function, or create it from **[the crate filter](`crate::filter`)**, or in **[`StudentFetcher`](`crate::StudentFetcher`)**.
 #[derive(Debug)]
 pub struct StudentFilterOptions<'s> {
     pub filtered_students: Option<Vec<&'s Student>>,
@@ -124,7 +126,33 @@ impl<'s> StudentFilterOptions<'s> {
         }
     }
 
-    /// Applies a filter, and returns itself allowing for direct chaining.
+    /**
+    Applies a filter, and returns [itself][`StudentFilterOptions`], allowing for direct chaining.
+
+    The filter works by first filtering based on the [`StudentFilter`] implementation of the type,
+    then matches with already existing **[`Students`][`Student`]** that were already filtered. It then finally retains the **[`Students`][`Student`]**
+    within the filter with the previously filtered **[`Students`][`Student`]** in the [`filtered_students`](StudentFilterOptions::filtered_students) field.
+
+    # Examples
+    ```
+    use anyhow::Result;
+
+    use blue_archive::{School, Position}; // <- These enums implement StudentFilter.
+    use blue_archive::Language;
+
+    #[tokio::main]
+    async fn main() -> Result<()> {
+        let students = blue_archive::fetch_all_students(&Language::English).await?;
+        // We use a specific builder-like pattern to chain the applications of filters, and then finish them.
+        // The first filter has precedence over the next.
+        blue_archive::filter(&students)
+            .apply(School::Abydos) // <- All students from Abydos will be filtered.
+            .apply(Position::Front) // <- Then, all Front Position students (from Abydos due to precedence) will be filtered.
+            .finish(); // <- Finally, we finish with a Vec of the Students as read-only values. (Vec<&Student>).
+        Ok(())
+    }
+    ```
+    */
     pub fn apply(mut self, student_filter: impl StudentFilter) -> Self {
         let mut applied_filter = student_filter.filter(self.slice);
         match self.filtered_students {
@@ -137,9 +165,8 @@ impl<'s> StudentFilterOptions<'s> {
         self
     }
 
-    /// Finishes the filtering and clones the values.
-    ///
-    /// If there is no filter applied using `apply`, then it will return an empty [Vec].
+    /// Finishes the filtering process.
+    /// If there is no filter applied using `apply`, then it will return an empty [`Vec`].
     pub fn finish(self) -> Vec<&'s Student> {
         self.filtered_students
             .unwrap_or_default()
