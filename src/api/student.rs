@@ -67,13 +67,17 @@ pub async fn fetch_student_by_name(
         .into_iter()
         .find(|student| {
             [
+                &student.name,
                 &student.first_name(),
                 &student.last_name(),
                 &student.full_name_last(),
                 &student.full_name_first(),
             ]
             .into_iter()
-            .any(|x| x.to_lowercase() == name.to_lowercase())
+            .any(|x| {
+                println!("TRACE! : {} =?= {}", x.to_lowercase(), name.to_lowercase());
+                x.to_lowercase() == name.to_lowercase()
+            })
         });
     match possible_student {
         Some(mut student) => {
