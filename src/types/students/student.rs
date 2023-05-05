@@ -24,8 +24,8 @@ pub struct Student {
     default_order: u32,
     path_name: String,
     dev_name: String,
-    /// The name of the student, which is their last, or family name.
-    /// This is just a shorthand to it.
+    /// The name of the student as presented in the data, and can have an associated tag alongside it.
+    /// An example would be **`Toki (Bunny)`**.
     pub name: String,
     school: String,
     club: String,

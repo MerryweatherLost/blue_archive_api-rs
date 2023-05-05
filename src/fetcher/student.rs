@@ -28,6 +28,7 @@ impl StudentFetcher {
         let name: String = name.into();
         self.students.iter().find(|student| {
             [
+                &student.name,
                 &student.first_name(),
                 &student.last_name(),
                 &student.full_name_last(),
