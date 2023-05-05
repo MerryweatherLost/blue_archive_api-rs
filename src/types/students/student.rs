@@ -294,15 +294,29 @@ impl GearKind {
 #[serde(rename_all = "PascalCase")]
 pub struct Gear {
     released: (bool, bool),
-    stat_type: Vec<String>,
-    stat_value: Vec<Vec<u16>>,
-    name: String,
-    desc: String,
+    pub stat_type: Vec<String>,
+    pub stat_value: Vec<Vec<u16>>,
+    pub name: String,
+    #[serde(alias = "Desc")]
+    pub description: String,
     icon: String,
-    tier_up_material: Vec<Vec<u16>>,
-    tier_up_material_amount: Vec<Vec<u8>>,
+    pub tier_up_material: Vec<Vec<u16>>,
+    pub tier_up_material_amount: Vec<Vec<u8>>,
 }
+impl Gear {
+    /// Whether a specific gear was **[released][Released]** or not in a specific region.
+    pub fn released(&self) -> Released {
+        Released {
+            japan: self.released.0,
+            global: self.released.1,
+        }
+    }
 
+    /// Returns the url of a gear icon.
+    pub fn icon_url(&self) -> String {
+        format!("{IMAGE_DATA_URI}/gear/{}", self.icon)
+    }
+}
 /// There is an issue where Gear in data is represented as `Gear {}`, therefore this is a mitigation against that.
 /// If you have a better implementation of handling this, as in allowing for me to represent the data as an `Option<Gear>`, please send a PR.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
@@ -334,35 +348,35 @@ pub struct Weapon {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Skill {
-    skill_type: String,
-    parameters: Option<Vec<Vec<String>>>,
-    cost: Option<Vec<u32>>,
-    icon: Option<String>,
-    effects: Vec<Effect>,
+    pub skill_type: String,
+    pub parameters: Option<Vec<Vec<String>>>,
+    pub cost: Option<Vec<u32>>,
+    pub icon: Option<String>,
+    pub effects: Vec<Effect>,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Effect {
     #[serde(alias = "Type")]
-    kind: String,
-    stat: Option<String>,
-    hits: Option<Vec<i32>>,
-    scale: Option<Vec<i32>>,
-    frames: Option<Frames>,
-    critical_check: Option<String>,
+    pub kind: String,
+    pub stat: Option<String>,
+    pub hits: Option<Vec<i32>>,
+    pub scale: Option<Vec<i32>>,
+    pub frames: Option<Frames>,
+    pub critical_check: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Frames {
-    attack_enter_duration: u8,
-    attack_start_duration: u8,
-    attack_end_duration: u8,
-    attack_burst_round_over_delay: u8,
+    pub attack_enter_duration: u8,
+    pub attack_start_duration: u8,
+    pub attack_end_duration: u8,
+    pub attack_burst_round_over_delay: u8,
     #[serde(alias = "AttackIngDuration")]
-    attacking_duration: u8,
-    attack_reload_duration: u8,
+    pub attacking_duration: u8,
+    pub attack_reload_duration: u8,
 }
 
 /// Image data related to a **[`Student`]**.

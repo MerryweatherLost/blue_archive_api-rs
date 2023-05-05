@@ -34,7 +34,7 @@ pub struct Released {
 
 impl Display for Released {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "(Japan: {} | Global: {})", self.japan, self.global)
+        write!(f, "(JP: {} | Global: {})", self.japan, self.global)
     }
 }
 
