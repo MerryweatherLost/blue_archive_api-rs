@@ -1,6 +1,6 @@
 [package]
 name = "blue_archive"
-version = "0.3.3"
+version = "0.3.4"
 edition = "2021"
 license-file = "LICENSE"
 description = "A Blue Archive api wrapper for Rust, based off of SchaleDB's data: https://github.com/lonqie/SchaleDB"
