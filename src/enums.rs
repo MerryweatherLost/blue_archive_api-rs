@@ -213,7 +213,8 @@ pub enum Position {
 pub enum BulletType {
     Explosion,
     Mystic,
-    Penetration,
+    #[strum(serialize = "Pierce")]
+    Piercing,
     /// An **`unknown`** type that contains the inner value.
     Unknown(String),
 }

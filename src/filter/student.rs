@@ -8,104 +8,104 @@ use crate::{
 /// Used to filter **[`Students`][`Student`]**.
 pub trait StudentFilter {
     /// Filters a borrowed slice of [`Student`], and returns a **[`Vec<Student>`]**.
-    fn filter(self, students: &[Student]) -> Vec<&Student>;
+    fn filter<'a>(&self, students: &'a [Student]) -> Vec<&'a Student>;
 }
 
 impl StudentFilter for Age {
-    fn filter(self, students: &[Student]) -> Vec<&Student> {
+    fn filter<'a>(&self, students: &'a [Student]) -> Vec<&'a Student> {
         students
             .iter()
-            .filter(|student| self == student.age())
+            .filter(|student| &student.age() == self)
             .collect()
     }
 }
 
 impl StudentFilter for Released {
-    fn filter(self, students: &[Student]) -> Vec<&Student> {
+    fn filter<'a>(&self, students: &'a [Student]) -> Vec<&'a Student> {
         students
             .iter()
-            .filter(|student| student.released() == self)
+            .filter(|student| &student.released() == self)
             .collect()
     }
 }
 
 impl StudentFilter for ID {
-    fn filter(self, students: &[Student]) -> Vec<&Student> {
+    fn filter<'a>(&self, students: &'a [Student]) -> Vec<&'a Student> {
         students
             .iter()
-            .filter(|student| student.id == self)
+            .filter(|student| &student.id == self)
             .collect()
     }
 }
 
 impl StudentFilter for School {
-    fn filter(self, students: &[Student]) -> Vec<&Student> {
+    fn filter<'a>(&self, students: &'a [Student]) -> Vec<&'a Student> {
         students
             .iter()
-            .filter(|student| student.school() == self)
+            .filter(|student| &student.school() == self)
             .collect()
     }
 }
 
 impl StudentFilter for TacticalRole {
-    fn filter(self, students: &[Student]) -> Vec<&Student> {
+    fn filter<'a>(&self, students: &'a [Student]) -> Vec<&'a Student> {
         students
             .iter()
-            .filter(|student| student.tactical_role() == self)
+            .filter(|student| &student.tactical_role() == self)
             .collect()
     }
 }
 
 impl StudentFilter for Squad {
-    fn filter(self, students: &[Student]) -> Vec<&Student> {
+    fn filter<'a>(&self, students: &'a [Student]) -> Vec<&'a Student> {
         students
             .iter()
-            .filter(|student| student.squad() == self)
+            .filter(|student| &student.squad() == self)
             .collect()
     }
 }
 
 impl StudentFilter for Armor {
-    fn filter(self, students: &[Student]) -> Vec<&Student> {
+    fn filter<'a>(&self, students: &'a [Student]) -> Vec<&'a Student> {
         students
             .iter()
-            .filter(|student| student.armor() == self)
+            .filter(|student| &student.armor() == self)
             .collect()
     }
 }
 
 impl StudentFilter for Position {
-    fn filter(self, students: &[Student]) -> Vec<&Student> {
+    fn filter<'a>(&self, students: &'a [Student]) -> Vec<&'a Student> {
         students
             .iter()
-            .filter(|student| student.position() == self)
+            .filter(|student| &student.position() == self)
             .collect()
     }
 }
 
 impl StudentFilter for BulletType {
-    fn filter(self, students: &[Student]) -> Vec<&Student> {
+    fn filter<'a>(&self, students: &'a [Student]) -> Vec<&'a Student> {
         students
             .iter()
-            .filter(|student| student.bullet_type() == self)
+            .filter(|student| &student.bullet_type() == self)
             .collect()
     }
 }
 
 impl StudentFilter for Club {
-    fn filter(self, students: &[Student]) -> Vec<&Student> {
+    fn filter<'a>(&self, students: &'a [Student]) -> Vec<&'a Student> {
         students
             .iter()
-            .filter(|student| student.club() == self)
+            .filter(|student| &student.club() == self)
             .collect()
     }
 }
 
 impl StudentFilter for WeaponType {
-    fn filter(self, students: &[Student]) -> Vec<&Student> {
+    fn filter<'a>(&self, students: &'a [Student]) -> Vec<&'a Student> {
         students
             .iter()
-            .filter(|student| student.weapon_type() == self)
+            .filter(|student| &student.weapon_type() == self)
             .collect()
     }
 }
@@ -126,6 +126,17 @@ impl<'s> StudentFilterOptions<'s> {
         }
     }
 
+    fn apply_filter(&mut self, student_filter: impl StudentFilter) {
+        let mut applied_filter = student_filter.filter(self.slice);
+        match &self.filtered_students {
+            Some(filtered) => {
+                applied_filter.retain(|student| filtered.contains(student));
+                self.filtered_students = Some(applied_filter);
+            }
+            None => self.filtered_students = Some(applied_filter),
+        }
+    }
+
     /**
     Applies a filter, and returns [itself][`StudentFilterOptions`], allowing for direct chaining.
 
@@ -142,7 +153,7 @@ impl<'s> StudentFilterOptions<'s> {
 
     #[tokio::main]
     async fn main() -> Result<()> {
-        let students = blue_archive::fetch_all_students(&Language::English).await?;
+        let students = blue_archive::fetch_all_students(Language::English).await?;
         // We use a specific builder-like pattern to chain the applications of filters, and then finish them.
         // The first filter has precedence over the next.
         blue_archive::filter(&students)
@@ -154,17 +165,9 @@ impl<'s> StudentFilterOptions<'s> {
     ```
     */
     pub fn apply(mut self, student_filter: impl StudentFilter) -> Self {
-        let mut applied_filter = student_filter.filter(self.slice);
-        match self.filtered_students {
-            Some(filtered) => {
-                applied_filter.retain(|student| filtered.contains(student));
-                self.filtered_students = Some(applied_filter);
-            }
-            None => self.filtered_students = Some(applied_filter),
-        }
+        self.apply_filter(student_filter);
         self
     }
-
     /// Finishes the filtering process.
     /// If there is no filter applied using `apply`, then it will return an empty [`Vec`].
     pub fn finish(self) -> Vec<&'s Student> {

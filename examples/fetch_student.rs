@@ -4,7 +4,7 @@ use blue_archive::Language;
 async fn main() -> anyhow::Result<()> {
     // First, let's try and fetch one student. We will use Hina for this example.
     // We can do this through simply calling the below crate function.
-    let hina = (blue_archive::fetch_student_by_name("Hina", &Language::English).await?).unwrap();
+    let hina = (blue_archive::fetch_student_by_name("Hina", Language::English).await?).unwrap();
 
     // Let us print some important details of Hina!
     let header = format!("|:: {} : Details", hina.full_name_last());
@@ -31,7 +31,7 @@ async fn main() -> anyhow::Result<()> {
     println!();
 
     // We can also fetch a random student.
-    let random_student = (blue_archive::fetch_random_student(&Language::English).await?).unwrap();
+    let random_student = (blue_archive::fetch_random_student(Language::English).await?).unwrap();
     // I wonder who it will be this time?
     println!(
         "The random student of this second is: {}!",

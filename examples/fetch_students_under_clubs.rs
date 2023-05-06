@@ -1,4 +1,4 @@
-use blue_archive::enums::Club;
+use blue_archive::{enums::Club, Language};
 use strum::IntoEnumIterator;
 
 #[tokio::main]
@@ -10,7 +10,7 @@ async fn main() -> anyhow::Result<()> {
         .unwrap();
 
     // Let's now fetch some students.
-    let students = blue_archive::fetch_all_students(&blue_archive::Language::English).await?;
+    let students = blue_archive::fetch_all_students(Language::English).await?;
 
     // We will iterate through every club (thanks strum macros!), and perform certain behavior to print out each student in a specific club.
     Club::iter().for_each(|club| {

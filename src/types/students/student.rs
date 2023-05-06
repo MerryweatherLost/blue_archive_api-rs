@@ -99,16 +99,16 @@ pub struct Student {
     /// The name of the music in the students' recollection lobby.
     #[serde(alias = "MemoryLobbyBGM")]
     pub memory_lobby_bgm: String,
-    pub furniture_interaction: Vec<Vec<u32>>,   // todo
-    pub favor_item_tags: Vec<String>,           // todo
-    pub favor_item_unique_tags: Vec<String>,    // todo
-    pub is_limited: u8, // todo: represent this as enum. Limited::(0?, 1?, 2?)
-    pub weapon: Weapon, // todo
-    pub gear: GearKind, // todo
-    pub skill_ex_material: Vec<Vec<u16>>, // todo
+    pub furniture_interaction: Vec<Vec<u32>>, // todo
+    pub favor_item_tags: Vec<String>,         // todo
+    pub favor_item_unique_tags: Vec<String>,  // todo
+    pub is_limited: u8,                       // todo: represent this as enum. Limited::(0?, 1?, 2?)
+    pub weapon: Weapon,                       // todo
+    gear: GearKind,
+    pub skill_ex_material: Vec<Vec<u16>>,       // todo
     pub skill_ex_material_amount: Vec<Vec<u8>>, // todo
-    pub skill_material: Vec<Vec<u16>>, // todo
-    pub skill_material_amount: Vec<Vec<u8>>, // todo
+    pub skill_material: Vec<Vec<u16>>,          // todo
+    pub skill_material_amount: Vec<Vec<u8>>,    // todo
     /// Image data related to the [`Student`].
     #[serde(skip)]
     pub image: StudentImageData,
@@ -264,15 +264,15 @@ impl std::fmt::Display for Student {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct StudentSummon {
-    id: u32,
-    source_skill: String,
-    inherit_caster_stat: Vec<String>,
-    inherit_caster_amount: Option<Vec<Vec<u32>>>,
+    pub id: u32,
+    pub source_skill: String,
+    pub inherit_caster_stat: Vec<String>,
+    pub inherit_caster_amount: Option<Vec<Vec<u32>>>,
 }
 
 /// The kind of [`Gear`] that the data may represent.
 ///
-/// There is an issue where Gear in data is represented as `Gear {}`, therefore this is a mitigation against that.
+/// There is an issue where Gear in data is represented as `"gear": {}`, therefore this is a mitigation against that.
 /// If you have a better implementation of handling this, as in allowing for me to represent the data as an `Option<Gear>`, please send a PR.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(untagged)]
@@ -317,7 +317,7 @@ impl Gear {
         format!("{IMAGE_DATA_URI}/gear/{}", self.icon)
     }
 }
-/// There is an issue where Gear in data is represented as `Gear {}`, therefore this is a mitigation against that.
+/// There is an issue where Gear in data is represented as `"gear": {}`, therefore this is a mitigation against that.
 /// If you have a better implementation of handling this, as in allowing for me to represent the data as an `Option<Gear>`, please send a PR.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -385,7 +385,7 @@ pub struct StudentImageData {
     /// The portrait associated with this **[`Student`]**.
     pub portrait: Portrait,
     /// The **[`Weapon`]** icon url belonging to the **[`Student`]**.
-    pub weapon_icon: String,
+    pub weapon_icon_url: String,
 }
 
 impl StudentImageData {
@@ -411,7 +411,7 @@ impl StudentImageData {
                 .await,
                 bg: format!("{IMAGE_DATA_URI}/background/{}.jpg", student.collection_bg),
             },
-            weapon_icon: format!("{IMAGE_DATA_URI}/weapon/{}.png", student.weapon_img),
+            weapon_icon_url: format!("{IMAGE_DATA_URI}/weapon/{}.png", student.weapon_img),
         })
     }
 
