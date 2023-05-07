@@ -2,6 +2,10 @@
 
 use serde::{Deserialize, Serialize};
 
+use std::str::FromStr;
+
+use crate::{Armor, BulletType};
+
 use super::{Skill, ID};
 
 #[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -42,4 +46,17 @@ pub struct Summon {
     pub range: u16,
     pub move_speed: u16,
     pub regen_cost: u16,
+}
+impl Summon {
+    /// Gets the **[`Bullet`]** type of the summon.
+    pub fn bullet_type(&self) -> BulletType {
+        BulletType::from_str(&self.bullet_type)
+            .unwrap_or_else(|_| BulletType::Unknown(self.bullet_type.clone()))
+    }
+
+    /// Gets the **[`Armor`]** of the summon.
+    pub fn armor(&self) -> Armor {
+        Armor::from_str(&self.armor_type)
+            .unwrap_or_else(|_| Armor::Unknown(self.armor_type.clone()))
+    }
 }

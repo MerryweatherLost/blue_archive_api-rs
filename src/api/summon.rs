@@ -2,12 +2,14 @@
 
 use std::borrow::Borrow;
 
-use crate::types::Summon;
+use crate::{types::Summon, BlueArchiveError};
 
 use super::{internal::Endpoint, Client, Language, Result};
 
 /// Fetches all **[`Summons`][`Summon`]** from the data.
-pub async fn fetch_all_summons(language: impl Borrow<Language>) -> Result<Vec<Summon>> {
+pub async fn fetch_all_summons(
+    language: impl Borrow<Language>,
+) -> Result<Vec<Summon>, BlueArchiveError> {
     let response =
         super::internal::fetch_response(&Endpoint::Summons, language.borrow(), &Client::new())
             .await?;
