@@ -2,25 +2,25 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::ID;
+use super::{Skill, ID};
 
 #[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct Summon {
     pub id: ID,
-    // pub skills: Vec<Skill>,
+    pub skills: Vec<Skill>,
     pub name: String,
-    dev_name: String,
+    pub dev_name: String,
     #[serde(alias = "Type")]
-    kind: String,
-    tactic_role: Option<String>,
-    star_bonus: Option<bool>,
-    bullet_type: String,
-    armor_type: String,
+    pub kind: String,
+    pub tactic_role: Option<String>,
+    pub star_bonus: Option<bool>,
+    pub bullet_type: String,
+    pub armor_type: String,
     pub street_battle_adaptation: Option<u8>,
     pub outdoor_battle_adaptation: Option<u8>,
     pub indoor_battle_adaptation: Option<u8>,
-    weapon_type: Option<String>,
+    pub weapon_type: Option<String>,
     pub stability_point: u16,
     pub stability_rate: Option<u16>,
     pub attack_power_1: u16,

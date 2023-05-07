@@ -7,10 +7,10 @@ async fn main() -> anyhow::Result<()> {
 
     // We can fetch all students first on their own...
     // For this one, we will use Chinese.
-    let students = blue_archive::fetch_all_students(&Language::Chinese).await?;
+    let students = blue_archive::fetch_all_students(Language::Chinese).await?;
 
     // We will also create a fetcher for later use.
-    let fetcher = StudentFetcher::new(&Language::English).await?;
+    let fetcher = StudentFetcher::new(Language::Chinese).await?;
 
     // And now, let us fetch 17 year olds under the Trinity General School.
 

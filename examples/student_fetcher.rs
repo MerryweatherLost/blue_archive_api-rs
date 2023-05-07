@@ -4,7 +4,7 @@ use blue_archive::{Language, School, StudentFetcher, WeaponType};
 async fn main() -> anyhow::Result<()> {
     // We use the fetcher as shown.
     // We create one using the Japanese Language enum, which will allow us to have japanese data.
-    let fetcher = StudentFetcher::new(&Language::Japanese).await?;
+    let fetcher = StudentFetcher::new(Language::Japanese).await?;
 
     // Now, we will filter students based on their school and type of weapon.
     // In this case, let's get students from Gehenna Academy that have the Sniper Rifle type of weapon.

@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     enums::*,
-    types::{Age, Released, ID},
+    types::{Age, Released, Skill, ID},
     BlueArchiveError, IMAGE_DATA_URI,
 };
 
@@ -34,7 +34,7 @@ pub struct Student {
     stars: u8,
     squad_type: String,
     tactic_role: String,
-    summons: Vec<StudentSummon>,
+    pub summons: Vec<StudentSummon>,
     position: String,
     bullet_type: String,
     armor_type: String,
@@ -99,16 +99,16 @@ pub struct Student {
     /// The name of the music in the students' recollection lobby.
     #[serde(alias = "MemoryLobbyBGM")]
     pub memory_lobby_bgm: String,
-    pub furniture_interaction: Vec<Vec<u32>>,   // todo
-    pub favor_item_tags: Vec<String>,           // todo
-    pub favor_item_unique_tags: Vec<String>,    // todo
-    pub is_limited: u8, // todo: represent this as enum. Limited::(0?, 1?, 2?)
-    pub weapon: Weapon, // todo
-    pub gear: GearKind, // todo
-    pub skill_ex_material: Vec<Vec<u16>>, // todo
+    pub furniture_interaction: Vec<Vec<u32>>, // todo
+    pub favor_item_tags: Vec<String>,         // todo
+    pub favor_item_unique_tags: Vec<String>,  // todo
+    pub is_limited: u8,                       // todo: represent this as enum. Limited::(0?, 1?, 2?)
+    pub weapon: Weapon,
+    gear: GearKind,
+    pub skill_ex_material: Vec<Vec<u16>>,       // todo
     pub skill_ex_material_amount: Vec<Vec<u8>>, // todo
-    pub skill_material: Vec<Vec<u16>>, // todo
-    pub skill_material_amount: Vec<Vec<u8>>, // todo
+    pub skill_material: Vec<Vec<u16>>,          // todo
+    pub skill_material_amount: Vec<Vec<u8>>,    // todo
     /// Image data related to the [`Student`].
     #[serde(skip)]
     pub image: StudentImageData,
@@ -264,15 +264,15 @@ impl std::fmt::Display for Student {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct StudentSummon {
-    id: u32,
-    source_skill: String,
-    inherit_caster_stat: Vec<String>,
-    inherit_caster_amount: Option<Vec<Vec<u32>>>,
+    pub id: ID,
+    pub source_skill: String,
+    pub inherit_caster_stat: Vec<String>,
+    pub inherit_caster_amount: Option<Vec<Vec<u32>>>,
 }
 
 /// The kind of [`Gear`] that the data may represent.
 ///
-/// There is an issue where Gear in data is represented as `Gear {}`, therefore this is a mitigation against that.
+/// There is an issue where Gear in data is represented as `"gear": {}`, therefore this is a mitigation against that.
 /// If you have a better implementation of handling this, as in allowing for me to represent the data as an `Option<Gear>`, please send a PR.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(untagged)]
@@ -317,7 +317,7 @@ impl Gear {
         format!("{IMAGE_DATA_URI}/gear/{}", self.icon)
     }
 }
-/// There is an issue where Gear in data is represented as `Gear {}`, therefore this is a mitigation against that.
+/// There is an issue where Gear in data is represented as `"gear": {}`, therefore this is a mitigation against that.
 /// If you have a better implementation of handling this, as in allowing for me to represent the data as an `Option<Gear>`, please send a PR.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -331,7 +331,7 @@ pub struct Weapon {
     /// The description of the weapon.
     #[serde(alias = "Desc")]
     pub description: String,
-    adaptation_type: String,
+    pub adaptation_type: String,
     pub adaptation_value: u8,
     pub attack_power_1: u32,
     pub attack_power_100: u32,
@@ -341,42 +341,15 @@ pub struct Weapon {
     pub max_hp_100: u32,
     pub heal_power_1: u32,
     pub heal_power_100: u32,
-    stat_level_up_type: String, // todo: Coerce to enum.
+    pub stat_level_up_type: LevelUpType,
 }
 
-/// A **[`Student`]** skill.
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-#[serde(rename_all = "PascalCase")]
-pub struct Skill {
-    pub skill_type: String,
-    pub parameters: Option<Vec<Vec<String>>>,
-    pub cost: Option<Vec<u32>>,
-    pub icon: Option<String>,
-    pub effects: Vec<Effect>,
-}
-
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-#[serde(rename_all = "PascalCase")]
-pub struct Effect {
-    #[serde(alias = "Type")]
-    pub kind: String,
-    pub stat: Option<String>,
-    pub hits: Option<Vec<i32>>,
-    pub scale: Option<Vec<i32>>,
-    pub frames: Option<Frames>,
-    pub critical_check: Option<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-#[serde(rename_all = "PascalCase")]
-pub struct Frames {
-    pub attack_enter_duration: u8,
-    pub attack_start_duration: u8,
-    pub attack_end_duration: u8,
-    pub attack_burst_round_over_delay: u8,
-    #[serde(alias = "AttackIngDuration")]
-    pub attacking_duration: u8,
-    pub attack_reload_duration: u8,
+/// The level-up type of a **[`Weapon`]**.
+#[derive(Debug, strum_macros::Display, Serialize, Deserialize, PartialEq, Eq, Clone)]
+pub enum LevelUpType {
+    Standard,
+    Premature,
+    LateBloom,
 }
 
 /// Image data related to a **[`Student`]**.
@@ -385,7 +358,7 @@ pub struct StudentImageData {
     /// The portrait associated with this **[`Student`]**.
     pub portrait: Portrait,
     /// The **[`Weapon`]** icon url belonging to the **[`Student`]**.
-    pub weapon_icon: String,
+    pub weapon_icon_url: String,
 }
 
 impl StudentImageData {
@@ -409,9 +382,9 @@ impl StudentImageData {
                     ),
                 )
                 .await,
-                bg: format!("{IMAGE_DATA_URI}/background/{}.jpg", student.collection_bg),
+                bg_url: format!("{IMAGE_DATA_URI}/background/{}.jpg", student.collection_bg),
             },
-            weapon_icon: format!("{IMAGE_DATA_URI}/weapon/{}.png", student.weapon_img),
+            weapon_icon_url: format!("{IMAGE_DATA_URI}/weapon/{}.png", student.weapon_img),
         })
     }
 
@@ -434,5 +407,5 @@ pub struct Portrait {
     /// If there is an alternative full-body image url associated with this **[`Student`]**.
     pub alternative_full_body_url: Option<String>,
     /// The background image url associated with this **[`Student`]**.
-    pub bg: String,
+    pub bg_url: String,
 }
