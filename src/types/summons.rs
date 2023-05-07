@@ -2,13 +2,13 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::ID;
+use super::{Skill, ID};
 
 #[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct Summon {
     pub id: ID,
-    // pub skills: Vec<Skill>,
+    pub skills: Vec<Skill>,
     pub name: String,
     pub dev_name: String,
     #[serde(alias = "Type")]

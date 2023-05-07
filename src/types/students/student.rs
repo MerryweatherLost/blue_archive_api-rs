@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     enums::*,
-    types::{Age, Released, ID},
+    types::{Age, Released, Skill, ID},
     BlueArchiveError, IMAGE_DATA_URI,
 };
 
@@ -342,41 +342,6 @@ pub struct Weapon {
     pub heal_power_1: u32,
     pub heal_power_100: u32,
     stat_level_up_type: String, // todo: Coerce to enum.
-}
-
-/// A **[`Student`]** skill.
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-#[serde(rename_all = "PascalCase")]
-pub struct Skill {
-    pub skill_type: String,
-    pub parameters: Option<Vec<Vec<String>>>,
-    pub cost: Option<Vec<u32>>,
-    pub icon: Option<String>,
-    pub effects: Vec<Effect>,
-}
-
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-#[serde(rename_all = "PascalCase")]
-pub struct Effect {
-    #[serde(alias = "Type")]
-    pub kind: String,
-    pub stat: Option<String>,
-    pub hits: Option<Vec<i32>>,
-    pub scale: Option<Vec<i32>>,
-    pub frames: Option<Frames>,
-    pub critical_check: Option<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-#[serde(rename_all = "PascalCase")]
-pub struct Frames {
-    pub attack_enter_duration: u8,
-    pub attack_start_duration: u8,
-    pub attack_end_duration: u8,
-    pub attack_burst_round_over_delay: u8,
-    #[serde(alias = "AttackIngDuration")]
-    pub attacking_duration: u8,
-    pub attack_reload_duration: u8,
 }
 
 /// Image data related to a **[`Student`]**.

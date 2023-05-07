@@ -24,7 +24,6 @@ impl StudentFetcher {
     /**
     Gets a **[`Student`]** by a `name` from a set of names.
 
-
     ## Different Methods
     - Searching with an associated tag, such as **`Iori (Swimsuit)`**
         - It is recommended to use the last name and an associated tag if you are looking for a **[`Student`]** with a different appearance.
