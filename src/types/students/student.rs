@@ -34,7 +34,7 @@ pub struct Student {
     stars: u8,
     squad_type: String,
     tactic_role: String,
-    summons: Vec<StudentSummon>,
+    pub summons: Vec<StudentSummon>,
     position: String,
     bullet_type: String,
     armor_type: String,
@@ -103,7 +103,7 @@ pub struct Student {
     pub favor_item_tags: Vec<String>,         // todo
     pub favor_item_unique_tags: Vec<String>,  // todo
     pub is_limited: u8,                       // todo: represent this as enum. Limited::(0?, 1?, 2?)
-    pub weapon: Weapon,                       // todo
+    pub weapon: Weapon,
     gear: GearKind,
     pub skill_ex_material: Vec<Vec<u16>>,       // todo
     pub skill_ex_material_amount: Vec<Vec<u8>>, // todo
@@ -264,7 +264,7 @@ impl std::fmt::Display for Student {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct StudentSummon {
-    pub id: u32,
+    pub id: ID,
     pub source_skill: String,
     pub inherit_caster_stat: Vec<String>,
     pub inherit_caster_amount: Option<Vec<Vec<u32>>>,
@@ -331,7 +331,7 @@ pub struct Weapon {
     /// The description of the weapon.
     #[serde(alias = "Desc")]
     pub description: String,
-    adaptation_type: String,
+    pub adaptation_type: String,
     pub adaptation_value: u8,
     pub attack_power_1: u32,
     pub attack_power_100: u32,
@@ -341,7 +341,15 @@ pub struct Weapon {
     pub max_hp_100: u32,
     pub heal_power_1: u32,
     pub heal_power_100: u32,
-    stat_level_up_type: String, // todo: Coerce to enum.
+    pub stat_level_up_type: LevelUpType,
+}
+
+/// The level-up type of a **[`Weapon`]**.
+#[derive(Debug, strum_macros::Display, Serialize, Deserialize, PartialEq, Eq, Clone)]
+pub enum LevelUpType {
+    Standard,
+    Premature,
+    LateBloom,
 }
 
 /// Image data related to a **[`Student`]**.

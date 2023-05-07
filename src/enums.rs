@@ -123,8 +123,8 @@ pub enum TacticalRole {
     **This is a `enum` that contains the current Blue Archive squads represented in the data.**
 
     This is the current list of squads represented in the data.
-    * **Main** (Striker)
-    * **Support** (Special)
+    * **Main** (aka. Striker)
+    * **Support** (aka. Special)
 
     In the case that a squad in the data is not present on the wrapper,
     a [`Squad::Unknown(String)`] is returned to represent the unknown type with its name in the `enum`.
@@ -138,7 +138,7 @@ pub enum Squad {
 }
 
 impl Squad {
-    /// Obtains an alternative name for the [Squad] that some may be familiar with.
+    /// Obtains an alternative name for the squad that some may be familiar with.
     ///
     /// - **Main** -> Striker
     /// - **Support** -> Special
