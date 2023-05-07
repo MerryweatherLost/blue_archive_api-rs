@@ -363,6 +363,8 @@ pub struct StudentImageData {
 
 impl StudentImageData {
     /// Creates itself from a given **[`Student`]** and **[`reqwest::Client`]**.
+    ///
+    /// Will query for extra image data when constructed.
     pub async fn new(student: &Student, client: &Client) -> Result<Self, BlueArchiveError> {
         Ok(Self {
             portrait: Portrait {

@@ -37,6 +37,17 @@ async fn main() -> anyhow::Result<()> {
         "The random student of this second is: {}!",
         random_student.full_name_last()
     );
+
+    // You can also fetch a random amount of students.
+    let random_students = blue_archive::fetch_random_students(Language::English, 10).await?;
+    random_students
+        .iter()
+        .enumerate()
+        .for_each(|(mut index, student)| {
+            index += 1;
+            println!("from random [{index}]: {student}")
+        });
+
     // All of these are available in the StudentFetcher as well.
     // Though, check the student_fetcher example to see that.
     Ok(())

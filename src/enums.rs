@@ -3,7 +3,7 @@
 use strum_macros::{Display, EnumIter, EnumString};
 
 /// Languages that **``SchaleDB``** supports.
-#[derive(Debug, Display)]
+#[derive(Debug, Display, Clone, Copy)]
 pub enum Language {
     English,
     Chinese,
