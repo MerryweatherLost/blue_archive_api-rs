@@ -12,7 +12,8 @@ pub struct StudentFetcher {
     pub students: Vec<Student>,
 }
 impl StudentFetcher {
-    /// Creates a new **[`StudentFetcher`]** by fetching [`Student`] data and hopefully returning the result.
+    /// Creates a new **[`StudentFetcher`]** by fetching **[`Student`]** data.
+    /// Has a chance to fail as it attempts to fetch all students.
     pub async fn new(
         language: impl std::borrow::Borrow<Language>,
     ) -> Result<Self, BlueArchiveError> {

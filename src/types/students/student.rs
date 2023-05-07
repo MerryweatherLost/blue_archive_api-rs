@@ -374,7 +374,7 @@ impl StudentImageData {
                     ),
                 )
                 .await,
-                bg: format!("{IMAGE_DATA_URI}/background/{}.jpg", student.collection_bg),
+                bg_url: format!("{IMAGE_DATA_URI}/background/{}.jpg", student.collection_bg),
             },
             weapon_icon_url: format!("{IMAGE_DATA_URI}/weapon/{}.png", student.weapon_img),
         })
@@ -399,5 +399,5 @@ pub struct Portrait {
     /// If there is an alternative full-body image url associated with this **[`Student`]**.
     pub alternative_full_body_url: Option<String>,
     /// The background image url associated with this **[`Student`]**.
-    pub bg: String,
+    pub bg_url: String,
 }
