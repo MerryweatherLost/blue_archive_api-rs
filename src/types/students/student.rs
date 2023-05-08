@@ -350,6 +350,8 @@ pub enum LevelUpType {
     Standard,
     Premature,
     LateBloom,
+    #[serde(other)]
+    Unknown,
 }
 
 /// Image data related to a **[`Student`]**.
