@@ -57,7 +57,7 @@ pub struct Effect {
     pub hits: Option<Vec<i32>>,
     pub scale: Option<Vec<i32>>,
     pub frames: Option<Frames>,
-    pub critical_check: Option<String>,
+    pub critical_check: Option<CriticalCheck>,
 }
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -69,4 +69,10 @@ pub struct Frames {
     #[serde(alias = "AttackIngDuration")]
     pub attacking_duration: u8,
     pub attack_reload_duration: u8,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+pub enum CriticalCheck {
+    Check,
+    Always,
 }
