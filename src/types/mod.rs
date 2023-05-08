@@ -66,6 +66,8 @@ pub enum SkillKind {
     Passive,
     #[serde(alias = "gearnormal")]
     GearNormal,
+    #[serde(other)]
+    Unknown,
 }
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -99,6 +101,8 @@ pub enum EffectKind {
     Shield,
     FormChange,
     IgnoreDelay,
+    #[serde(other)]
+    Unknown,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
@@ -117,4 +121,6 @@ pub struct Frames {
 pub enum CriticalCheck {
     Check,
     Always,
+    #[serde(other)]
+    Unknown,
 }
