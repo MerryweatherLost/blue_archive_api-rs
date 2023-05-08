@@ -42,23 +42,65 @@ impl<'de> Deserialize<'de> for ID {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Skill {
-    pub skill_type: String,
+    #[serde(alias = "SkillType")]
+    pub kind: SkillKind,
     pub parameters: Option<Vec<Vec<String>>>,
     pub cost: Option<Vec<u32>>,
     pub icon: Option<String>,
     pub effects: Vec<Effect>,
 }
+
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
+pub enum SkillKind {
+    #[serde(alias = "weaponpassive")]
+    WeaponPassive,
+    #[serde(alias = "sub")]
+    Sub,
+    #[serde(alias = "ex")]
+    Ex,
+    #[serde(alias = "normal")]
+    Normal,
+    #[serde(alias = "autoattack")]
+    AutoAttack,
+    #[serde(alias = "passive")]
+    Passive,
+    #[serde(alias = "gearnormal")]
+    GearNormal,
+}
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Effect {
     #[serde(alias = "Type")]
-    pub kind: String,
+    pub kind: EffectKind,
     pub stat: Option<String>,
     pub hits: Option<Vec<i32>>,
     pub scale: Option<Vec<i32>>,
     pub frames: Option<Frames>,
     pub critical_check: Option<CriticalCheck>,
 }
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+pub enum EffectKind {
+    Accumulation,
+    DMGSingle,
+    DMGMulti,
+    DMGEcho,
+    DMGDot,
+    DMGZone,
+    DMGByHit,
+    DMGEchoWithScaling,
+    BuffSelf,
+    HealDot,
+    Heal,
+    HealZone,
+    CrowdControl,
+    BuffTarget,
+    BuffAlly,
+    Shield,
+    FormChange,
+    IgnoreDelay,
+}
+
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Frames {
