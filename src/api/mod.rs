@@ -27,7 +27,7 @@ pub(crate) mod internal {
         _Furniture,
         _Items,
         _Localization,
-        _Raids,
+        Raids,
         Students,
         Summons,
     }

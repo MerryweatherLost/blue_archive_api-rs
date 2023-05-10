@@ -21,9 +21,9 @@ pub struct Student {
     /// The **[`ID`]** of the student.
     pub id: ID,
     is_released: (bool, bool),
-    default_order: u32,
-    path_name: String,
-    dev_name: String,
+    pub default_order: u32,
+    pub path_name: String,
+    pub dev_name: String,
     /// The name of the student as presented in the data, and can have an associated tag alongside it.
     /// An example would be **`Toki (Bunny)`**.
     pub name: String,
@@ -31,7 +31,7 @@ pub struct Student {
     club: String,
     /// The amount of stars a [`Student`] is rated.
     #[serde(alias = "StarGrade")]
-    stars: u8,
+    pub stars: u8,
     squad_type: String,
     tactic_role: String,
     pub summons: Vec<StudentSummon>,

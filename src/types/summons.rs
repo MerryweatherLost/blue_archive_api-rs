@@ -8,7 +8,7 @@ use crate::{Armor, BulletType};
 
 use super::{Skill, ID};
 
-#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Summon {
     pub id: ID,
