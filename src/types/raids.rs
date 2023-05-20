@@ -1,31 +1,45 @@
+use std::str::FromStr;
+
 use serde::{Deserialize, Serialize};
 
-use super::{Released, Skill, ID};
+use super::{Effect, Released, SkillKind, ID};
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
-pub struct Raids {
-    pub raid: Vec<Raid>,
+pub struct RaidData {
+    #[serde(alias = "Raid")]
+    pub raids: Vec<Raid>,
+    // pub raid_seasons: Vec<RaidSeason>,
+    // pub time_attack: Vec<TimeAttack>,
+    // pub time_attack_rules: Vec<TimeAttackRule>,
     pub world_raid: Vec<Raid>,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Raid {
     pub id: ID,
     is_released: (bool, bool),
-    pub max_difficulty: Vec<u8>,
+    pub max_difficulty: Option<Vec<u8>>,
     pub path_name: String,
-    pub faction: String, // todo: -> enum | remove pub when done.
+    pub faction: Option<Faction>,
     pub terrain: Vec<String>,
-    pub bullet_type: String, // todo: might associate with BulletType enum?
-    pub bullet_type_insane: String, // ???
-    pub armor_type: String,
+    pub bullet_type: String,
+    pub bullet_type_insane: Option<String>,
+    armor_type: String,
     pub enemy_list: Vec<Vec<u32>>, // todo: might associate with ID's of enemies. Will need further lookup in order to deserialize.
     pub raid_skill: Vec<Skill>,
-    pub exclude_normal_attack: Vec<u32>,
+    pub exclude_normal_attack: Option<Vec<u32>>,
     pub name: String,
-    pub profile: String,
+    pub icon: Option<String>,
+    #[serde(alias = "IconBG")]
+    pub icon_bg: Option<String>,
+    pub difficulty_name: Option<Vec<String>>,
+    pub difficulty_max: Option<Vec<i8>>,
+    pub profile: Option<String>,
+    #[serde(alias = "WorldBossHP")]
+    pub world_boss_hp: Option<u64>,
+    pub level: Option<Vec<i32>>,
 }
 
 impl Raid {
@@ -36,4 +50,67 @@ impl Raid {
             global: self.is_released.1,
         }
     }
+
+    pub fn armor(&self) -> crate::Armor {
+        crate::Armor::from_str(&self.armor_type)
+            .unwrap_or(crate::Armor::Unknown(self.armor_type.clone()))
+    }
+}
+
+// #[derive(Debug, Serialize, Deserialize, PartialEq,)]
+// #[serde(rename_all = "PascalCase")]
+// pub struct RaidSeason;
+
+// #[derive(Debug, Serialize, Deserialize, PartialEq,)]
+// #[serde(rename_all = "PascalCase")]
+// pub struct TimeAttack;
+
+// #[derive(Debug, Serialize, Deserialize, PartialEq,)]
+// #[serde(rename_all = "PascalCase")]
+// pub struct TimeAttackRule;
+
+/// **A [`Raid`] specific Skill**.
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[serde(rename_all = "PascalCase")]
+pub struct Skill {
+    /// An id that has so far been associated with `raids`.
+    pub id: Option<String>,
+    #[serde(alias = "SkillType")]
+    pub kind: SkillKind,
+    pub min_difficulty: Option<u8>,
+    #[serde(alias = "ATGCost")]
+    /// So far normally associated with `raids`.
+    pub atg_cost: Option<u8>,
+    /// So far normally associated with `raids`.
+    name: Option<String>,
+    desc: Option<String>,
+    pub parameters: Option<Vec<Vec<String>>>,
+    pub cost: Option<Vec<u32>>,
+    pub icon: Option<String>,
+    pub show_info: Option<bool>,
+    pub effects: Option<Vec<Effect>>,
+}
+impl Skill {
+    /// The name of the skill.
+    pub fn name(&self) -> Option<String> {
+        self.name
+            .as_ref()
+            .map(|value| html_escape::decode_html_entities(&value).into())
+    }
+
+    /// The description of the skill.
+    pub fn description(&self) -> Option<String> {
+        self.desc
+            .as_ref()
+            .map(|value| html_escape::decode_html_entities(&value).into())
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+pub enum Faction {
+    Decagrammaton,
+    Slumpia,
+    CommunioSanctorum,
+    Kaitenger,
+    TheLibraryofLore,
 }

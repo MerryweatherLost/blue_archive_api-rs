@@ -2,9 +2,7 @@
 
 use std::borrow::Borrow;
 
-use crate::{types::Summon, BlueArchiveError};
-
-use super::{internal::Endpoint, Client, Language, Result};
+use super::{internal::Endpoint, BlueArchiveError, Client, Language, Result, Summon};
 
 /// Fetches all **[`Summons`][`Summon`]** from the data.
 pub async fn fetch_all_summons(

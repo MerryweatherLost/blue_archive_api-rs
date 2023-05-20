@@ -4,6 +4,7 @@ pub mod raids;
 pub mod students;
 pub mod summons;
 
+pub use raids::RaidData;
 use serde::{Deserialize, Serialize};
 pub use students::{Age, Released, Student};
 pub use summons::Summon;
@@ -11,7 +12,7 @@ pub use summons::Summon;
 /// **A Blue Archive ID**.
 ///
 /// Basically wraps around a [`u32`], and exists for representation of an identifier that can be filtered and have extra functionality.
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct ID(pub u32);
 
 impl std::fmt::Display for ID {
@@ -39,44 +40,7 @@ impl<'de> Deserialize<'de> for ID {
     }
 }
 
-/// **A Blue Archive Skill**.
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
-#[serde(rename_all = "PascalCase")]
-pub struct Skill {
-    /// An id that has so far been associated with `raids`.
-    pub id: Option<String>,
-    #[serde(alias = "SkillType")]
-    pub kind: SkillKind,
-    pub min_difficulty: Option<u8>,
-    #[serde(alias = "ATGCost")]
-    /// So far normally associated with `raids`.
-    pub atg_cost: Option<u8>,
-    /// So far normally associated with `raids`.
-    name: Option<String>,
-    desc: Option<String>,
-    pub parameters: Option<Vec<Vec<String>>>,
-    pub cost: Option<Vec<u32>>,
-    pub icon: Option<String>,
-    pub show_info: Option<bool>,
-    pub effects: Vec<Effect>,
-}
-impl Skill {
-    /// The name of the skill.
-    pub fn name(&self) -> Option<String> {
-        self.name
-            .as_ref()
-            .map(|value| html_escape::decode_html_entities(&value).into())
-    }
-
-    /// The description of the skill.
-    pub fn description(&self) -> Option<String> {
-        self.desc
-            .as_ref()
-            .map(|value| html_escape::decode_html_entities(&value).into())
-    }
-}
-
-#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
 pub enum SkillKind {
     #[serde(alias = "weaponpassive")]
     WeaponPassive,
@@ -96,13 +60,13 @@ pub enum SkillKind {
     Unknown,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
 #[serde(tag = "Type")]
 pub enum Effect {
     Accumulation {
         #[serde(alias = "Scale")]
-        scale: Vec<i32>,
+        scale: ScaleValue,
     },
     BuffSelf {
         #[serde(alias = "Stat")]
@@ -136,7 +100,7 @@ pub enum Effect {
         #[serde(alias = "CriticalCheck")]
         critical_check: Option<CriticalCheck>,
         #[serde(alias = "Scale")]
-        scale: Vec<i32>,
+        scale: ScaleValue,
         #[serde(alias = "IgnoreDef")]
         ignore_def: Option<Vec<i32>>,
         #[serde(alias = "Hits")]
@@ -156,7 +120,7 @@ pub enum Effect {
         #[serde(alias = "HitsParameter")]
         hits_parameter: Option<i8>,
         #[serde(alias = "Scale")]
-        scale: Vec<i32>,
+        scale: ScaleValue,
         #[serde(alias = "SubstituteScale")]
         substitute_scale: Option<Vec<i32>>,
         #[serde(alias = "IgnoreDef")]
@@ -168,7 +132,7 @@ pub enum Effect {
         #[serde(alias = "CriticalCheck")]
         critical_check: CriticalCheck,
         #[serde(alias = "Scale")]
-        scale: Vec<i32>,
+        scale: ScaleValue,
         #[serde(alias = "IgnoreDef")]
         ignore_def: Option<Vec<i32>>,
     },
@@ -180,7 +144,7 @@ pub enum Effect {
         #[serde(alias = "Icon")]
         icon: String,
         #[serde(alias = "Scale")]
-        scale: Vec<i32>,
+        scale: ScaleValue,
     },
     DMGZone {
         #[serde(alias = "ZoneHitInterval")]
@@ -192,23 +156,23 @@ pub enum Effect {
         #[serde(alias = "CriticalCheck")]
         critical_check: CriticalCheck,
         #[serde(alias = "Hits")]
-        hits: Vec<i32>,
+        hits: Option<Vec<i32>>,
         #[serde(alias = "HitsParameter")]
-        hits_parameter: i8,
+        hits_parameter: Option<i8>,
         #[serde(alias = "Scale")]
-        scale: Vec<i32>,
+        scale: ScaleValue,
     },
     DMGByHit {
         #[serde(alias = "Icon")]
         icon: String,
         #[serde(alias = "Scale")]
-        scale: Vec<i32>,
+        scale: ScaleValue,
     },
     DMGEchoWithScaling {
         #[serde(alias = "CriticalCheck")]
         critical_check: CriticalCheck,
         #[serde(alias = "Scale")]
-        scale: Vec<i32>,
+        scale: ScaleValue,
     },
     HealDot {
         #[serde(alias = "Duration")]
@@ -216,17 +180,17 @@ pub enum Effect {
         #[serde(alias = "Period")]
         period: String, // todo: parse.
         #[serde(alias = "Scale")]
-        scale: Vec<i32>,
+        scale: ScaleValue,
     },
     Heal {
         #[serde(alias = "Scale")]
-        scale: Vec<i32>,
+        scale: ScaleValue,
     },
     HealZone {
         #[serde(alias = "HitFrames")]
         hit_frames: Vec<i32>,
         #[serde(alias = "Scale")]
-        scale: Vec<i32>,
+        scale: ScaleValue,
     },
     CrowdControl {
         #[serde(alias = "Chance")]
@@ -234,7 +198,7 @@ pub enum Effect {
         #[serde(alias = "Icon")]
         icon: String,
         #[serde(alias = "Scale")]
-        scale: Vec<i32>,
+        scale: ScaleValue,
     },
     BuffAlly {
         #[serde(alias = "Restrictions")]
@@ -248,7 +212,7 @@ pub enum Effect {
     },
     Shield {
         #[serde(alias = "Scale")]
-        scale: Vec<i32>,
+        scale: ScaleValue,
     },
     FormChange {
         #[serde(alias = "HideFormChangeIcon")]
@@ -269,7 +233,14 @@ pub enum Effect {
     #[serde(other)]
     Unknown,
 }
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[serde(untagged)]
+pub enum ScaleValue {
+    D1(Vec<i32>),
+    D2(Vec<Vec<i32>>),
+}
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Restriction {
     pub property: String,
@@ -278,14 +249,14 @@ pub struct Restriction {
     pub value: RestrictValue,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(untagged)]
 pub enum RestrictValue {
     String(String),
     I32(i32),
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Frames {
     pub attack_enter_duration: u8,
@@ -297,7 +268,7 @@ pub struct Frames {
     pub attack_reload_duration: u8,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub enum CriticalCheck {
     Check,
     Always,

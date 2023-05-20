@@ -6,9 +6,9 @@ use std::str::FromStr;
 
 use crate::{Armor, BulletType};
 
-use super::{Skill, ID};
+use super::ID;
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
 pub struct Summon {
     pub id: ID,
@@ -60,3 +60,8 @@ impl Summon {
             .unwrap_or_else(|_| Armor::Unknown(self.armor_type.clone()))
     }
 }
+
+/// **A [`Summon`] specific Skill**.
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "PascalCase")]
+pub struct Skill {}

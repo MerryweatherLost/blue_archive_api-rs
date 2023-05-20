@@ -1,10 +1,11 @@
 //! The main module where obtaining the data happens.
+pub mod raid;
 pub mod student;
 pub mod summon;
 
 use crate::enums::Language;
 use crate::filter::student::StudentFilterOptions;
-use crate::types::Student;
+use crate::types::{RaidData, Student, Summon};
 use crate::{BlueArchiveError, DATA_URI};
 
 use rand::seq::IteratorRandom;
