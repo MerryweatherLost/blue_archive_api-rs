@@ -1,9 +1,12 @@
+//! Contains types for the [`RaidData`] structure and its respective structures.
+
 use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
 
 use super::{Effect, Released, SkillKind, ID};
 
+/// Contains data including **[`Raids`][`Raid`]** and other kinds of information.
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
 pub struct RaidData {
@@ -15,6 +18,9 @@ pub struct RaidData {
     pub world_raid: Vec<Raid>,
 }
 
+/// **A Blue Archive raid.**
+///
+/// Has information related to a specific raid, including icons, release status and stats.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Raid {
@@ -73,15 +79,12 @@ impl Raid {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Skill {
-    /// An id that has so far been associated with `raids`.
     pub id: Option<String>,
     #[serde(alias = "SkillType")]
     pub kind: SkillKind,
     pub min_difficulty: Option<u8>,
     #[serde(alias = "ATGCost")]
-    /// So far normally associated with `raids`.
     pub atg_cost: Option<u8>,
-    /// So far normally associated with `raids`.
     name: Option<String>,
     desc: Option<String>,
     pub parameters: Option<Vec<Vec<String>>>,

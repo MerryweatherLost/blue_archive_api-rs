@@ -1,3 +1,5 @@
+//! Functions primarily for fetching [`RaidData`].
+
 use std::borrow::Borrow;
 
 use anyhow::Result;
@@ -8,7 +10,7 @@ use super::{
     BlueArchiveError, Language, RaidData,
 };
 
-/// todo: TBD.
+/// Fetches **[`RaidData`]**, which contains information related to raids in Blue Archive.
 pub async fn fetch_raid_data(
     language: impl Borrow<Language>,
 ) -> Result<RaidData, BlueArchiveError> {
