@@ -2,9 +2,13 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::{Skill, ID};
+use std::str::FromStr;
 
-#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
+use crate::{Armor, BulletType};
+
+use super::ID;
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
 pub struct Summon {
     pub id: ID,
@@ -43,3 +47,21 @@ pub struct Summon {
     pub move_speed: u16,
     pub regen_cost: u16,
 }
+impl Summon {
+    /// Gets the **[`Bullet`]** type of the summon.
+    pub fn bullet_type(&self) -> BulletType {
+        BulletType::from_str(&self.bullet_type)
+            .unwrap_or_else(|_| BulletType::Unknown(self.bullet_type.clone()))
+    }
+
+    /// Gets the **[`Armor`]** of the summon.
+    pub fn armor(&self) -> Armor {
+        Armor::from_str(&self.armor_type)
+            .unwrap_or_else(|_| Armor::Unknown(self.armor_type.clone()))
+    }
+}
+
+/// **A [`Summon`] specific Skill**.
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "PascalCase")]
+pub struct Skill {}

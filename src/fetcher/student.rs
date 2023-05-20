@@ -30,7 +30,7 @@ impl StudentFetcher {
         - It is recommended to use the last name and an associated tag if you are looking for a **[`Student`]** with a different appearance.
     - Searching via. the **last name**.
     - Searching via. the **first name**.
-    - Searching via. the **first name and last name together**, and vise versa (e.g. Ichinose Asuna/Asuna Ichinose).
+    - Searching via. the **first name and last name together**, and vise versa (e.g. Asuna Ichinose/Ichinose Asuna).
 
     # Examples
     ```
@@ -68,6 +68,15 @@ impl StudentFetcher {
     /// If the [`Vec`] is empty, then it will return [`None`].
     pub fn get_random_student(&self) -> Option<&Student> {
         self.students.choose(&mut rand::thread_rng())
+    }
+
+    /// Attempts to get a random amount of **[`Students`][`Student`]** depending on the specified **`amount`**.
+    ///
+    /// Depending on the **`amount`** inserted, if it exceeds the total length of **[`Students`][`Student`]** from the data, it will just return everything.
+    pub fn get_random_students(&self, amount: usize) -> Vec<&Student> {
+        self.students
+            .choose_multiple(&mut rand::thread_rng(), amount)
+            .collect()
     }
 
     /// Returns **[`StudentFilterOptions`]** to be used for filtering.

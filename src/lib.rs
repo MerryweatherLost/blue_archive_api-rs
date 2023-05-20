@@ -8,6 +8,7 @@
 //!
 //! - **Original Database Repository: <https://github.com/lonqie/SchaleDB>**
 //! - **Owner: <https://github.com/lonqie>**
+//! - **Website: <https://schale.gg/>**
 //!
 //! ---
 //!
@@ -33,7 +34,7 @@ pub mod fetcher;
 pub mod filter;
 pub mod types;
 
-pub use api::{student::*, summon::*};
+pub use api::{raid::*, student::*, summon::*};
 pub use enums::{
     Armor, BulletType, Club, Language, Position, School, Squad, TacticalRole, WeaponType,
 };

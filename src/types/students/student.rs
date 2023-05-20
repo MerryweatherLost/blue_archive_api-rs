@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     enums::*,
-    types::{Age, Released, Skill, ID},
+    types::{Age, Effect, Released, SkillKind, ID},
     BlueArchiveError, IMAGE_DATA_URI,
 };
 
@@ -15,15 +15,15 @@ use anyhow::Result;
 
 use super::Height;
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Student {
     /// The **[`ID`]** of the student.
     pub id: ID,
     is_released: (bool, bool),
-    default_order: u32,
-    path_name: String,
-    dev_name: String,
+    pub default_order: u32,
+    pub path_name: String,
+    pub dev_name: String,
     /// The name of the student as presented in the data, and can have an associated tag alongside it.
     /// An example would be **`Toki (Bunny)`**.
     pub name: String,
@@ -31,10 +31,10 @@ pub struct Student {
     club: String,
     /// The amount of stars a [`Student`] is rated.
     #[serde(alias = "StarGrade")]
-    stars: u8,
+    pub stars: u8,
     squad_type: String,
     tactic_role: String,
-    pub summons: Vec<StudentSummon>,
+    pub summons: Vec<Summon>,
     position: String,
     bullet_type: String,
     armor_type: String,
@@ -149,7 +149,7 @@ impl Student {
 
     /// Gets the **[`Age`]** of the student.
     pub fn age(&self) -> Age {
-        let radix = 10_u8;
+        let radix = 10;
         let mut num_sequence: Vec<u8> = vec![];
         for char in self.character_age.chars() {
             match char.to_digit(radix.into()) {
@@ -187,7 +187,7 @@ impl Student {
 
     /// Tries to get a **[`Gear`]** from data.
     pub fn gear(&self) -> Option<Gear> {
-        self.gear.get().cloned()
+        self.gear.get()
     }
 
     /// Gets the **[`School`]** of the student.
@@ -261,9 +261,26 @@ impl std::fmt::Display for Student {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+/// A [`Student`] specific skill.
+///
+/// A great portion of it is raw data that has not been fully deserialized and represented.
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct StudentSummon {
+pub struct Skill {
+    #[serde(alias = "SkillType")]
+    pub kind: SkillKind,
+    pub name: Option<String>,
+    pub desc: Option<String>,
+    pub parameters: Option<Vec<Vec<String>>>,
+    pub cost: Option<Vec<u32>>,
+    pub icon: Option<String>,
+    pub effects: Vec<Effect>,
+}
+
+/// A [`Student`] specific summon.
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[serde(rename_all = "PascalCase")]
+pub struct Summon {
     pub id: ID,
     pub source_skill: String,
     pub inherit_caster_stat: Vec<String>,
@@ -274,7 +291,7 @@ pub struct StudentSummon {
 ///
 /// There is an issue where Gear in data is represented as `"gear": {}`, therefore this is a mitigation against that.
 /// If you have a better implementation of handling this, as in allowing for me to represent the data as an `Option<Gear>`, please send a PR.
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(untagged)]
 pub enum GearKind {
     Present(Gear),
@@ -282,15 +299,15 @@ pub enum GearKind {
 }
 impl GearKind {
     /// Attempts to get a **[`Gear`]**, though if it gets an [`GearKind::Empty`], it will return [`None`].
-    pub const fn get(&self) -> Option<&Gear> {
+    pub fn get(&self) -> Option<Gear> {
         match self {
-            Self::Present(gear) => Some(gear),
+            Self::Present(gear) => Some(gear.clone()),
             Self::Empty(_) => None,
         }
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Gear {
     released: (bool, bool),
@@ -319,11 +336,11 @@ impl Gear {
 }
 /// There is an issue where Gear in data is represented as `"gear": {}`, therefore this is a mitigation against that.
 /// If you have a better implementation of handling this, as in allowing for me to represent the data as an `Option<Gear>`, please send a PR.
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct EmptyGear {}
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Weapon {
     /// The name of the weapon.
@@ -345,15 +362,17 @@ pub struct Weapon {
 }
 
 /// The level-up type of a **[`Weapon`]**.
-#[derive(Debug, strum_macros::Display, Serialize, Deserialize, PartialEq, Eq, Clone)]
+#[derive(Debug, strum_macros::Display, Serialize, Deserialize, PartialEq, Clone)]
 pub enum LevelUpType {
     Standard,
     Premature,
     LateBloom,
+    #[serde(other)]
+    Unknown,
 }
 
 /// Image data related to a **[`Student`]**.
-#[derive(Debug, Default, PartialEq, Eq, Clone)]
+#[derive(Debug, Default, PartialEq, Clone)]
 pub struct StudentImageData {
     /// The portrait associated with this **[`Student`]**.
     pub portrait: Portrait,
@@ -363,6 +382,8 @@ pub struct StudentImageData {
 
 impl StudentImageData {
     /// Creates itself from a given **[`Student`]** and **[`reqwest::Client`]**.
+    ///
+    /// Will query for extra image data when constructed.
     pub async fn new(student: &Student, client: &Client) -> Result<Self, BlueArchiveError> {
         Ok(Self {
             portrait: Portrait {
@@ -398,7 +419,7 @@ impl StudentImageData {
 }
 
 /// Contains portrait data of a **[`Student`]**.
-#[derive(Debug, Default, PartialEq, Eq, Clone)]
+#[derive(Debug, Default, PartialEq, Clone)]
 pub struct Portrait {
     /// The full body image url associated with this **[`Student`]**.
     pub full_body_url: String,

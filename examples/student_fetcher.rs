@@ -49,5 +49,16 @@ async fn main() -> anyhow::Result<()> {
         random_student.full_name_last()
     );
 
+    // We can also get a random amount of students.
+    let random_students = fetcher.get_random_students(5);
+    println!(
+        "Names of [5] Randomized Students: ({})",
+        random_students
+            .iter()
+            .map(|s| s.full_name_last())
+            .collect::<Vec<String>>()
+            .join(", ")
+    );
+
     Ok(())
 }

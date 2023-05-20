@@ -3,23 +3,9 @@
 use std::borrow::Borrow;
 
 use super::{
-    internal,
     internal::{fetch_response, Endpoint},
     BlueArchiveError, Client, IteratorRandom, Language, Result, Student, StudentFilterOptions,
 };
-
-/// **Obtains all Students without adding extra content**.
-///
-/// Extra content such as images will not be retrieved unless the **[`Students`][`Student`]** are mutated and are fetched by using `fetch_extra_data`.
-/// It can be beneficial to use this in a context where you want information retrieved as quickly as possible.
-pub async fn fetch_all_students_without_extra(
-    language: impl Borrow<Language>,
-) -> Result<Vec<Student>, BlueArchiveError> {
-    let response = internal::fetch_response(&Endpoint::Students, language.borrow(), &Client::new())
-        .await?
-        .error_for_status()?;
-    Ok(response.json::<Vec<Student>>().await?)
-}
 
 /// Fetches all students with extra data, which includes the images of the **[`Students`][`Student`]** among other things.
 pub async fn fetch_all_students(
@@ -47,7 +33,7 @@ pub async fn fetch_all_students(
         - It is recommended to use the last name and an associated tag if you are looking for a **[`Student`]** with a different appearance.
     - Searching via. the **last name (`surname`)**.
     - Searching via. the **first name**.
-    - Searching via. the **first name and last name together**, and vise versa (e.g. Ichinose Asuna/Asuna Ichinose).
+    - Searching via. the **first name and last name together**, and vise versa (e.g. Asuna Ichinose/Ichinose Asuna).
 
     # Examples
     ```
@@ -69,7 +55,7 @@ pub async fn fetch_student_by_name(
     language: impl Borrow<Language>,
 ) -> Result<Option<Student>, BlueArchiveError> {
     let name: String = name.into();
-    let possible_student = fetch_all_students_without_extra(language)
+    let possible_student = fetch_all_students(language)
         .await?
         .into_iter()
         .find(|student| {
@@ -102,6 +88,21 @@ pub async fn fetch_random_student(
         .await?
         .into_iter()
         .choose(&mut rand::thread_rng()))
+}
+
+/// Attempts to fetch a random amount of **[`Students`][`Student`]** depending on the specified **`amount`**.
+///
+/// Depending on the **`amount`** inserted, if it exceeds the total length of **[`Students`][`Student`]** from the data, it will just return everything.
+///
+/// If fetching the data fails, then it will return a [`BlueArchiveError`], as the data would not have any **[`Students`][`Student`]**.
+pub async fn fetch_random_students(
+    language: impl Borrow<Language>,
+    amount: usize,
+) -> Result<Vec<Student>, BlueArchiveError> {
+    Ok(fetch_all_students(language)
+        .await?
+        .into_iter()
+        .choose_multiple(&mut rand::thread_rng(), amount))
 }
 
 /// Returns **[`StudentFilterOptions`]** to be used with the provided **[`Vec<Student>`]** for filtering.

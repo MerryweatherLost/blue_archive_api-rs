@@ -3,7 +3,7 @@
 use strum_macros::{Display, EnumIter, EnumString};
 
 /// Languages that **``SchaleDB``** supports.
-#[derive(Debug, Display)]
+#[derive(Debug, Display, Clone, Copy)]
 pub enum Language {
     English,
     Chinese,
@@ -383,6 +383,8 @@ pub enum WeaponType {
     GL,
     /// **`Railgun`**
     RG,
+    /// **`Cannon`**
+    Cannon,
     /// An **`unknown`** type that contains the inner value.
     Unknown(String),
 }
@@ -402,6 +404,7 @@ impl WeaponType {
             Self::SG => "Shotgun",
             Self::SMG => "Submachine Gun",
             Self::SR => "Sniper Rifle",
+            Self::Cannon => "Cannon",
             Self::Unknown(string) => string,
         }
         .to_string()

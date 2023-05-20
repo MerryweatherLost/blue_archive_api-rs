@@ -4,11 +4,9 @@ macro_rules! lang_test {
     ($test_name:ident, $language_type:expr) => {
         #[tokio::test]
         async fn $test_name() {
-            assert!(
-                blue_archive::fetch_all_students_without_extra($language_type)
-                    .await
-                    .is_ok()
-            )
+            assert!(blue_archive::fetch_all_students($language_type)
+                .await
+                .is_ok())
         }
     };
 }

@@ -110,7 +110,7 @@ impl StudentFilter for WeaponType {
     }
 }
 
-/// Provides the options to apply any **[`StudentFilter`]** on a **[`Vec<&Student>`]**.
+/// Provides the options to apply any **[`StudentFilter`]** on a **[`Vec<Student>`]**.
 /// It is recommended to use the `new` function, or create it from **[the crate filter](`crate::filter`)**, or in **[`StudentFetcher`](`crate::StudentFetcher`)**.
 #[derive(Debug)]
 pub struct StudentFilterOptions<'s> {

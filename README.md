@@ -8,6 +8,7 @@ A Rust API wrapper of lonqie's SchaleDB that represents data from the game **Blu
 
 - **Original Database Repository: <https://github.com/lonqie/SchaleDB>**
 - **Owner: <https://github.com/lonqie>**
+- **Website: <https://schale.gg/>**
 
 ---
 
