@@ -26,7 +26,7 @@ rand = "0.8"
 anyhow = "1"
 thiserror = "1.0"
 
-strum = "0.24"
-strum_macros = "0.24"
+strum = "0.25"
+strum_macros = "0.25"
 
 # chrono = { version = "0.4", features = ["serde"] }
