@@ -47,7 +47,7 @@ pub struct Student {
     pub equipment: Vec<String>, // todo
     #[serde(alias = "CollectionBG")]
     collection_bg: String,
-    collection_texture: String,
+    collection_texture: Option<String>,
     family_name: String,
     family_name_ruby: Option<String>,
     personal_name: String,
@@ -99,10 +99,9 @@ pub struct Student {
     /// The name of the music in the students' recollection lobby.
     #[serde(alias = "MemoryLobbyBGM")]
     pub memory_lobby_bgm: String,
-    pub furniture_interaction: Vec<Vec<u32>>, // todo
-    pub favor_item_tags: Vec<String>,         // todo
-    pub favor_item_unique_tags: Vec<String>,  // todo
-    pub is_limited: u8,                       // todo: represent this as enum. Limited::(0?, 1?, 2?)
+    pub favor_item_tags: Vec<String>,        // todo
+    pub favor_item_unique_tags: Vec<String>, // todo
+    pub is_limited: u8,                      // todo: represent this as enum. Limited::(0?, 1?, 2?)
     pub weapon: Weapon,
     gear: GearKind,
     pub skill_ex_material: Vec<Vec<u16>>,       // todo
@@ -393,7 +392,7 @@ impl StudentImageData {
                 ),
                 icon_url: format!(
                     "{IMAGE_DATA_URI}/student/icon/{}.png",
-                    student.collection_texture
+                    student.collection_texture.as_deref().unwrap_or("")
                 ),
                 alternative_full_body_url: Self::fetch_image_with_url(
                     client,
