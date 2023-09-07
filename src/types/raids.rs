@@ -116,4 +116,5 @@ pub enum Faction {
     CommunioSanctorum,
     Kaitenger,
     TheLibraryofLore,
+    SevenPrisoners,
 }
