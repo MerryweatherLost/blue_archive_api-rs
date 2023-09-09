@@ -386,25 +386,16 @@ impl StudentImageData {
     pub async fn new(student: &Student, client: &Client) -> Result<Self, BlueArchiveError> {
         Ok(Self {
             portrait: Portrait {
-                full_body_url: format!(
-                    "{IMAGE_DATA_URI}/student/portrait/Portrait_{}.webp",
-                    student.dev_name
-                ),
-                icon_url: format!(
-                    "{IMAGE_DATA_URI}/student/icon/{}.png",
-                    student.collection_texture.as_deref().unwrap_or("")
-                ),
+                full_body_url: format!("{IMAGE_DATA_URI}/student/portrait/{}.webp", student.id.0),
+                icon_url: format!("{IMAGE_DATA_URI}/student/icon/{}.webp", student.id.0),
                 alternative_full_body_url: Self::fetch_image_with_url(
                     client,
-                    format!(
-                        "{IMAGE_DATA_URI}/student/portrait/Portrait_{}_2.webp",
-                        student.dev_name
-                    ),
+                    format!("{IMAGE_DATA_URI}/student/portrait/{}_2.webp", student.id.0),
                 )
                 .await,
                 bg_url: format!("{IMAGE_DATA_URI}/background/{}.jpg", student.collection_bg),
             },
-            weapon_icon_url: format!("{IMAGE_DATA_URI}/weapon/{}.png", student.weapon_img),
+            weapon_icon_url: format!("{IMAGE_DATA_URI}/weapon/{}.webp", student.weapon_img),
         })
     }
 
