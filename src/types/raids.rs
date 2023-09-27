@@ -25,7 +25,7 @@ pub struct RaidData {
 #[serde(rename_all = "PascalCase")]
 pub struct Raid {
     pub id: ID,
-    is_released: (bool, bool),
+    is_released: (bool, bool, bool),
     pub max_difficulty: Option<Vec<u8>>,
     pub path_name: String,
     pub faction: Option<Faction>,
