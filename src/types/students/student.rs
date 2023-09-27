@@ -20,7 +20,7 @@ use super::Height;
 pub struct Student {
     /// The **[`ID`]** of the student.
     pub id: ID,
-    is_released: (bool, bool),
+    is_released: (bool, bool, bool),
     pub default_order: u32,
     pub path_name: String,
     pub dev_name: String,
