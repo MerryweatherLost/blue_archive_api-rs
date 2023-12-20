@@ -117,4 +117,5 @@ pub enum Faction {
     Kaitenger,
     TheLibraryofLore,
     SevenPrisoners,
+    HundredGhostTales,
 }
