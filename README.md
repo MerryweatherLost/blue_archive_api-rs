@@ -10,8 +10,6 @@ A Rust API wrapper of lonqie's SchaleDB that represents data from the game **Blu
 - **Owner: <https://github.com/lonqie>**
 - **Website: <https://schale.gg/>**
 
----
-
 ## Information
 
 Something I wanted to make in Rust was a simple api wrapper, picked something and the rest was history.
@@ -20,8 +18,6 @@ Something I wanted to make in Rust was a simple api wrapper, picked something an
 - The former versions **`<= 0.2.*`** used a different API, and to migrate to the new one, a lot of changes needed to happen to adjust.
 
 - **Repository: <https://github.com/MerryweatherLost/blue_archive_api-rs>**
-
----
 
 ## Contributing
 

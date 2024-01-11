@@ -2,16 +2,13 @@
 
 use std::str::FromStr;
 
-use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
 use crate::{
     enums::*,
     types::{Age, Effect, Released, SkillKind, ID},
-    BlueArchiveError, IMAGE_DATA_URI,
+    IMAGE_DATA_URI,
 };
-
-use anyhow::Result;
 
 use super::Height;
 
@@ -165,6 +162,7 @@ impl Student {
         Released {
             japan: self.is_released.0,
             global: self.is_released.1,
+            china: self.is_released.2,
         }
     }
 
@@ -191,59 +189,45 @@ impl Student {
 
     /// Gets the **[`School`]** of the student.
     pub fn school(&self) -> School {
-        School::from_str(&self.school).unwrap_or_else(|_| School::Unknown(self.school.clone()))
+        School::from_str(&self.school).unwrap_or(School::Unknown(self.school.clone()))
     }
 
     /// Gets the **[`TacticalRole`]** of the student.
     pub fn tactical_role(&self) -> TacticalRole {
         TacticalRole::from_str(&self.tactic_role)
-            .unwrap_or_else(|_| TacticalRole::Unknown(self.tactic_role.clone()))
+            .unwrap_or(TacticalRole::Unknown(self.tactic_role.clone()))
     }
 
     /// Gets the **[`Squad`]** of the student.
     pub fn squad(&self) -> Squad {
-        Squad::from_str(&self.squad_type)
-            .unwrap_or_else(|_| Squad::Unknown(self.squad_type.clone()))
+        Squad::from_str(&self.squad_type).unwrap_or(Squad::Unknown(self.squad_type.clone()))
     }
 
     /// Gets the **[`Armor`]** of the student.
     pub fn armor(&self) -> Armor {
-        Armor::from_str(&self.armor_type)
-            .unwrap_or_else(|_| Armor::Unknown(self.armor_type.clone()))
+        Armor::from_str(&self.armor_type).unwrap_or(Armor::Unknown(self.armor_type.clone()))
     }
 
     /// Gets the **[`Position`]** of the student.
     pub fn position(&self) -> Position {
-        Position::from_str(&self.armor_type)
-            .unwrap_or_else(|_| Position::Unknown(self.armor_type.clone()))
+        Position::from_str(&self.armor_type).unwrap_or(Position::Unknown(self.armor_type.clone()))
     }
 
     /// Gets the **[`BulletType`]** of the student.
     pub fn bullet_type(&self) -> BulletType {
         BulletType::from_str(&self.bullet_type)
-            .unwrap_or_else(|_| BulletType::Unknown(self.bullet_type.clone()))
+            .unwrap_or(BulletType::Unknown(self.bullet_type.clone()))
     }
 
     /// Gets the **[`Club`]** of the student.
     pub fn club(&self) -> Club {
-        Club::from_str(&self.club).unwrap_or_else(|_| Club::Unknown(self.club.clone()))
+        Club::from_str(&self.club).unwrap_or(Club::Unknown(self.club.clone()))
     }
 
     /// Gets the **[`WeaponType`]** of the student.
     pub fn weapon_type(&self) -> WeaponType {
         WeaponType::from_str(&self.weapon_type)
-            .unwrap_or_else(|_| WeaponType::Unknown(self.weapon_type.clone()))
-    }
-
-    /// Fetches extra data of this **[`Student`]**.
-    ///
-    /// Has a possibility of failing when trying to use the [`Client`].
-    pub(crate) async fn fetch_extra_data(
-        &mut self,
-        client: &Client,
-    ) -> Result<(), BlueArchiveError> {
-        self.image = StudentImageData::new(self, client).await?;
-        Ok(())
+            .unwrap_or(WeaponType::Unknown(self.weapon_type.clone()))
     }
 }
 
@@ -294,7 +278,7 @@ pub struct Summon {
 #[serde(untagged)]
 pub enum GearKind {
     Present(Gear),
-    Empty(EmptyGear),
+    Empty(Empty),
 }
 impl GearKind {
     /// Attempts to get a **[`Gear`]**, though if it gets an [`GearKind::Empty`], it will return [`None`].
@@ -309,7 +293,7 @@ impl GearKind {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Gear {
-    released: (bool, bool),
+    released: (bool, bool, bool),
     pub stat_type: Vec<String>,
     pub stat_value: Vec<Vec<u16>>,
     pub name: String,
@@ -325,6 +309,7 @@ impl Gear {
         Released {
             japan: self.released.0,
             global: self.released.1,
+            china: self.released.2,
         }
     }
 
@@ -334,10 +319,10 @@ impl Gear {
     }
 }
 /// There is an issue where Gear in data is represented as `"gear": {}`, therefore this is a mitigation against that.
-/// If you have a better implementation of handling this, as in allowing for me to represent the data as an `Option<Gear>`, please send a PR.
+/// If you have a better implementation of handling this, as in allowing for me to represent the data as an `Option<...>`, please send a PR.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct EmptyGear {}
+pub struct Empty {}
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -380,31 +365,20 @@ pub struct StudentImageData {
 }
 
 impl StudentImageData {
-    /// Creates itself from a given **[`Student`]** and **[`reqwest::Client`]**.
-    ///
-    /// Will query for extra image data when constructed.
-    pub async fn new(student: &Student, client: &Client) -> Result<Self, BlueArchiveError> {
-        Ok(Self {
+    /// Creates itself from a given **[`Student`]**.
+    pub fn new(student: &Student) -> Self {
+        Self {
             portrait: Portrait {
                 full_body_url: format!("{IMAGE_DATA_URI}/student/portrait/{}.webp", student.id.0),
                 icon_url: format!("{IMAGE_DATA_URI}/student/icon/{}.webp", student.id.0),
-                alternative_full_body_url: Self::fetch_image_with_url(
-                    client,
-                    format!("{IMAGE_DATA_URI}/student/portrait/{}_2.webp", student.id.0),
-                )
-                .await,
+                alternative_full_body_url: format!(
+                    "{IMAGE_DATA_URI}/student/portrait/{}_2.webp",
+                    student.id.0
+                ),
                 bg_url: format!("{IMAGE_DATA_URI}/background/{}.jpg", student.collection_bg),
             },
             weapon_icon_url: format!("{IMAGE_DATA_URI}/weapon/{}.webp", student.weapon_img),
-        })
-    }
-
-    async fn fetch_image_with_url(client: &Client, url: impl Into<String>) -> Option<String> {
-        let url: String = url.into();
-        (client.get(&url).send().await).map_or(None, |response| match response.error_for_status() {
-            Ok(_) => Some(url),
-            Err(_) => None,
-        })
+        }
     }
 }
 
@@ -415,8 +389,8 @@ pub struct Portrait {
     pub full_body_url: String,
     /// The icon url associated with this **[`Student`]**.
     pub icon_url: String,
-    /// If there is an alternative full-body image url associated with this **[`Student`]**.
-    pub alternative_full_body_url: Option<String>,
+    /// If there is an alternative full-body image url associated with this **[`Student`]**. There is a chance for this
+    pub alternative_full_body_url: String,
     /// The background image url associated with this **[`Student`]**.
     pub bg_url: String,
 }

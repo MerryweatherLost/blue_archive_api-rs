@@ -36,6 +36,7 @@ impl Display for Age {
 pub struct Released {
     pub japan: bool,
     pub global: bool,
+    pub china: bool,
 }
 
 impl Display for Released {
