@@ -2,6 +2,8 @@
 
 use std::borrow::Borrow;
 
+use crate::types::students::student::StudentImageData;
+
 use super::{
     internal::{fetch_response, Endpoint},
     BlueArchiveError, Client, IteratorRandom, Language, Result, Student, StudentFilterOptions,
@@ -16,12 +18,11 @@ pub async fn fetch_all_students(
         .await?
         .json::<Vec<Student>>()
         .await?;
-    futures::future::join_all(
-        students
-            .iter_mut()
-            .map(|student| async { student.fetch_extra_data(&client).await }),
-    )
-    .await;
+
+    students
+        .iter_mut()
+        .for_each(|student| student.image = StudentImageData::new(student));
+
     Ok(students)
 }
 
@@ -55,27 +56,24 @@ pub async fn fetch_student_by_name(
     language: impl Borrow<Language>,
 ) -> Result<Option<Student>, BlueArchiveError> {
     let name: String = name.into();
-    let possible_student = fetch_all_students(language)
-        .await?
-        .into_iter()
-        .find(|student| {
-            [
-                &student.name,
-                &student.first_name(),
-                &student.last_name(),
-                &student.full_name_last(),
-                &student.full_name_first(),
-            ]
-            .into_iter()
-            .any(|x| x.to_lowercase() == name.to_lowercase())
-        });
-    match possible_student {
-        Some(mut student) => {
-            student.fetch_extra_data(&Client::new()).await?;
-            Ok(Some(student))
+
+    let mut matched_student = None;
+
+    for student in fetch_all_students(language).await? {
+        let lowercased = name.to_lowercase();
+        let maybe_student = (lowercased == student.name.to_lowercase()
+            || lowercased == student.first_name().to_lowercase()
+            || lowercased == student.last_name().to_lowercase()
+            || lowercased == student.full_name_last().to_lowercase()
+            || lowercased == student.full_name_first().to_lowercase())
+        .then_some(student);
+        if let Some(student) = maybe_student {
+            matched_student = Some(student);
+            break;
         }
-        None => Ok(None),
     }
+
+    Ok(matched_student)
 }
 
 /// Attempts to fetch a random **[`Student`]**.

@@ -22,5 +22,12 @@ async fn main() -> anyhow::Result<()> {
         })
     });
 
+    // Of course, you can just filter the students through the direct filter.
+    let maids = blue_archive::filter(&students)
+        .apply(Club::CleaningAndClearing)
+        .finish();
+    println!("{} Members : [{}]", Club::CleaningAndClearing, maids.len());
+    maids.iter().for_each(|student| println!("{student}"));
+
     Ok(())
 }

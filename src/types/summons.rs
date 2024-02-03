@@ -51,13 +51,12 @@ impl Summon {
     /// Gets the **[`Bullet`]** type of the summon.
     pub fn bullet_type(&self) -> BulletType {
         BulletType::from_str(&self.bullet_type)
-            .unwrap_or_else(|_| BulletType::Unknown(self.bullet_type.clone()))
+            .unwrap_or(BulletType::Unknown(self.bullet_type.clone()))
     }
 
     /// Gets the **[`Armor`]** of the summon.
     pub fn armor(&self) -> Armor {
-        Armor::from_str(&self.armor_type)
-            .unwrap_or_else(|_| Armor::Unknown(self.armor_type.clone()))
+        Armor::from_str(&self.armor_type).unwrap_or(Armor::Unknown(self.armor_type.clone()))
     }
 }
 

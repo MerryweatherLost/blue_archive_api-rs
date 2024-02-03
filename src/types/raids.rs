@@ -54,6 +54,7 @@ impl Raid {
         Released {
             japan: self.is_released.0,
             global: self.is_released.1,
+            china: self.is_released.2,
         }
     }
 

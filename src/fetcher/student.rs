@@ -50,17 +50,23 @@ impl StudentFetcher {
     */
     pub fn get_student_by_name(&self, name: impl Into<String>) -> Option<&Student> {
         let name: String = name.into();
-        self.students.iter().find(|student| {
-            [
-                &student.name,
-                &student.first_name(),
-                &student.last_name(),
-                &student.full_name_last(),
-                &student.full_name_first(),
-            ]
-            .into_iter()
-            .any(|x| x.to_lowercase() == name.to_lowercase())
-        })
+        let mut matched_student = None;
+
+        for student in &self.students {
+            let lowercased = name.to_lowercase();
+            let maybe_student = (lowercased == student.name.to_lowercase()
+                || lowercased == student.first_name().to_lowercase()
+                || lowercased == student.last_name().to_lowercase()
+                || lowercased == student.full_name_last().to_lowercase()
+                || lowercased == student.full_name_first().to_lowercase())
+            .then_some(student);
+            if let Some(student) = maybe_student {
+                matched_student = Some(student);
+                break;
+            }
+        }
+
+        matched_student
     }
 
     /// Attempts to get a random **[`Student`]**.
