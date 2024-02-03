@@ -6,6 +6,7 @@ pub mod summons;
 
 pub use raids::RaidData;
 use serde::{Deserialize, Serialize};
+use serde_aux::prelude::*;
 pub use students::{Age, Released, Student};
 pub use summons::Summon;
 
@@ -137,10 +138,13 @@ pub enum Effect {
         ignore_def: Option<Vec<i32>>,
     },
     DMGDot {
-        #[serde(alias = "Duration")]
-        duration: String, // todo: parse.
-        #[serde(alias = "Period")]
-        period: String, // todo: parse.
+        #[serde(
+            deserialize_with = "deserialize_number_from_string",
+            alias = "Duration"
+        )]
+        duration: u32,
+        #[serde(deserialize_with = "deserialize_number_from_string", alias = "Period")]
+        period: u32,
         #[serde(alias = "Icon")]
         icon: String,
         #[serde(alias = "Scale")]
@@ -175,10 +179,13 @@ pub enum Effect {
         scale: ScaleValue,
     },
     HealDot {
-        #[serde(alias = "Duration")]
-        duration: String, // todo: parse.
-        #[serde(alias = "Period")]
-        period: String, // todo: parse.
+        #[serde(
+            deserialize_with = "deserialize_number_from_string",
+            alias = "Duration"
+        )]
+        duration: u32,
+        #[serde(deserialize_with = "deserialize_number_from_string", alias = "Period")]
+        period: u32,
         #[serde(alias = "Scale")]
         scale: ScaleValue,
     },
@@ -193,8 +200,8 @@ pub enum Effect {
         scale: ScaleValue,
     },
     CrowdControl {
-        #[serde(alias = "Chance")]
-        chance: String, // todo: parse.
+        #[serde(deserialize_with = "deserialize_number_from_string", alias = "Chance")]
+        chance: u32,
         #[serde(alias = "Icon")]
         icon: String,
         #[serde(alias = "Scale")]
