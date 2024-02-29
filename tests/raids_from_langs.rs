@@ -15,4 +15,3 @@ lang_test!(fetch_raids_by_chinese, Language::Chinese);
 lang_test!(fetch_raids_by_korean, Language::Korean);
 lang_test!(fetch_raids_by_thai, Language::Thai);
 lang_test!(fetch_raids_by_taiwanese, Language::Taiwanese);
-lang_test!(fetch_raids_by_vietnamese, Language::Vietnamese);

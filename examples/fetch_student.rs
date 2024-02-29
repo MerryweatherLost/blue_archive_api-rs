@@ -7,11 +7,12 @@ async fn main() -> anyhow::Result<()> {
     let hina = (blue_archive::fetch_student_by_name("Hina", Language::English).await?).unwrap();
 
     // Let us print some important details of Hina!
-    let header = format!("|:: {} : Details", hina.full_name_last());
+    let header = hina.full_name_last().to_string();
     println!("{header}");
     println!("{}", "-".repeat(header.len()));
     let segments = [
         ("age", format!("{}", hina.age())),
+        ("birthday", hina.birthday.to_string()),
         ("school", format!("{}", hina.school())),
         ("club", format!("{}", hina.club())),
         ("armor", format!("{}", hina.armor())),
@@ -24,6 +25,7 @@ async fn main() -> anyhow::Result<()> {
                 hina.bullet_type()
             ),
         ),
+        ("designer", hina.designer.to_string()),
     ];
     let max = segments.iter().map(|(n, _)| n.len()).max().unwrap();
     segments.map(|(name, details)| println!("{}{name}: {}", " ".repeat(max - name.len()), details));
