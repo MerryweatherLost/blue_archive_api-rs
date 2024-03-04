@@ -17,4 +17,3 @@ lang_test!(fetch_students_by_chinese, Language::Chinese);
 lang_test!(fetch_students_by_korean, Language::Korean);
 lang_test!(fetch_students_by_thai, Language::Thai);
 lang_test!(fetch_students_by_taiwanese, Language::Taiwanese);
-lang_test!(fetch_students_by_vietnamese, Language::Vietnamese);

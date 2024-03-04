@@ -11,7 +11,6 @@ pub enum Language {
     Korean,
     Thai,
     Taiwanese,
-    Vietnamese,
 }
 
 impl Language {
@@ -24,7 +23,6 @@ impl Language {
             Self::Korean => "kr",
             Self::Thai => "th",
             Self::Taiwanese => "tw",
-            Self::Vietnamese => "vi",
         }
         .to_string()
     }
