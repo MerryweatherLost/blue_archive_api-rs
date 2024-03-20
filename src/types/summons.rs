@@ -4,9 +4,9 @@ use serde::{Deserialize, Serialize};
 
 use std::str::FromStr;
 
-use crate::{Armor, BulletType, WeaponType};
+use crate::{Armor, BulletType, WeaponType, IMAGE_DATA_URI};
 
-use super::{Effect, Radius, SkillKind, ID};
+use super::{Effect, Radius, ID};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
@@ -71,27 +71,65 @@ impl Summon {
 
 /// **[`Summon`] specific Skills**.
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
-#[serde(rename_all = "snake_case", tag = "SkillType")]
+#[serde(rename_all = "PascalCase", tag = "SkillType")]
 pub enum Skill {
     #[serde(alias = "autoattack")]
     AutoAttack {
-        effects: Vec<Effect>,
-        radius: Vec<Radius>,
+        effects: Option<Vec<Effect>>,
+        radius: Option<Vec<Radius>>,
     },
-    Normal(CommonSkillDefinition),
-    Passive(CommonSkillDefinition),
+    #[serde(alias = "normal")]
+    Normal(NormalSkill),
+    #[serde(alias = "passive")]
+    Passive(PassiveSkill),
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
-pub struct CommonSkillDefinition {
-    name: String,
+pub struct NormalSkill {
+    pub name: String,
     desc: String,
     parameters: Vec<Vec<String>>,
-    duration: u32,
-    range: u32,
-    radius: Vec<Radius>,
+    pub duration: Option<u32>,
+    pub range: Option<u32>,
+    pub radius: Option<Vec<Radius>>,
     icon: String,
     is_summon_skill: bool,
-    effects: Vec<Effect>,
+    pub effects: Option<Vec<Effect>>,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "PascalCase")]
+pub struct PassiveSkill {
+    pub name: String,
+    desc: String,
+    parameters: Vec<Vec<String>>,
+    pub radius: Option<Vec<Radius>>,
+    icon: String,
+    pub is_summon_skill: bool,
+    pub effects: Option<Vec<Effect>>,
+}
+
+impl NormalSkill {
+    /** The description of a normal skill. */
+    pub fn description(&self) -> String {
+        html_escape::decode_html_entities(&self.desc).into()
+    }
+
+    /** Gets the icon of this skill represented in a `URI`. */
+    pub fn icon(&self) -> String {
+        format!("{IMAGE_DATA_URI}/skill/{}.webp", self.icon)
+    }
+}
+
+impl PassiveSkill {
+    /** The description of a passive skill. */
+    pub fn description(&self) -> String {
+        html_escape::decode_html_entities(&self.desc).into()
+    }
+
+    /** Gets the icon of this skill represented in a `URI`. */
+    pub fn icon(&self) -> String {
+        format!("{IMAGE_DATA_URI}/skill/{}.webp", self.icon)
+    }
 }
