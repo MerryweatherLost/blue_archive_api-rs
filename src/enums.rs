@@ -353,6 +353,8 @@ pub enum Club {
     * **SG** (Shotgun)
     * **SMG** (Submachine Gun)
     * **SR** (Sniper RIfle)
+    * **Cannon**
+    * **None**
 
     In the case that a weapon type in the data is not present on the wrapper,
     a [`WeaponType::Unknown(String)`] is returned to represent the unknown weapon type with its name in the `enum`.
@@ -383,6 +385,8 @@ pub enum WeaponType {
     RG,
     /// **`Cannon`**
     Cannon,
+    /// **`None`**
+    None,
     /// An **`unknown`** type that contains the inner value.
     Unknown(String),
 }
@@ -403,6 +407,7 @@ impl WeaponType {
             Self::SMG => "Submachine Gun",
             Self::SR => "Sniper Rifle",
             Self::Cannon => "Cannon",
+            Self::None => "No Weapon",
             Self::Unknown(string) => string,
         }
         .to_string()

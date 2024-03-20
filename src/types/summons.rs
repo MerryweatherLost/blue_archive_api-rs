@@ -4,9 +4,9 @@ use serde::{Deserialize, Serialize};
 
 use std::str::FromStr;
 
-use crate::{Armor, BulletType};
+use crate::{Armor, BulletType, WeaponType};
 
-use super::ID;
+use super::{Effect, Radius, SkillKind, ID};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
@@ -19,12 +19,12 @@ pub struct Summon {
     pub kind: String,
     pub tactic_role: Option<String>,
     pub star_bonus: Option<bool>,
-    pub bullet_type: String,
-    pub armor_type: String,
+    bullet_type: String,
+    armor_type: String,
     pub street_battle_adaptation: Option<u8>,
     pub outdoor_battle_adaptation: Option<u8>,
     pub indoor_battle_adaptation: Option<u8>,
-    pub weapon_type: Option<String>,
+    weapon_type: Option<String>,
     pub stability_point: u16,
     pub stability_rate: Option<u16>,
     pub attack_power_1: u16,
@@ -41,7 +41,7 @@ pub struct Summon {
     pub accuracy_point: u16,
     pub critical_point: u16,
     pub critical_damage_rate: u32,
-    pub ammo_count: u8,
+    pub ammo_count: u32,
     pub ammo_cost: u8,
     pub range: u16,
     pub move_speed: u16,
@@ -58,9 +58,40 @@ impl Summon {
     pub fn armor(&self) -> Armor {
         Armor::from_str(&self.armor_type).unwrap_or(Armor::Unknown(self.armor_type.clone()))
     }
+
+    /// Gets the **[`WeaponType`] of the summon.
+    pub fn weapon_type(&self) -> WeaponType {
+        match &self.weapon_type {
+            Some(weapon_type) => WeaponType::from_str(weapon_type)
+                .unwrap_or(WeaponType::Unknown(weapon_type.clone())),
+            None => WeaponType::None,
+        }
+    }
 }
 
-/// **A [`Summon`] specific Skill**.
+/// **[`Summon`] specific Skills**.
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "snake_case", tag = "SkillType")]
+pub enum Skill {
+    #[serde(alias = "autoattack")]
+    AutoAttack {
+        effects: Vec<Effect>,
+        radius: Vec<Radius>,
+    },
+    Normal(CommonSkillDefinition),
+    Passive(CommonSkillDefinition),
+}
+
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "PascalCase")]
-pub struct Skill {}
+pub struct CommonSkillDefinition {
+    name: String,
+    desc: String,
+    parameters: Vec<Vec<String>>,
+    duration: u32,
+    range: u32,
+    radius: Vec<Radius>,
+    icon: String,
+    is_summon_skill: bool,
+    effects: Vec<Effect>,
+}

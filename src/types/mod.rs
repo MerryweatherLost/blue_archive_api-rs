@@ -282,3 +282,16 @@ pub enum CriticalCheck {
     #[serde(other)]
     Unknown,
 }
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+pub enum RadiusType {
+    Circle,
+    Bounce,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+pub struct Radius {
+    #[serde(alias = "Type")]
+    kind: RadiusType,
+    radius: u32,
+}
