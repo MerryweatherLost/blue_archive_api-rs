@@ -7,8 +7,12 @@ async fn main() -> anyhow::Result<()> {
     // Let's iterate over all of them and print out some details...
     summons.iter().for_each(|summon| {
         println!(
-            "{} : {} : ammo cost : {}",
-            summon.id, summon.name, summon.ammo_cost
+            "{} : {} : Ammo Cost: {} : Weapon: {}, Armor: {}",
+            summon.id,
+            summon.name,
+            summon.ammo_cost,
+            summon.weapon_type(),
+            summon.armor()
         )
     });
     Ok(())

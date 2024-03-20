@@ -274,6 +274,7 @@ pub struct Summon {
 ///
 /// There is an issue where Gear in data is represented as `"gear": {}`, therefore this is a mitigation against that.
 /// If you have a better implementation of handling this, as in allowing for me to represent the data as an `Option<Gear>`, please send a PR.
+/// todo: Could use #[serde(skip_serializing_if = "...")]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(untagged)]
 pub enum GearKind {

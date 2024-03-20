@@ -1,4 +1,4 @@
-use blue_archive::{types::Student, Language};
+use blue_archive::Language;
 use rand::Rng;
 
 fn read_line_to_buffer(buffer: &mut String) -> Result<usize, std::io::Error> {
