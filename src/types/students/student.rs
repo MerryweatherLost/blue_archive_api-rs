@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     enums::*,
+    serialization,
     types::{Age, Effect, Released, SkillKind, ID},
     IMAGE_DATA_URI,
 };
@@ -54,7 +55,12 @@ pub struct Student {
     pub birthday: String,
     #[serde(alias = "CharacterSSRNew")]
     character_ssr_new: Option<String>,
-    profile_introduction: String,
+    /// Also known as the **profile** of the student. Provides a brief explanation of their background.
+    #[serde(
+        alias = "ProfileIntroduction",
+        deserialize_with = "serialization::deserialize_html_encoded_string"
+    )]
+    pub description: String,
     hobby: String,
     /// The voice actor of the student.
     #[serde(alias = "CharacterVoice")]
@@ -129,11 +135,6 @@ impl Student {
     /// Gets the full name of a student, with the **first name (`personal_name`)** coming first.
     pub fn full_name_first(&self) -> String {
         format!("{} {}", self.personal_name, self.family_name)
-    }
-
-    /// Also known as the **profile** of the student. Provides a brief explanation of their background.
-    pub fn description(&self) -> String {
-        html_escape::decode_html_entities(&self.profile_introduction).into()
     }
 
     /// The quote said when obtaining this student (if an SSR).
