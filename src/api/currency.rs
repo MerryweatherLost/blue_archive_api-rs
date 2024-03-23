@@ -9,6 +9,22 @@ use super::{
 
 /**
     Fetches all existing **[`Currency`]** currently in the database.
+
+    # Examples
+    ```
+        use blue_archive::Language;
+
+        #[tokio::main]
+        async fn main() -> anyhow::Result<()> {
+            println!(
+                "Total Currencies: [{}]",
+                blue_archive::fetch_all_currencies(Language::English)
+                    .await?
+                    .len()
+            );
+            Ok(())
+        }
+    ```
 */
 pub async fn fetch_all_currencies(
     language: impl Borrow<Language>,
@@ -23,6 +39,22 @@ pub async fn fetch_all_currencies(
 
 /**
     Fetches a specific **[`Currency`]** that matches with a provided **`name`** argument.
+
+    # Examples
+    ```
+        use blue_archive::Language;
+
+        #[tokio::main]
+        async fn main() -> anyhow::Result<()> {
+            let pyroxenes_now = blue_archive::fetch_currency_by_name("Pyroxenes", Language::English)
+                .await?
+                .unwrap();
+            println!("Pyroxenes");
+            println!("--------------------------");
+            println!("{:?}", pyroxenes_now);
+            Ok(())
+        }
+    ```
 */
 pub async fn fetch_currency_by_name(
     name: impl Into<String>,

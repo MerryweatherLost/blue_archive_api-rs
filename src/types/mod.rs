@@ -18,7 +18,7 @@ pub use summons::Summon;
 pub struct ID(u32);
 
 impl ID {
-    ///
+    /// Gets the inner value stored in the **[`ID`]** struct as a **[`u32`]**.
     pub fn to_u32(&self) -> u32 {
         self.0
     }
