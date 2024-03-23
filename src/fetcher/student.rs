@@ -55,8 +55,8 @@ impl StudentFetcher {
         for student in &self.students {
             let lowercased = name.to_lowercase();
             let maybe_student = (lowercased == student.name.to_lowercase()
-                || lowercased == student.first_name().to_lowercase()
-                || lowercased == student.last_name().to_lowercase()
+                || lowercased == student.first_name.to_lowercase()
+                || lowercased == student.last_name.to_lowercase()
                 || lowercased == student.full_name_last().to_lowercase()
                 || lowercased == student.full_name_first().to_lowercase())
             .then_some(student);

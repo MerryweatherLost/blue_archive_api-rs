@@ -25,6 +25,18 @@ pub struct Student {
     /// The name of the student as presented in the data, and can have an associated tag alongside it.
     /// An example would be **`Toki (Bunny)`**.
     pub name: String,
+    /// The first name of the student. e.g., Ichinose.
+    #[serde(alias = "PersonalName")]
+    pub first_name: String,
+    /// The last name/surname (family name) of the student.
+    #[serde(alias = "FamilyName")]
+    pub last_name: String,
+    /// Also known as the **profile** of the student. Provides a brief explanation of their background.
+    #[serde(
+        alias = "ProfileIntroduction",
+        deserialize_with = "serialization::deserialize_html_encoded_string"
+    )]
+    pub description: String,
     school: String,
     club: String,
     /// The amount of stars a [`Student`] is rated.
@@ -46,21 +58,13 @@ pub struct Student {
     #[serde(alias = "CollectionBG")]
     collection_bg: String,
     collection_texture: Option<String>,
-    family_name: String,
     family_name_ruby: Option<String>,
-    personal_name: String,
     pub school_year: Option<String>,
     character_age: String,
     /// The birthday of the student represented as (Month, Day).
     pub birthday: String,
     #[serde(alias = "CharacterSSRNew")]
     character_ssr_new: Option<String>,
-    /// Also known as the **profile** of the student. Provides a brief explanation of their background.
-    #[serde(
-        alias = "ProfileIntroduction",
-        deserialize_with = "serialization::deserialize_html_encoded_string"
-    )]
-    pub description: String,
     hobby: String,
     /// The voice actor of the student.
     #[serde(alias = "CharacterVoice")]
@@ -117,24 +121,14 @@ pub struct Student {
 }
 
 impl Student {
-    /// The **first name (`personal_name`)** of the student.
-    pub fn first_name(&self) -> String {
-        self.personal_name.clone()
-    }
-
-    /// The **last name/surname (`family_name`)** of the student.
-    pub fn last_name(&self) -> String {
-        self.family_name.clone()
-    }
-
     /// Gets the full name of a student, with the **surname (`family_name`)** coming first.
     pub fn full_name_last(&self) -> String {
-        format!("{} {}", self.family_name, self.personal_name)
+        format!("{} {}", self.last_name, self.first_name)
     }
 
     /// Gets the full name of a student, with the **first name (`personal_name`)** coming first.
     pub fn full_name_first(&self) -> String {
-        format!("{} {}", self.personal_name, self.family_name)
+        format!("{} {}", self.first_name, self.last_name)
     }
 
     /// The quote said when obtaining this student (if an SSR).
