@@ -1,4 +1,5 @@
 //! The main module where obtaining the data happens.
+pub mod currency;
 pub mod raid;
 pub mod student;
 pub mod summon;
@@ -22,12 +23,12 @@ pub(crate) mod internal {
     /// Contains the endpoints for the data, they mainly just represent the path of what data is obtained.
     #[derive(Debug, Display)]
     pub enum Endpoint {
-        _Currency,
         _Enemies,
         _Equipment,
         _Furniture,
         _Items,
         _Localization,
+        Currency,
         Raids,
         Students,
         Summons,
