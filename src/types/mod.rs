@@ -1,5 +1,6 @@
 //! Contains many structures that make up the deserialized data.
 
+pub mod currency;
 pub mod raids;
 pub mod students;
 pub mod summons;
@@ -14,7 +15,14 @@ pub use summons::Summon;
 ///
 /// Basically wraps around a [`u32`], and exists for representation of an identifier that can be filtered and have extra functionality.
 #[derive(Debug, PartialEq, Clone)]
-pub struct ID(pub u32);
+pub struct ID(u32);
+
+impl ID {
+    ///
+    pub fn to_u32(&self) -> u32 {
+        self.0
+    }
+}
 
 impl std::fmt::Display for ID {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
