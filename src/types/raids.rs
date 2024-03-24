@@ -3,8 +3,11 @@
 use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
+use strum_macros::{Display, EnumString};
 
-use super::{Effect, Released, SkillKind, ID};
+use crate::serialization;
+
+use super::{Effect, Released, ID};
 
 /// Contains data including **[`Raids`][`Raid`]** and other kinds of information.
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -25,7 +28,9 @@ pub struct RaidData {
 #[serde(rename_all = "PascalCase")]
 pub struct Raid {
     pub id: ID,
-    is_released: (bool, bool, bool),
+    /// Whether a `raid` has been **[`Released`]** in a specific region or not.
+    #[serde(alias = "IsReleased")]
+    pub released: Released,
     pub max_difficulty: Option<Vec<u8>>,
     pub path_name: String,
     pub faction: Option<Faction>,
@@ -34,7 +39,8 @@ pub struct Raid {
     pub bullet_type_insane: Option<String>,
     armor_type: String,
     pub enemy_list: Vec<Vec<u32>>, // todo: might associate with ID's of enemies. Will need further lookup in order to deserialize.
-    pub raid_skill: Vec<Skill>,
+    #[serde(alias = "RaidSkill")]
+    pub skills: Vec<Skill>,
     pub exclude_normal_attack: Option<Vec<u32>>,
     pub name: String,
     pub icon: Option<String>,
@@ -49,15 +55,6 @@ pub struct Raid {
 }
 
 impl Raid {
-    /// Whether a `raid` has been **[released][`Released`]** in a specific region or not.
-    pub fn released(&self) -> Released {
-        Released {
-            japan: self.is_released.0,
-            global: self.is_released.1,
-            china: self.is_released.2,
-        }
-    }
-
     pub fn armor(&self) -> crate::Armor {
         crate::Armor::from_str(&self.armor_type)
             .unwrap_or(crate::Armor::Unknown(self.armor_type.clone()))
@@ -78,45 +75,67 @@ impl Raid {
 
 /// **A [`Raid`] specific Skill**.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[serde(tag = "SkillType", rename_all = "PascalCase")]
+pub enum Skill {
+    #[serde(alias = "normal")]
+    Normal {
+        #[serde(alias = "Id")]
+        id: String,
+        min_difficulty: Option<u8>,
+        #[serde(alias = "ATGCost")]
+        atg_cost: u8,
+        icon: Option<String>,
+        name: Option<String>,
+        #[serde(
+            alias = "Desc",
+            deserialize_with = "serialization::deserialize_html_encoded_string"
+        )]
+        description: String,
+    },
+    #[serde(alias = "raidautoattack")]
+    RaidAutoAttack {
+        #[serde(alias = "Id")]
+        id: String,
+        min_difficulty: Option<u8>,
+        #[serde(alias = "ATGCost")]
+        atg_cost: u8,
+        icon: Option<String>,
+        effects: Option<Vec<Effect>>,
+    },
+    EX(SpecialRaidSkill),
+    Passive(SpecialRaidSkill),
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct Skill {
-    pub id: Option<String>,
-    #[serde(alias = "SkillType")]
-    pub kind: SkillKind,
-    pub min_difficulty: Option<u8>,
+pub struct SpecialRaidSkill {
+    #[serde(alias = "Id")]
+    id: String,
+    min_difficulty: Option<u8>,
     #[serde(alias = "ATGCost")]
-    pub atg_cost: Option<u8>,
-    name: Option<String>,
-    desc: Option<String>,
-    pub parameters: Option<Vec<Vec<String>>>,
-    pub cost: Option<Vec<u32>>,
-    pub icon: Option<String>,
-    pub show_info: Option<bool>,
-    pub effects: Option<Vec<Effect>>,
-}
-impl Skill {
-    /// The name of the skill.
-    pub fn name(&self) -> Option<String> {
-        self.name
-            .as_ref()
-            .map(|value| html_escape::decode_html_entities(&value).into())
-    }
-
-    /// The description of the skill.
-    pub fn description(&self) -> Option<String> {
-        self.desc
-            .as_ref()
-            .map(|value| html_escape::decode_html_entities(&value).into())
-    }
+    atg_cost: u8,
+    icon: String,
+    effects: Option<Vec<Effect>>,
+    name: String,
+    #[serde(
+        alias = "Desc",
+        deserialize_with = "serialization::deserialize_html_encoded_string"
+    )]
+    pub description: String,
+    parameters: Option<Vec<Vec<String>>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+#[derive(Debug, Display, Deserialize, Serialize, PartialEq, Clone, EnumString)]
 pub enum Faction {
     Decagrammaton,
     Slumpia,
+    #[strum(to_string = "Communio Sanctorum")]
     CommunioSanctorum,
     Kaitenger,
+    #[strum(to_string = "The Library of Lore")]
     TheLibraryofLore,
+    #[strum(to_string = "Seven Prisoners")]
     SevenPrisoners,
+    #[strum(to_string = "Hundred Ghost Tales")]
     HundredGhostTales,
 }

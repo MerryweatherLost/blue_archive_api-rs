@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use std::str::FromStr;
 
-use crate::{Armor, BulletType, WeaponType, IMAGE_DATA_URI};
+use crate::{serialization, Armor, BulletType, WeaponType, IMAGE_DATA_URI};
 
 use super::{Effect, Radius, ID};
 
@@ -88,7 +88,12 @@ pub enum Skill {
 #[serde(rename_all = "PascalCase")]
 pub struct NormalSkill {
     pub name: String,
-    desc: String,
+    /** The description of a normal skill. */
+    #[serde(
+        alias = "Desc",
+        deserialize_with = "serialization::deserialize_html_encoded_string"
+    )]
+    pub description: String,
     parameters: Vec<Vec<String>>,
     pub duration: Option<u32>,
     pub range: Option<u32>,
@@ -102,7 +107,12 @@ pub struct NormalSkill {
 #[serde(rename_all = "PascalCase")]
 pub struct PassiveSkill {
     pub name: String,
-    desc: String,
+    /** The description of a passive skill. */
+    #[serde(
+        alias = "Desc",
+        deserialize_with = "serialization::deserialize_html_encoded_string"
+    )]
+    pub description: String,
     parameters: Vec<Vec<String>>,
     pub radius: Option<Vec<Radius>>,
     icon: String,
@@ -111,11 +121,6 @@ pub struct PassiveSkill {
 }
 
 impl NormalSkill {
-    /** The description of a normal skill. */
-    pub fn description(&self) -> String {
-        html_escape::decode_html_entities(&self.desc).into()
-    }
-
     /** Gets the icon of this skill represented in a `URI`. */
     pub fn icon(&self) -> String {
         format!("{IMAGE_DATA_URI}/skill/{}.webp", self.icon)
@@ -123,11 +128,6 @@ impl NormalSkill {
 }
 
 impl PassiveSkill {
-    /** The description of a passive skill. */
-    pub fn description(&self) -> String {
-        html_escape::decode_html_entities(&self.desc).into()
-    }
-
     /** Gets the icon of this skill represented in a `URI`. */
     pub fn icon(&self) -> String {
         format!("{IMAGE_DATA_URI}/skill/{}.webp", self.icon)

@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     enums::*,
+    serialization,
     types::{Age, Effect, Released, SkillKind, ID},
     IMAGE_DATA_URI,
 };
@@ -17,13 +18,27 @@ use super::Height;
 pub struct Student {
     /// The **[`ID`]** of the student.
     pub id: ID,
-    is_released: (bool, bool, bool),
+    /// The **[`Released`]** status of the student.
+    #[serde(alias = "IsReleased")]
+    pub released: Released,
     pub default_order: u32,
     pub path_name: String,
     pub dev_name: String,
     /// The name of the student as presented in the data, and can have an associated tag alongside it.
     /// An example would be **`Toki (Bunny)`**.
     pub name: String,
+    /// The first name of the student. e.g., Ichinose.
+    #[serde(alias = "PersonalName")]
+    pub first_name: String,
+    /// The last name/surname (family name) of the student.
+    #[serde(alias = "FamilyName")]
+    pub last_name: String,
+    /// Also known as the **profile** of the student. Provides a brief explanation of their background.
+    #[serde(
+        alias = "ProfileIntroduction",
+        deserialize_with = "serialization::deserialize_html_encoded_string"
+    )]
+    pub description: String,
     school: String,
     club: String,
     /// The amount of stars a [`Student`] is rated.
@@ -45,16 +60,13 @@ pub struct Student {
     #[serde(alias = "CollectionBG")]
     collection_bg: String,
     collection_texture: Option<String>,
-    family_name: String,
     family_name_ruby: Option<String>,
-    personal_name: String,
     pub school_year: Option<String>,
     character_age: String,
     /// The birthday of the student represented as (Month, Day).
     pub birthday: String,
     #[serde(alias = "CharacterSSRNew")]
     character_ssr_new: Option<String>,
-    profile_introduction: String,
     hobby: String,
     /// The voice actor of the student.
     #[serde(alias = "CharacterVoice")]
@@ -111,29 +123,14 @@ pub struct Student {
 }
 
 impl Student {
-    /// The **first name (`personal_name`)** of the student.
-    pub fn first_name(&self) -> String {
-        self.personal_name.clone()
-    }
-
-    /// The **last name/surname (`family_name`)** of the student.
-    pub fn last_name(&self) -> String {
-        self.family_name.clone()
-    }
-
     /// Gets the full name of a student, with the **surname (`family_name`)** coming first.
     pub fn full_name_last(&self) -> String {
-        format!("{} {}", self.family_name, self.personal_name)
+        format!("{} {}", self.last_name, self.first_name)
     }
 
     /// Gets the full name of a student, with the **first name (`personal_name`)** coming first.
     pub fn full_name_first(&self) -> String {
-        format!("{} {}", self.personal_name, self.family_name)
-    }
-
-    /// Also known as the **profile** of the student. Provides a brief explanation of their background.
-    pub fn description(&self) -> String {
-        html_escape::decode_html_entities(&self.profile_introduction).into()
+        format!("{} {}", self.first_name, self.last_name)
     }
 
     /// The quote said when obtaining this student (if an SSR).
@@ -155,15 +152,6 @@ impl Student {
         }
         Age((!num_sequence.is_empty())
             .then_some(num_sequence.iter().fold(0, |acc, el| acc * radix + el)))
-    }
-
-    /// The **[`Released`]** status of the student.
-    pub fn released(&self) -> Released {
-        Released {
-            japan: self.is_released.0,
-            global: self.is_released.1,
-            china: self.is_released.2,
-        }
     }
 
     /// Gets the [`Height`] of the [`Student`].
@@ -210,7 +198,7 @@ impl Student {
 
     /// Gets the **[`Position`]** of the student.
     pub fn position(&self) -> Position {
-        Position::from_str(&self.armor_type).unwrap_or(Position::Unknown(self.armor_type.clone()))
+        Position::from_str(&self.position).unwrap_or(Position::Unknown(self.position.clone()))
     }
 
     /// Gets the **[`BulletType`]** of the student.
@@ -294,7 +282,8 @@ impl GearKind {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Gear {
-    released: (bool, bool, bool),
+    /// Whether a specific gear was **[`Released`]** or not in a specific region.
+    pub released: Released,
     pub stat_type: Vec<String>,
     pub stat_value: Vec<Vec<u16>>,
     pub name: String,
@@ -305,15 +294,6 @@ pub struct Gear {
     pub tier_up_material_amount: Vec<Vec<u8>>,
 }
 impl Gear {
-    /// Whether a specific gear was **[released][Released]** or not in a specific region.
-    pub fn released(&self) -> Released {
-        Released {
-            japan: self.released.0,
-            global: self.released.1,
-            china: self.released.2,
-        }
-    }
-
     /// Returns the url of a gear icon.
     pub fn icon_url(&self) -> String {
         format!("{IMAGE_DATA_URI}/gear/{}", self.icon)

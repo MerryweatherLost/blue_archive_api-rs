@@ -48,15 +48,14 @@ impl StudentFetcher {
     }
     ```
     */
-    pub fn get_student_by_name(&self, name: impl Into<String>) -> Option<&Student> {
-        let name: String = name.into();
+    pub fn get_student_by_name(&self, name: impl AsRef<str>) -> Option<&Student> {
         let mut matched_student = None;
 
         for student in &self.students {
-            let lowercased = name.to_lowercase();
+            let lowercased = name.as_ref().to_lowercase();
             let maybe_student = (lowercased == student.name.to_lowercase()
-                || lowercased == student.first_name().to_lowercase()
-                || lowercased == student.last_name().to_lowercase()
+                || lowercased == student.first_name.to_lowercase()
+                || lowercased == student.last_name.to_lowercase()
                 || lowercased == student.full_name_last().to_lowercase()
                 || lowercased == student.full_name_first().to_lowercase())
             .then_some(student);

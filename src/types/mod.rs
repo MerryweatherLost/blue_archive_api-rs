@@ -1,5 +1,8 @@
 //! Contains many structures that make up the deserialized data.
 
+pub mod currency;
+pub mod enemy;
+pub mod equipment;
 pub mod raids;
 pub mod students;
 pub mod summons;
@@ -7,6 +10,7 @@ pub mod summons;
 pub use raids::RaidData;
 use serde::{Deserialize, Serialize};
 use serde_aux::prelude::*;
+use strum_macros::{Display, EnumString};
 pub use students::{Age, Released, Student};
 pub use summons::Summon;
 
@@ -14,7 +18,14 @@ pub use summons::Summon;
 ///
 /// Basically wraps around a [`u32`], and exists for representation of an identifier that can be filtered and have extra functionality.
 #[derive(Debug, PartialEq, Clone)]
-pub struct ID(pub u32);
+pub struct ID(u32);
+
+impl ID {
+    /// Gets the inner value stored in the **[`ID`]** struct as a **[`u32`]**.
+    pub fn to_u32(&self) -> u32 {
+        self.0
+    }
+}
 
 impl std::fmt::Display for ID {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -296,4 +307,16 @@ pub struct Radius {
     #[serde(alias = "Type")]
     kind: RadiusType,
     radius: u32,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, EnumString, Display)]
+pub enum Rarity {
+    #[strum(to_string = "Normal")]
+    N,
+    #[strum(to_string = "Rare")]
+    R,
+    #[strum(to_string = "Super Rare")]
+    SR,
+    #[strum(to_string = "Super Special Rare")]
+    SSR,
 }

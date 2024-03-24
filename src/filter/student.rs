@@ -24,7 +24,7 @@ impl StudentFilter for Released {
     fn filter<'a>(&self, students: &'a [Student]) -> Vec<&'a Student> {
         students
             .iter()
-            .filter(|student| &student.released() == self)
+            .filter(|student| &student.released == self)
             .collect()
     }
 }
