@@ -57,12 +57,11 @@ pub async fn fetch_all_currencies(
     ```
 */
 pub async fn fetch_currency_by_name(
-    name: impl Into<String>,
+    name: impl AsRef<str>,
     language: impl Borrow<Language>,
 ) -> Result<Option<Currency>, BlueArchiveError> {
-    let name: String = name.into();
     Ok(fetch_all_currencies(language)
         .await?
         .into_iter()
-        .find(|currency| currency.name.to_lowercase() == name.to_lowercase()))
+        .find(|currency| currency.name.to_lowercase() == name.as_ref().to_lowercase()))
 }

@@ -3,6 +3,7 @@
 pub mod student;
 use std::fmt::Display;
 
+use serde::{Deserialize, Serialize};
 pub use student::Student;
 
 /// The age of a **[`Student`]**, which can be **[`None`]** or a **[`u8`]**, depending on if the age can be parsed or not.
@@ -32,16 +33,26 @@ impl Display for Age {
 }
 
 /// The released status of a **[`Student`]**.
-#[derive(Debug, PartialEq, Eq)]
-pub struct Released {
-    pub japan: bool,
-    pub global: bool,
-    pub china: bool,
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+pub struct Released(bool, bool, bool);
+
+impl Released {
+    pub fn japan(&self) -> bool {
+        self.0
+    }
+
+    pub fn global(&self) -> bool {
+        self.1
+    }
+
+    pub fn china(&self) -> bool {
+        self.2
+    }
 }
 
 impl Display for Released {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "(JP: {} | Global: {})", self.japan, self.global)
+        write!(f, "(JP: {} | Global: {})", self.japan(), self.global())
     }
 }
 

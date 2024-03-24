@@ -35,7 +35,7 @@ pub mod filter;
 pub(crate) mod serialization;
 pub mod types;
 
-pub use api::{currency::*, raid::*, student::*, summon::*};
+pub use api::{currency::*, enemy::*, equipment::*, raid::*, student::*, summon::*};
 pub use enums::{
     Armor, BulletType, Club, Language, Position, School, Squad, TacticalRole, WeaponType,
 };

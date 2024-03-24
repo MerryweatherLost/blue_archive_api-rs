@@ -28,7 +28,9 @@ pub struct RaidData {
 #[serde(rename_all = "PascalCase")]
 pub struct Raid {
     pub id: ID,
-    is_released: (bool, bool, bool),
+    /// Whether a `raid` has been **[`Released`]** in a specific region or not.
+    #[serde(alias = "IsReleased")]
+    pub released: Released,
     pub max_difficulty: Option<Vec<u8>>,
     pub path_name: String,
     pub faction: Option<Faction>,
@@ -53,15 +55,6 @@ pub struct Raid {
 }
 
 impl Raid {
-    /// Whether a `raid` has been **[released][`Released`]** in a specific region or not.
-    pub fn released(&self) -> Released {
-        Released {
-            japan: self.is_released.0,
-            global: self.is_released.1,
-            china: self.is_released.2,
-        }
-    }
-
     pub fn armor(&self) -> crate::Armor {
         crate::Armor::from_str(&self.armor_type)
             .unwrap_or(crate::Armor::Unknown(self.armor_type.clone()))
@@ -128,7 +121,7 @@ pub struct SpecialRaidSkill {
         alias = "Desc",
         deserialize_with = "serialization::deserialize_html_encoded_string"
     )]
-    description: String,
+    pub description: String,
     parameters: Option<Vec<Vec<String>>>,
 }
 

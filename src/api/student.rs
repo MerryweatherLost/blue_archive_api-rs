@@ -52,15 +52,13 @@ pub async fn fetch_all_students(
     ```
 */
 pub async fn fetch_student_by_name(
-    name: impl Into<String>,
+    name: impl AsRef<str>,
     language: impl Borrow<Language>,
 ) -> Result<Option<Student>, BlueArchiveError> {
-    let name: String = name.into();
-
     let mut matched_student = None;
 
     for student in fetch_all_students(language).await? {
-        let lowercased = name.to_lowercase();
+        let lowercased = name.as_ref().to_lowercase();
         let maybe_student = (lowercased == student.name.to_lowercase()
             || lowercased == student.first_name.to_lowercase()
             || lowercased == student.last_name.to_lowercase()

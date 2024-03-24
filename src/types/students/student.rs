@@ -18,7 +18,9 @@ use super::Height;
 pub struct Student {
     /// The **[`ID`]** of the student.
     pub id: ID,
-    is_released: (bool, bool, bool),
+    /// The **[`Released`]** status of the student.
+    #[serde(alias = "IsReleased")]
+    pub released: Released,
     pub default_order: u32,
     pub path_name: String,
     pub dev_name: String,
@@ -152,15 +154,6 @@ impl Student {
             .then_some(num_sequence.iter().fold(0, |acc, el| acc * radix + el)))
     }
 
-    /// The **[`Released`]** status of the student.
-    pub fn released(&self) -> Released {
-        Released {
-            japan: self.is_released.0,
-            global: self.is_released.1,
-            china: self.is_released.2,
-        }
-    }
-
     /// Gets the [`Height`] of the [`Student`].
     pub fn height(&self) -> Height {
         Height {
@@ -205,7 +198,7 @@ impl Student {
 
     /// Gets the **[`Position`]** of the student.
     pub fn position(&self) -> Position {
-        Position::from_str(&self.armor_type).unwrap_or(Position::Unknown(self.armor_type.clone()))
+        Position::from_str(&self.position).unwrap_or(Position::Unknown(self.position.clone()))
     }
 
     /// Gets the **[`BulletType`]** of the student.
@@ -289,7 +282,8 @@ impl GearKind {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Gear {
-    released: (bool, bool, bool),
+    /// Whether a specific gear was **[`Released`]** or not in a specific region.
+    pub released: Released,
     pub stat_type: Vec<String>,
     pub stat_value: Vec<Vec<u16>>,
     pub name: String,
@@ -300,15 +294,6 @@ pub struct Gear {
     pub tier_up_material_amount: Vec<Vec<u8>>,
 }
 impl Gear {
-    /// Whether a specific gear was **[released][Released]** or not in a specific region.
-    pub fn released(&self) -> Released {
-        Released {
-            japan: self.released.0,
-            global: self.released.1,
-            china: self.released.2,
-        }
-    }
-
     /// Returns the url of a gear icon.
     pub fn icon_url(&self) -> String {
         format!("{IMAGE_DATA_URI}/gear/{}", self.icon)

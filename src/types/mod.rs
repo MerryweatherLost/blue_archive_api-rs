@@ -1,6 +1,8 @@
 //! Contains many structures that make up the deserialized data.
 
 pub mod currency;
+pub mod enemy;
+pub mod equipment;
 pub mod raids;
 pub mod students;
 pub mod summons;
@@ -8,6 +10,7 @@ pub mod summons;
 pub use raids::RaidData;
 use serde::{Deserialize, Serialize};
 use serde_aux::prelude::*;
+use strum_macros::{Display, EnumString};
 pub use students::{Age, Released, Student};
 pub use summons::Summon;
 
@@ -304,4 +307,16 @@ pub struct Radius {
     #[serde(alias = "Type")]
     kind: RadiusType,
     radius: u32,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, EnumString, Display)]
+pub enum Rarity {
+    #[strum(to_string = "Normal")]
+    N,
+    #[strum(to_string = "Rare")]
+    R,
+    #[strum(to_string = "Super Rare")]
+    SR,
+    #[strum(to_string = "Super Special Rare")]
+    SSR,
 }
