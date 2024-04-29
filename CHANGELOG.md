@@ -31,3 +31,13 @@
 ## Fixes ⚒️
 
 - Applied a change to the `Student::position` function, was passing in the `Student::armor_type` for some reason... oops!
+
+## 0.4.1 - 2024-04-01
+
+### Additions ✨
+
+### Changes 📝
+
+- Changed how some internal deserialization and hashing works in the crate.
+
+## Fixes ⚒️

@@ -13,7 +13,7 @@ use crate::{
 
 use super::Height;
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Student {
     /// The **[`ID`]** of the student.
@@ -120,6 +120,12 @@ pub struct Student {
     /// Image data related to the [`Student`].
     #[serde(skip)]
     pub image: StudentImageData,
+}
+
+impl std::hash::Hash for Student {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.id.hash(state);
+    }
 }
 
 impl Student {
@@ -235,7 +241,7 @@ impl std::fmt::Display for Student {
 /// A [`Student`] specific skill.
 ///
 /// A great portion of it is raw data that has not been fully deserialized and represented.
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Skill {
     #[serde(alias = "SkillType")]
@@ -249,7 +255,7 @@ pub struct Skill {
 }
 
 /// A [`Student`] specific summon.
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Summon {
     pub id: ID,
@@ -263,7 +269,7 @@ pub struct Summon {
 /// There is an issue where Gear in data is represented as `"gear": {}`, therefore this is a mitigation against that.
 /// If you have a better implementation of handling this, as in allowing for me to represent the data as an `Option<Gear>`, please send a PR.
 /// todo: Could use #[serde(skip_serializing_if = "...")]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(untagged)]
 pub enum GearKind {
     Present(Gear),
@@ -279,7 +285,7 @@ impl GearKind {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Gear {
     /// Whether a specific gear was **[`Released`]** or not in a specific region.
@@ -301,11 +307,11 @@ impl Gear {
 }
 /// There is an issue where Gear in data is represented as `"gear": {}`, therefore this is a mitigation against that.
 /// If you have a better implementation of handling this, as in allowing for me to represent the data as an `Option<...>`, please send a PR.
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Empty {}
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Weapon {
     /// The name of the weapon.
@@ -327,7 +333,7 @@ pub struct Weapon {
 }
 
 /// The level-up type of a **[`Weapon`]**.
-#[derive(Debug, strum_macros::Display, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, strum_macros::Display, Serialize, Deserialize, PartialEq, Eq, Clone)]
 pub enum LevelUpType {
     Standard,
     Premature,
@@ -337,7 +343,7 @@ pub enum LevelUpType {
 }
 
 /// Image data related to a **[`Student`]**.
-#[derive(Debug, Default, PartialEq, Clone)]
+#[derive(Debug, Default, PartialEq, Eq, Clone)]
 pub struct StudentImageData {
     /// The portrait associated with this **[`Student`]**.
     pub portrait: Portrait,
@@ -364,7 +370,7 @@ impl StudentImageData {
 }
 
 /// Contains portrait data of a **[`Student`]**.
-#[derive(Debug, Default, PartialEq, Clone)]
+#[derive(Debug, Default, PartialEq, Eq, Clone)]
 pub struct Portrait {
     /// The full body image url associated with this **[`Student`]**.
     pub full_body_url: String,

@@ -1,4 +1,6 @@
 //! The main module where obtaining the data happens.
+#[cfg(feature = "blocking")]
+pub mod blocking;
 pub mod currency;
 pub mod enemy;
 pub mod equipment;
@@ -49,5 +51,20 @@ pub(crate) mod internal {
             endpoint.to_string().to_lowercase()
         );
         Ok(client.get(url).send().await?.error_for_status()?)
+    }
+
+    #[cfg(feature = "blocking")]
+    pub(crate) fn get_response(
+        endpoint: &Endpoint,
+        language: &Language,
+        client: &reqwest::blocking::Client,
+    ) -> Result<reqwest::blocking::Response, BlueArchiveError> {
+        let url = format!(
+            "{}/{}/{}.json",
+            DATA_URI,
+            language.id(),
+            endpoint.to_string().to_lowercase()
+        );
+        Ok(client.get(url).send()?.error_for_status()?)
     }
 }
