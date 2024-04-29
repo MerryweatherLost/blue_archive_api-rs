@@ -1,6 +1,9 @@
-//! The main module where obtaining the data happens.
+//! This is where the main asynchronous (and if elligble, blocking) API implementation is.
+//! You are able to obtain data about multiple entities in the game here.
+
 #[cfg(feature = "blocking")]
 pub mod blocking;
+
 pub mod currency;
 pub mod enemy;
 pub mod equipment;
