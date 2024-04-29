@@ -1,6 +1,7 @@
 use anyhow::Result;
 use blue_archive::Language;
 
+#[cfg(feature = "blocking")]
 pub fn main() -> Result<()> {
     // You can obtain the students in a blocking context now.
     let students = blue_archive::blocking::get_all_students(Language::English)?;
