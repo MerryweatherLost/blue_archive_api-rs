@@ -36,3 +36,8 @@ strum_macros = "0.26"
 
 [features]
 blocking = ["reqwest/blocking"]
+
+[[example]]
+name = "get_all_students"
+path = "examples/blocking/get_all_students.rs"
+required-features = ["blocking"]
