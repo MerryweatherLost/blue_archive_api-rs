@@ -28,16 +28,20 @@
 - `Released` type has been changed to a struct with an inner tuple value, though to get the regions, you use the functions:
   - `Released::japan()`, `Released::global()`, and `Released::china()` for example.
 
-## Fixes ⚒️
+### Fixes ⚒️
 
 - Applied a change to the `Student::position` function, was passing in the `Student::armor_type` for some reason... oops!
 
-## 0.4.1 - 2024-04-01
+## 0.5.0 - 2024-04-01
 
 ### Additions ✨
+
+Added the new `blocking` feature. It is not enabled by default, so you must require it if you wish to use it!
+
+- This uses reqwest's `blocking` feature to handle all requests in a non-asynchronous way.
 
 ### Changes 📝
 
 - Changed how some internal deserialization and hashing works in the crate.
 
-## Fixes ⚒️
+### Fixes ⚒️

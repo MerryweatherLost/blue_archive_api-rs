@@ -39,9 +39,11 @@ pub mod types;
 pub use api::blocking;
 
 pub use api::{currency::*, enemy::*, equipment::*, raid::*, student::*, summon::*};
+
 pub use enums::{
     Armor, BulletType, Club, Language, Position, School, Squad, TacticalRole, WeaponType,
 };
+
 pub use errors::BlueArchiveError;
 pub use fetcher::StudentFetcher;
 pub use filter::student::StudentFilter;
