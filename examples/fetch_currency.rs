@@ -12,7 +12,7 @@ async fn main() -> anyhow::Result<()> {
     println!("Pyroxenes");
     println!("--------------------------");
     println!(
-        "{:?}",
+        "{:#?}",
         blue_archive::fetch_currency_by_name("Pyroxenes", Language::English)
             .await?
             .unwrap()

@@ -17,7 +17,7 @@ pub use summons::Summon;
 /// **A Blue Archive ID**.
 ///
 /// Basically wraps around a [`u32`], and exists for representation of an identifier that can be filtered and have extra functionality.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct ID(u32);
 
 impl ID {
@@ -52,7 +52,7 @@ impl<'de> Deserialize<'de> for ID {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub enum SkillKind {
     #[serde(alias = "weaponpassive")]
     WeaponPassive,
@@ -72,7 +72,7 @@ pub enum SkillKind {
     Unknown,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 #[serde(tag = "Type")]
 pub enum Effect {
@@ -252,13 +252,13 @@ pub enum Effect {
     Unknown,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(untagged)]
 pub enum ScaleValue {
     D1(Vec<i32>),
     D2(Vec<Vec<i32>>),
 }
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Restriction {
     pub property: String,
@@ -267,14 +267,14 @@ pub struct Restriction {
     pub value: RestrictValue,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(untagged)]
 pub enum RestrictValue {
     String(String),
     I32(i32),
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Frames {
     pub attack_enter_duration: u8,
@@ -286,7 +286,7 @@ pub struct Frames {
     pub attack_reload_duration: u8,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 pub enum CriticalCheck {
     Check,
     Always,
