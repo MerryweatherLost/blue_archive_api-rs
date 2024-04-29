@@ -1,5 +1,7 @@
 //! Contains the **[`StudentFetcher`]** structure.
 
+use std::borrow::Borrow;
+
 use crate::{filter::student::StudentFilterOptions, types::Student, BlueArchiveError, Language};
 
 use anyhow::Result;
@@ -14,11 +16,17 @@ pub struct StudentFetcher {
 impl StudentFetcher {
     /// Creates a new **[`StudentFetcher`]** by fetching **[`Student`]** data.
     /// Has a chance to fail as it attempts to fetch all students.
-    pub async fn new(
-        language: impl std::borrow::Borrow<Language>,
-    ) -> Result<Self, BlueArchiveError> {
+    pub async fn new(language: impl Borrow<Language>) -> Result<Self, BlueArchiveError> {
         Ok(Self {
             students: crate::fetch_all_students(language).await?,
+        })
+    }
+
+    #[cfg(feature = "blocking")]
+    /// Creates a new student fetcher using the **[`crate::blocking`]** module.
+    pub fn new_blocking(language: impl Borrow<Language>) -> Result<Self, BlueArchiveError> {
+        Ok(Self {
+            students: crate::blocking::get_all_students(language)?,
         })
     }
 
