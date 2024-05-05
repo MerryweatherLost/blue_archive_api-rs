@@ -24,9 +24,7 @@ impl From<u8> for Age {
 impl Display for Age {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.0 {
-            Some(age) => {
-                write!(f, "{}", age)
-            }
+            Some(age) => write!(f, "{}", age),
             None => write!(f, "None"),
         }
     }

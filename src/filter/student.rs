@@ -7,7 +7,7 @@ use crate::{
 
 /// Used to filter **[`Students`][`Student`]**.
 pub trait StudentFilter {
-    /// Filters a borrowed slice of [`Student`], and returns a **[`Vec<Student>`]**.
+    /// Filters a borrowed slice of [`Student`], and returns a **[`Vec<&Student>`]**.
     fn filter<'a>(&self, students: &'a [Student]) -> Vec<&'a Student>;
 }
 

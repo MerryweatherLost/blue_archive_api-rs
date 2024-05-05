@@ -30,9 +30,10 @@ pub(crate) mod internal {
     /// Contains the endpoints for the data, they mainly just represent the path of what data is obtained.
     #[derive(Debug, Display)]
     pub enum Endpoint {
+        _Localization,
+        _Voice,
         _Furniture,
         _Items,
-        _Localization,
         Enemies,
         Equipment,
         Currency,
