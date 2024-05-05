@@ -1,5 +1,32 @@
 # blue_archive-rs
 
+
+## 0.5.1 - 2024-05-04
+
+### Additions ✨
+
+### Changes 📝
+- Modified displayed portions of `Student` and other struct fields.
+- Changed `Released` struct to allow direct access to `japan`, `global` and `china` fields.
+- Changed how `age` is obtained and how it is serialized/deserialized. This will be done as soon as it is read/written without a method call.
+  - Use `student.age` instead of `student.age()`.
+
+### Fixes ⚒️
+
+## 0.5.0 - 2024-04-01
+
+### Additions ✨
+
+Added the new `blocking` feature. It is not enabled by default, so you must require it if you wish to use it!
+
+- This uses reqwest's `blocking` feature to handle all requests in a non-asynchronous way.
+
+### Changes 📝
+
+- Changed how some internal deserialization and hashing works in the crate.
+
+### Fixes ⚒️
+
 ## 0.4.0 - 2024-03-23
 
 ### Additions ✨
@@ -31,29 +58,3 @@
 ### Fixes ⚒️
 
 - Applied a change to the `Student::position` function, was passing in the `Student::armor_type` for some reason... oops!
-
-## 0.5.0 - 2024-04-01
-
-### Additions ✨
-
-Added the new `blocking` feature. It is not enabled by default, so you must require it if you wish to use it!
-
-- This uses reqwest's `blocking` feature to handle all requests in a non-asynchronous way.
-
-### Changes 📝
-
-- Changed how some internal deserialization and hashing works in the crate.
-
-### Fixes ⚒️
-
-## 0.5.1 - 2024-05-04
-
-### Additions ✨
-
-### Changes 📝
-
-- Changed `Released` struct to allow direct access to `japan`, `global` and `china` fields.
-- Changed how `age` is obtained and how it is serialized/deserialized. This will be done as soon as it is read/written without a method call.
-  - Use `student.age` instead of `student.age()`.
-
-### Fixes ⚒️

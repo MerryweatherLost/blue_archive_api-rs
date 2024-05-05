@@ -217,9 +217,9 @@ impl std::fmt::Display for Student {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "Student : {} :-: {} | Age:{} | School: {}",
-            self.full_name_last(),
+            "(ID: {}, Name: {}, Age: {}, School: {})",
             self.id,
+            self.full_name_last(),
             self.age,
             self.school()
         )
