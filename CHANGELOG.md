@@ -52,6 +52,7 @@ Added the new `blocking` feature. It is not enabled by default, so you must requ
 
 ### Changes 📝
 
+- Changed `Released` struct to allow direct access to `japan`, `global` and `china` fields.
 - Changed how `age` is obtained and how it is serialized/deserialized. This will be done as soon as it is read/written without a method call.
   - Use `student.age` instead of `student.age()`.
 

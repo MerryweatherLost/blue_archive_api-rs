@@ -3,6 +3,8 @@
 pub mod student;
 use std::fmt::Display;
 
+use serde::ser::SerializeStruct;
+
 use serde::{Deserialize, Serialize};
 pub use student::Student;
 
@@ -63,20 +65,37 @@ impl Display for Age {
 }
 
 /// The released status of a **[`Student`]**.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
-pub struct Released(bool, bool, bool);
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Released {
+    pub japan: bool,
+    pub global: bool,
+    pub china: bool,
+}
 
-impl Released {
-    pub fn japan(&self) -> bool {
-        self.0
+impl Serialize for Released {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut released = serializer.serialize_struct("IsReleased", 3)?;
+        released.serialize_field("japan", &self.japan)?;
+        released.serialize_field("global", &self.global)?;
+        released.serialize_field("china", &self.china)?;
+        released.end()
     }
+}
 
-    pub fn global(&self) -> bool {
-        self.1
-    }
-
-    pub fn china(&self) -> bool {
-        self.2
+impl<'de> Deserialize<'de> for Released {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let vec = Vec::deserialize(deserializer)?;
+        Ok(Self {
+            japan: vec[0],
+            global: vec[1],
+            china: vec[2],
+        })
     }
 }
 
@@ -85,9 +104,7 @@ impl Display for Released {
         write!(
             f,
             "(JP: {}, GL: {}, CN, {})",
-            self.japan(),
-            self.global(),
-            self.china()
+            self.japan, self.global, self.china
         )
     }
 }
