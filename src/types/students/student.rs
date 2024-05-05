@@ -27,6 +27,9 @@ pub struct Student {
     /// The name of the student as presented in the data, and can have an associated tag alongside it.
     /// An example would be **`Toki (Bunny)`**.
     pub name: String,
+    /// The **[`Age`]** of the student.
+    #[serde(alias = "CharacterAge")]
+    pub age: Age,
     /// The first name of the student. e.g., Ichinose.
     #[serde(alias = "PersonalName")]
     pub first_name: String,
@@ -62,7 +65,6 @@ pub struct Student {
     collection_texture: Option<String>,
     family_name_ruby: Option<String>,
     pub school_year: Option<String>,
-    character_age: String,
     /// The birthday of the student represented as (Month, Day).
     pub birthday: String,
     #[serde(alias = "CharacterSSRNew")]
@@ -146,20 +148,6 @@ impl Student {
         })
     }
 
-    /// Gets the **[`Age`]** of the student.
-    pub fn age(&self) -> Age {
-        let radix = 10;
-        let mut num_sequence: Vec<u8> = vec![];
-        for char in self.character_age.chars() {
-            match char.to_digit(radix.into()) {
-                Some(digit) => num_sequence.push(digit as u8),
-                None => break,
-            }
-        }
-        Age((!num_sequence.is_empty())
-            .then_some(num_sequence.iter().fold(0, |acc, el| acc * radix + el)))
-    }
-
     /// Gets the [`Height`] of the [`Student`].
     pub fn height(&self) -> Height {
         Height {
@@ -232,7 +220,7 @@ impl std::fmt::Display for Student {
             "Student : {} :-: {} | Age:{} | School: {}",
             self.full_name_last(),
             self.id,
-            self.age(),
+            self.age,
             self.school()
         )
     }

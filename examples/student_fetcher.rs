@@ -36,7 +36,7 @@ async fn main() -> anyhow::Result<()> {
             - full name (surname): {}
         "#,
         aru.id,
-        aru.age(),
+        aru.age,
         aru.club(),
         aru.full_name_last()
     );

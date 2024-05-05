@@ -45,3 +45,14 @@ Added the new `blocking` feature. It is not enabled by default, so you must requ
 - Changed how some internal deserialization and hashing works in the crate.
 
 ### Fixes ⚒️
+
+## 0.5.1 - 2024-05-04
+
+### Additions ✨
+
+### Changes 📝
+
+- Changed how `age` is obtained and how it is serialized/deserialized. This will be done as soon as it is read/written without a method call.
+  - Use `student.age` instead of `student.age()`.
+
+### Fixes ⚒️

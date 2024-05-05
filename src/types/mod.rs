@@ -29,7 +29,7 @@ impl ID {
 
 impl std::fmt::Display for ID {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "ID#:({})", self.0)
+        write!(f, "{}", self.0)
     }
 }
 

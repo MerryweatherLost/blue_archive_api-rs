@@ -11,7 +11,8 @@ async fn main() -> anyhow::Result<()> {
     println!("{header}");
     println!("{}", "-".repeat(header.len()));
     let segments = [
-        ("age", format!("{}", hina.age())),
+        ("id", format!("{}", hina.id)),
+        ("age", format!("{}", hina.age)),
         ("birthday", hina.birthday.to_string()),
         ("school", format!("{}", hina.school())),
         ("club", format!("{}", hina.club())),
