@@ -12,7 +12,7 @@ async fn main() -> anyhow::Result<()> {
 
     println!("Guessing Game (it's really bad)");
     println!("---------------------------");
-    println!("See if you can guess the characters based on certain properties.\n\n");
+    println!("See if you can guess the characters based on the remaining ones.\n\n");
 
     let chosen = blue_archive::fetch_random_student(Language::English)
         .await?

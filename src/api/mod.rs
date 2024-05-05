@@ -1,6 +1,9 @@
-//! The main module where obtaining the data happens.
+//! This is where the main asynchronous (and if elligble, blocking) API implementation is.
+//! You are able to obtain data about multiple entities in the game here.
+
 #[cfg(feature = "blocking")]
 pub mod blocking;
+
 pub mod currency;
 pub mod enemy;
 pub mod equipment;
@@ -27,9 +30,10 @@ pub(crate) mod internal {
     /// Contains the endpoints for the data, they mainly just represent the path of what data is obtained.
     #[derive(Debug, Display)]
     pub enum Endpoint {
+        _Localization,
+        _Voice,
         _Furniture,
         _Items,
-        _Localization,
         Enemies,
         Equipment,
         Currency,

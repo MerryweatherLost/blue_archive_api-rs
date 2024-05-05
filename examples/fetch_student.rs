@@ -11,7 +11,8 @@ async fn main() -> anyhow::Result<()> {
     println!("{header}");
     println!("{}", "-".repeat(header.len()));
     let segments = [
-        ("age", format!("{}", hina.age())),
+        ("id", format!("{}", hina.id)),
+        ("age", format!("{}", hina.age)),
         ("birthday", hina.birthday.to_string()),
         ("school", format!("{}", hina.school())),
         ("club", format!("{}", hina.club())),
@@ -36,7 +37,7 @@ async fn main() -> anyhow::Result<()> {
     let random_student = (blue_archive::fetch_random_student(Language::English).await?).unwrap();
     // I wonder who it will be this time?
     println!(
-        "The random student of this second is: {}!",
+        "The random student of this second is: {}!\n",
         random_student.full_name_last()
     );
 
