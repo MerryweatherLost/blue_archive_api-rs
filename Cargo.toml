@@ -1,6 +1,7 @@
+
 [package]
 name = "blue_archive"
-version = "0.5.1"
+version = "0.5.2"
 edition = "2021"
 license-file = "LICENSE"
 description = "A Blue Archive api wrapper for Rust, based off of SchaleDB's data: https://github.com/lonqie/SchaleDB"
@@ -41,3 +42,6 @@ blocking = ["reqwest/blocking"]
 name = "get_all_students"
 path = "examples/blocking/get_all_students.rs"
 required-features = ["blocking"]
+
+[profile.dev]
+debug-assertions = false

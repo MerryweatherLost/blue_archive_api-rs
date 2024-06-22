@@ -116,7 +116,7 @@ pub struct SpecialRaidSkill {
     atg_cost: u8,
     icon: String,
     effects: Option<Vec<Effect>>,
-    name: String,
+    name: Option<String>,
     #[serde(
         alias = "Desc",
         deserialize_with = "serialization::deserialize_html_encoded_string"

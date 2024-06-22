@@ -18,7 +18,9 @@ async fn main() -> anyhow::Result<()> {
         println!("|::{club}{}::|", " ".repeat(max - club.to_string().len()));
         // Iterating over each student and checking if they associate with the club.
         students.iter().for_each(|student| {
-            (student.club() == club).then(|| println!("{student}"));
+            if student.club() == club {
+                println!("{student}")
+            }
         })
     });
 
